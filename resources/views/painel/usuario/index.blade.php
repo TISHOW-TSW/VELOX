@@ -1,16 +1,8 @@
 @extends('painel.padrao')
 @section('css')
     <style>
-        body {
-            color: white;
-        }
 
-        .caixa {
-            border-radius: 15px;
-            opacity: 55%;
-            background-color: #43308a;
-            color: white
-        }
+
 
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             box-sizing: border-box;
@@ -27,37 +19,6 @@
             border-radius: 2px;
         }
 
-        label {
-            color: white;
-        }
-
-        span {
-            color: white;
-        }
-
-        #myTable_info {
-            color: white;
-        }
-
-        #myTable1_info {
-            color: white;
-        }
-
-        #myTable2_info {
-            color: white;
-        }
-
-        #myTable3_info {
-            color: white;
-        }
-
-        #myTable4_info {
-            color: white;
-        }
-
-        .dataTables_empty {
-            background-color: transparent;
-        }
 
     </style>
 @endsection

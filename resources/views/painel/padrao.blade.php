@@ -177,7 +177,13 @@
 
 
         <!-- Full Width Column -->
-        <div class="content-wrapper" style="background-image: url('{{ asset('fundo.jpeg')}}');
+        <div class="content-wrapper"
+
+             @if(Auth::user()->tipo !=1)
+             style="background-image: url('{{ asset('fundo.jpeg')}}')
+
+             @endif
+
 
 
          background-repeat: no-repeat;
@@ -191,7 +197,7 @@
   width: 100%;">
 
             @if (Auth::user()->tipo == 0)
-                <nav style="background-color: transparent;border-color:transparent"
+                <nav style="background-color:rgba(233, 0, 0,0.4);border-color:transparent"
                     class="navbar navbar-default text-center">
                     <div style="background-color: transparent;border-color:transparent" class="container text-center">
                         <!-- Brand and toggle get grouped for better mobile display -->
@@ -236,8 +242,7 @@
                                         <li style="background-color: transparent" class="dropdown text-center">
                                             <a style="background-color: transparent" href="#" class="dropdown-toggle"
                                                 data-toggle="dropdown" role="button" aria-haspopup="true"
-                                                aria-expanded="false"><img width="35px"
-                                                    src="{{ asset('iconlogin.png') }}" alt=""></a>
+                                                aria-expanded="false"><i style="font-size: 30px;color: rgba(233, 0, 0,1)" class="fa fa-adjust"></i></a>
 
                                             <ul style="background-color: transparent;border-color: transparent"
                                                 class="dropdown-menu text-center">

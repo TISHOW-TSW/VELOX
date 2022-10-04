@@ -22,6 +22,19 @@
         src: url("{{ url('fontnova.otf') }}") format("opentype");
     }
 
+    .caixa {
+        border-radius: 15px;
+        /*opacity: 55%*/
+        background-color: rgba(39, 34, 40, 0.6);
+        border: 3px solid rgba(233, 0, 0, 0.4);
+        color: white;
+        padding-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        text-transform: uppercase;
+        padding: 15px;
+    }
 
 
     .btn {
@@ -29,21 +42,24 @@
         border-radius: 10px;
         text-transform: uppercase;
         width: 170px;
-        border-color: #b20a5d;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         background-color: transparent;
         color: white;
         box-shadow: 0px 2px 6px white;
 
     }
+
     .btn2 {
         border-width: 2px;
-        border-radius: 10px;
+
         text-transform: uppercase;
+        font-weight: bolder;
         width: 250px;
-        border-color: #b20a5d;
+        padding: 10px;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         background-color: transparent;
-        color: white;
-        box-shadow: 0px 2px 6px white;
+        color: yellow;
+        box-shadow: 0px 2px 6px rgba(233, 0, 0, 0.4);
 
     }
 
@@ -52,14 +68,12 @@
     }
 
 
-
-
     .inputfundo {
         border-width: 2px;
-        border-radius: 10px;
+
         border-color: white;
         background-color: transparent;
-        box-shadow: 0px 2px 6px #b20a5d;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         color: white;
 
 
@@ -69,26 +83,26 @@
     .inputfundo:focus {
 
 
-        border: 1px solid #381897;
+        border: 1px solid white;
         border-radius: 10px;
     }
 
     .inputfundo:hover {
-        border: 1px solid #381897;
+        border: 1px solid white;
         border-radius: 10px;
     }
 
     .inputfundo:focus:hover {
 
 
-        border: 1px solid #381897;
+        border: 1px solid white;
         border-radius: 10px;
 
     }
 
 </style>
 
-<body style="background-image: url('{{ url('bg.jpg') }}');
+<body style="background-image: url('{{ url('fundo2.jpeg') }}');
 
 
 background-repeat: no-repeat;
@@ -101,47 +115,52 @@ background-size: cover;
 height: 100%;
 width: 100%;">
 
-    <div style="margin-top: 45px" class="container">
-        <center>
-            <img width="300px" class="img img-responsive" src="{{ asset(url('logo4.png')) }}" alt="">
-        </center>
-    </div>
-    <div style="margin-top: 20px" class="container">
-        <center>
-            <h3 class="btn2">{{ $user->name }}</h3>
-        </center>
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
+<div style="margin-top: 45px" class="container">
+    <center>
+        <img width="300px" class="img img-responsive" src="{{ asset(url('logo.png')) }}" alt="">
+    </center>
+</div>
+<div style="margin-top: 20px" class="container">
+    <center>
+        <h2 class="btn2">{{ $user->name }}</h2>
+    </center>
+
+
+
+    <div class="col-md-offset-4 col-md-4">
+        <div class="panel caixa">
+
+
             <form class="m-t" method="POST" action="{{ url('registerindicado') }}">
                 @csrf
 
                 <!-- Name -->
                 <div class="form-group">
                     <input placeholder="NAME" class="form-control inputfundo" id="name" type="text" name="name"
-                        value="{{ old('name') }}" required autofocus />
+                           value="{{ old('name') }}" required autofocus/>
                 </div>
                 <!-- Email Address -->
                 <div class="form-group">
                     <input class="form-control inputfundo" placeholder="EMAIL" id="email" type="email" name="email"
-                        value="{{ old('email') }}" required />
+                           value="{{ old('email') }}" required/>
                 </div>
                 <input type="hidden" name="quem" value="{{ $user->link }}">
 
                 <div class="form-group">
 
                     <input class="form-control inputfundo" placeholder="PHONE" id="telefone" type="teste"
-                        name="telefone" value="{{ old('telefone') }}" required />
+                           name="telefone" value="{{ old('telefone') }}" required/>
                 </div>
                 <!-- Password -->
                 <div class="form-group">
                     <input placeholder="PASSWORD" class="form-control inputfundo" id="password" type="password"
-                        name="password" required autocomplete="new-password" />
+                           name="password" required autocomplete="new-password"/>
                 </div>
 
                 <!-- Confirm Password -->
                 <div class="form-group">
                     <input class="form-control inputfundo" placeholder="CONFIRM PASSWORD" id="password_confirmation"
-                        type="password" name="password_confirmation" requ ired />
+                           type="password" name="password_confirmation" required/>
                 </div>
                 <br>
                 <br>
@@ -161,10 +180,11 @@ width: 100%;">
                     </ul>
                 </div>
             @endif
-        </div>
-        <div class="col-md-4"></div>
 
+
+        </div>
     </div>
+</div>
 
     <!-- Mainly scripts -->
     <script src="js/jquery-2.1.1.js"></script>
@@ -172,13 +192,13 @@ width: 100%;">
     <!-- iCheck -->
     <script src="js/plugins/iCheck/icheck.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.i-checks').iCheck({
                 checkboxClass: 'icheckbox_square-green',
                 radioClass: 'iradio_square-green',
             });
         });
-        $("#cep").change(function() {
+        $("#cep").change(function () {
 
             var valor = document.getElementById('cep').value;
 
@@ -187,7 +207,7 @@ width: 100%;">
                 type: 'GET',
                 url: 'https://viacep.com.br/ws/' + valor + '/json/',
 
-                success: function(data) {
+                success: function (data) {
                     var names = data.bairro
                     $('input[name="endereco"]').val(data.logradouro);
                     $('input[name="bairro"]').val(data.bairro);
