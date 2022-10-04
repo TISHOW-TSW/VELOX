@@ -1,5 +1,6 @@
 @extends('painel.padrao')
 @section('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
             color: white;
@@ -64,7 +65,7 @@
 
         <div class="box collapsed-box caixa">
             <div class="box-header">
-                <h3 class="box-title"> Wallet BNB</h3>
+                <h3 class="box-title"> Pix Key</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                     </button>
@@ -72,20 +73,28 @@
             </div>
             <div class="box-body">
 
+                @if(isset(Auth::user()->pix))
+                    <h1>Tem</h1>
+                @else
+                    <h1>Não tem</h1>
+                    <form action="{{ url('cadconta') }}" method="post">
+                        @csrf
 
-                <form action="{{ url('cadconta') }}" method="post">
-                    @csrf
+                        <div class="form-group">
+                            <label for="cod_id">Bank</label>
+                            <select name="cod_id" class="form-control" id="select" required>
 
-                    <div class="form-group">
-                        <label for="">Wallet BNB</label>
-                        <input style=" background-color: transparent;color:white" type="text" id="agencia" name="agencia"
-                            class="form-control">
-                    </div>
+                                <option value="">Selecione...</option>
 
-                    <div class="form-group">
-                        <button class="btn btn-success btn-block">register</button>
-                    </div>
-                </form>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-success btn-block">register</button>
+                        </div>
+                    </form>
+                @endif
+
                 <br>
 
                 <table class="table">
@@ -240,4 +249,28 @@
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#select').select2()
+            const bancoSelect = document.getElementById('select')
+
+            console.log(bancoSelect)
+
+
+
+            $.ajax({
+                type: 'GET',
+                url: 'https://brasilapi.com.br/api/banks/v1',
+                success: function(response) {
+                    $.each(response, function(i, obj) {
+                        bancoSelect.options[bancoSelect.length] =  new Option(obj.name, obj.code)
+                    })
+
+                }
+            })
+
+
+
+        })
+    </script>
 @endsection

@@ -503,4 +503,19 @@ class User extends Authenticatable
             return 1;
         }
     }
+
+    public function contaBancaria()
+    {
+        return $this->hasOne(ContaBancaria::class);
+    }
+
+    public function bankon()
+    {
+        return $this->hasOne(Bankon::class);
+    }
+
+    public function pix()
+    {
+        return $this->hasOne(Pix::class);
+    }
 }
