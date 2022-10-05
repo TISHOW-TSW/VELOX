@@ -35,7 +35,9 @@ class PixController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+        Pix::create($request->all());
+        return redirect()->back()->with('succes', 'Chave pix cadastrada com sucesso!');
     }
 
     /**
@@ -69,7 +71,8 @@ class PixController extends Controller
      */
     public function update(Request $request, Pix $pix)
     {
-        //
+        $pix->update($request->all());
+        return redirect()->back()->with('succes', 'Chave pix editada com sucesso!');
     }
 
     /**

@@ -620,16 +620,11 @@ Route::post('alterendereco', function (Request $request) {
     return redirect()->back();
 });
 
-Route::post('cadconta', function (Request $request) {
-    $validated = $request->validate([
+Route::post('cadconta', [\App\Http\Controllers\PixController::class, 'store'])->middleware(['auth']);
+Route::put('editapix/{pix}', [\App\Http\Controllers\PixController::class, 'update'])->middleware(['auth']);
+Route::post('cadbankon', [\App\Http\Controllers\BankonController::class, 'store'])->middleware(['auth']);
+Route::put('editabankon/{bankon}', [\App\Http\Controllers\BankonController::class, 'update'])->middleware(['auth']);
 
-        'agencia' => 'required',
-
-    ]);
-    $request['user_id'] = Auth::user()->id;
-    \App\Models\Conta::create($request->all());
-    return redirect()->back();
-});
 Route::post('admin/cadconta', function (Request $request) {
     $validated = $request->validate([
 

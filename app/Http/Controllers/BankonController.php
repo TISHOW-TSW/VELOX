@@ -35,7 +35,8 @@ class BankonController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Bankon::create($request->all());
+        return redirect()->back()->with('succes', 'Bankon cadastrado com sucesso!');
     }
 
     /**
@@ -69,7 +70,8 @@ class BankonController extends Controller
      */
     public function update(Request $request, Bankon $bankon)
     {
-        //
+        $bankon->update($request->all());
+        return redirect()->back()->with('succes', 'Bankon editado com sucesso!');
     }
 
     /**

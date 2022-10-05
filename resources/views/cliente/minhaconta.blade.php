@@ -74,8 +74,8 @@
             <div class="box-body">
 
                 @if(isset(Auth::user()->pix))
-                    <h1>Tem</h1>
                     <form action="{{ url('editapix/'.Auth::user()->pix->id) }}" method="post">
+                        @method('PUT')
                         @csrf
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                         <div class="form-group">
@@ -86,15 +86,15 @@
                         </div>
                         <div class="form-group">
                             <label for="name">Código:</label>
-                            <input type="text" class="form-control" name="cod_banco" id="cod_banco" value="{{ Auth::user()->pix->cod_banco }} >
+                            <input type="text" class="form-control" name="cod_banco" id="cod_banco" value="{{ Auth::user()->pix->cod_banco }}" >
                         </div>
                         <div class="form-group">
                             <label for="name">Banco:</label>
-                            <input type="text" class="form-control" name="banco" id="banco" value="{{ Auth::user()->pix->banco }} required>
+                            <input type="text" class="form-control" name="banco" id="banco" value="{{ Auth::user()->pix->banco }}" required>
                         </div>
                         <div class="form-group">
                             <label for="chave">Pix Key</label>
-                            <input name="chave" id="chave" class="form-control" type="text" />
+                            <input name="chave" id="chave" class="form-control" type="text" value="{{ Auth::user()->pix->chave }}" required/>
                         </div>
 
                         <div class="form-group">
@@ -102,7 +102,6 @@
                         </div>
                     </form>
                 @else
-                    <h1>Não tem</h1>
                     <form action="{{ url('cadconta') }}" method="post">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
@@ -131,34 +130,11 @@
                     </form>
                 @endif
 
-                <br>
-
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Wallet </th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse(Auth::user()->contas as $conta)
-                            <tr>
-
-                                <td>{{ $conta->agencia }}</td>
-
-
-                            </tr>
-
-                        @empty
-                        @endforelse
-
-                    </tbody>
-                </table>
             </div>
         </div>
         <div class="box collapsed-box caixa">
             <div class="box-header">
-                <h3 class="box-title"> Video</h3>
+                <h3 class="box-title">Bankon</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                     </button>
@@ -166,45 +142,36 @@
             </div>
             <div class="box-body">
 
-                @if (Auth::user()->videodisponivel() == 1)
-                    <form action="{{ url('cadvideo') }}" method="post">
+                @if (isset(Auth::user()->bankon))
+                    <form action="{{ url('editabankon/'.Auth::user()->bankon->id) }}" method="post">
+                        @method('PUT')
                         @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
                         <div class="form-group">
-                            <label for="">video link</label>
-                            <input style=" background-color: transparent;color:white" type="url" id="video" name="video"
-                                class="form-control">
+                            <label for="cod_bankon">Bankon:</label>
+                            <input type="text" class="form-control" name="cod_bankon" id="cod_bankon" value="{{ Auth::user()->bankon->cod_bankon }}" required>
                         </div>
 
+                        <div class="form-group">
+                            <button class="btn btn-success btn-block">Edit</button>
+                        </div>
+                    </form>
+                @else
+                    <form action="{{ url('cadbankon') }}" method="post">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+
+                        <div class="form-group">
+                            <label for="cod_bankon">Bankon:</label>
+                            <input type="text" class="form-control" name="cod_bankon" id="cod_bankon" required>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-success btn-block">register</button>
                         </div>
                     </form>
                 @endif
-                <br>
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Video </th>
-                            <th>Status</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse(Auth::user()->videos as $video)
-                            <tr>
-
-                                <td>{{ $video->video }}</td>
-
-                                <td>{{ $video->status }}</td>
-                            </tr>
-
-                        @empty
-                        @endforelse
-
-                    </tbody>
-                </table>
             </div>
         </div>
 
