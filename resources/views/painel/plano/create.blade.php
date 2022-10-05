@@ -1,4 +1,4 @@
-@extends('painel.admin')
+@extends('painel.padrao')
 
 @section('content')
     <div class="container">
