@@ -1,6 +1,6 @@
 @extends('painel.padrao')
 @section('css')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
         body {
             color: white;
@@ -31,7 +31,7 @@
 @endsection
 @section('content')
     <br><br>
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <div class="container">
         <div class="box collapsed-box caixa">
             <div class="box-header">
@@ -75,18 +75,54 @@
 
                 @if(isset(Auth::user()->pix))
                     <h1>Tem</h1>
+                    <form action="{{ url('editapix/'.Auth::user()->pix->id) }}" method="post">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        <div class="form-group">
+                            <label for="name">Selecione um banco</label>
+                            <select  id="banco-api" class="form-control">
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Código:</label>
+                            <input type="text" class="form-control" name="cod_banco" id="cod_banco" value="{{ Auth::user()->pix->cod_banco }} >
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Banco:</label>
+                            <input type="text" class="form-control" name="banco" id="banco" value="{{ Auth::user()->pix->banco }} required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chave">Pix Key</label>
+                            <input name="chave" id="chave" class="form-control" type="text" />
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-success btn-block">Edit</button>
+                        </div>
+                    </form>
                 @else
                     <h1>Não tem</h1>
                     <form action="{{ url('cadconta') }}" method="post">
                         @csrf
-
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                         <div class="form-group">
-                            <label for="cod_id">Bank</label>
-                            <select name="cod_id" class="form-control" id="select" required>
-
-                                <option value="">Selecione...</option>
-
+                            <label for="name">Selecione um banco</label>
+                            <select  id="banco-api" class="form-control">
+                                <option value="">Select...</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Código:</label>
+                            <input type="text" class="form-control" name="cod_banco" id="cod_banco" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Banco:</label>
+                            <input type="text" class="form-control" name="banco" id="banco" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chave">Pix Key</label>
+                            <input name="chave" id="chave" class="form-control" type="text" />
                         </div>
 
                         <div class="form-group">
@@ -251,9 +287,10 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#select').select2()
-            const bancoSelect = document.getElementById('select')
-
+            $('#banco-api').select2()
+            const bancoSelect = document.getElementById('banco-api')
+            const codForm = document.getElementById('cod_banco')
+            const bancoForm = document.getElementById('banco')
             console.log(bancoSelect)
 
 
@@ -267,6 +304,12 @@
                     })
 
                 }
+            })
+
+            $('#banco-api').on('select2:select', event => {
+                console.log(event.params.data)
+                codForm.value = event.params.data.id
+                bancoForm.value = event.params.data.text
             })
 
 

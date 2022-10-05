@@ -15,7 +15,8 @@ class CreatePixesTable extends Migration
     {
         Schema::create('pixes', function (Blueprint $table) {
             $table->id();
-            $table->integer('cod_id');
+            $table->integer('cod_banco')->nullable();
+            $table->string('banco');
             $table->string('chave');
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('id')->on('users');
