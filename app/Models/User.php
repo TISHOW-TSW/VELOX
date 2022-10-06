@@ -139,7 +139,7 @@ class User extends Authenticatable
     }
 
 
-    public function direto()
+    public function primeiro()
     {
         if (isset($this->attributes['quem'])) {
             $user = User::where('link', $this->attributes['quem'])->first();
@@ -151,29 +151,6 @@ class User extends Authenticatable
             return NULL;
         }
         return NULL;
-    }
-
-    public function primeiro()
-    {
-        $busca = $this->direto();
-        if (!empty($busca)) {
-
-            if (isset($busca->quem)) {
-                $user = User::where('link', $busca->quem)->first();
-
-                if (isset($user)) {
-                    return $user;
-                }
-
-                return NULL;
-            }
-            return NULL;
-        }
-    }
-
-    public function compras()
-    {
-        return $this->hasMany(Compra::class);
     }
 
     public function segundo()
@@ -194,6 +171,11 @@ class User extends Authenticatable
         }
     }
 
+    public function compras()
+    {
+        return $this->hasMany(Compra::class);
+    }
+
     public function terceiro()
     {
         $busca = $this->segundo();
@@ -212,23 +194,7 @@ class User extends Authenticatable
         }
     }
 
-    public function quarto()
-    {
-        $busca = $this->terceiro();
-        if (!empty($busca)) {
 
-            if (isset($busca->quem)) {
-                $user = User::where('link', $busca->quem)->first();
-
-                if (isset($user)) {
-                    return $user;
-                }
-
-                return NULL;
-            }
-            return NULL;
-        }
-    }
 
 
     public function getSaldoAttribute()

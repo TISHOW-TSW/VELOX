@@ -10,33 +10,27 @@ use Illuminate\Http\Request;
 class AcaoController extends Controller
 {
 
-    public function calculorenda($fatura, $nivel)
+    function calculorenda($fatura, $nivel)
     {
-        // return $fatura;
+       // dd($fatura);
+        //return $fatura;
         // $$$buscadireto4->plano->segundo4->plano->segundo;
         switch ($nivel) {
-            case 0:
-                $escolha = $fatura->user->direto();
-                $frase = 'MY SQUAD';
 
-                break;
             case 1:
                 $escolha = $fatura->user->primeiro();
-                $frase = 'FIRST SQUAD';
+                $frase = 'PRIMEIRO NIVEL';
 
                 break;
             case 2:
                 $escolha = $fatura->user->segundo();
-                $frase = 'SECOND SQUAD';
+                $frase = 'SEGUNDO NIVEL';
                 break;
             case 3:
                 $escolha = $fatura->user->terceiro();
-                $frase = 'THIRD SQUAD';
+                $frase = 'TERCEIRO NIVEL';
                 break;
-            case 4:
-                $escolha = $fatura->user->quarto();
-                $frase = 'FOURTH SQUAD';
-                break;
+
         }
         // $planodireto = Compra::where('user_id', $escolha->id)->where('ativo', 1)->get();
 
@@ -44,7 +38,7 @@ class AcaoController extends Controller
             $query->orderBy('valor', 'ASC');
         }])->first();
 
-        // dd($planodireto);
+        //dd($planodireto);
 
         //  $locations = App\Location::with(['region' => function ($query) {
         //    $query->orderBy('name');
@@ -68,10 +62,7 @@ class AcaoController extends Controller
             $dobroplano = $buscamenor->plano->valor * 2;
 
             switch ($nivel) {
-                case 0:
 
-                    $acao = $buscamenor->plano->direto;
-                    break;
                 case 1:
 
                     $acao = $buscamenor->plano->primeiro;
@@ -84,10 +75,7 @@ class AcaoController extends Controller
 
                     $acao = $buscamenor->plano->terceiro;
                     break;
-                case 4:
 
-                    $acao = $buscamenor->plano->quarto;
-                    break;
             }
             // dd($acao);
             $saldo = ($fatura->plano->valor - ($fatura->plano->valor * ((100 - $acao) / 100)));
@@ -119,9 +107,9 @@ class AcaoController extends Controller
             //dd($saldo);
             Soma::create(['compra_id' => $buscamenor->id, 'valor' => $saldo]);
             $extrato = [
-                'user_id' => $fatura->user->direto()->id,
+                'user_id' => $fatura->user->primeiro()->id,
                 'indicado_id' => $fatura->user->id,
-                'pontos' => $fatura->plano->pontos,
+                'pontos' => 0,
                 'saldo' => $saldo
             ];
 

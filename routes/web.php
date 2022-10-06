@@ -177,6 +177,7 @@ Route::post('registerindicado', function (Request $request) {
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'confirmed'],
+        'cpf'=>['cpf','required'],
         'telefone' => ['required'],
 
 
@@ -188,6 +189,7 @@ Route::post('registerindicado', function (Request $request) {
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
+        'cpf'=> $request->cpf,
         'password' => Hash::make($request->password),
         'telefone' => $request->telefone,
         'link' => md5($request->email),
@@ -2911,7 +2913,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
 
 
 
-Route::get('atualizarfaturas', function () {
+Route::get('atualizarfaturas', function (AcaoController $acaoController) {
     $faturas = Compra::where('buscador', "!=", 'NULL')->get();
 
 
@@ -2949,107 +2951,20 @@ Route::get('atualizarfaturas', function () {
                 Caixa::create($grava);
             }
 
-
-
-            if (!empty($fatura->user->quem)) {
-                $plano = Plano::find($fatura->plano->id);
-                //dd($plano);
-
-                $user = User::where('link', $fatura->user->quem)->first();
-
-
-                $planolast = $user->assinaturas->last();
-
-                if (!empty($planolast)) {
-                    $extrato = [
-                        'user_id' => $user->id,
-                        'indicado_id' => $fatura->user->id,
-                        'pontos' => $plano->pontos,
-                        'saldo' => $plano->valor
-                    ];
-
-
-                    Extrato::create($extrato);
-                    $pontuacao = $user->pontos + $plano->pontos;
-                    $dados = [
-                        'tipo' => 0,
-                        'descricao' => 'bonus ref. login ' . $fatura->user->name . ' Direto',
-                        'valor' => $plano->valor,
-                        'user_id' => $user->id
-                    ];
-                    //dd($pontuacao);
-
-                    \App\Models\Movimento::create($dados);
-                    $user->fill(['pontos' => $pontuacao]);
-                    $user->save();
-                }
-
-
-                $primeiro = User::where('link', $user->quem)->first();
-
-                if (!empty($primeiro)) {
-
-                    $planolast1 = $primeiro->assinaturas->last();
-
-                    //dd($planolast->plano->direto);
-
-
-                    if (!empty($planolast1)) {
-                        $extrato1 = [
-                            'user_id' => $primeiro->id,
-                            'indicado_id' => $fatura->user->id,
-                            'pontos' => $plano->pontos,
-                            'saldo' => 0
-                        ];
-
-                        // dd($extrato);
-
-
-                        Extrato::create($extrato1);
-                        $pontuacao = $primeiro->pontos + $plano->pontos;
-
-                        //dd($pontuacao);
-                        $primeiro->fill(['pontos' => $pontuacao]);
-                        $primeiro->save();
-                    }
-
-
-                    $segundo = User::where('link', $primeiro->quem)->first();
-
-                    if (!empty($segundo)) {
-
-                        $planolast2 = $segundo->assinaturas->last();
-
-                        //dd($planolast->plano->direto);
-
-
-                        if (!empty($planolast2)) {
-                            $extrato2 = [
-                                'user_id' => $segundo->id,
-                                'indicado_id' => $fatura->user->id,
-                                'pontos' => $plano->pontos,
-                                'saldo' => 0
-                            ];
-
-                            // dd($extrato);
-
-
-                            Extrato::create($extrato2);
-                            $pontuacao = $segundo->pontos + $plano->pontos;
-
-                            //dd($pontuacao);
-                            $segundo->fill(['pontos' => $pontuacao]);
-                            $segundo->save();
-                        }
-
-
-                        $terceiro = User::where('link', $segundo->quem)->first();
-
-
-                    }
-                }
-            } else {
+            if (!empty($fatura->user->terceiro())) {
+                $direto = $acaoController->calculorenda($fatura, 3);
             }
+            if (!empty($fatura->user->segundo())) {
+                $direto = $acaoController->calculorenda($fatura, 2);
+            }
+            if (!empty($fatura->user->primeiro())) {
+
+                //dd($fatura->user->primeiro());
+
+                $direto = $acaoController->calculorenda($fatura, 1);
+            }
+
+
 
         }
         // dd($cobranca);

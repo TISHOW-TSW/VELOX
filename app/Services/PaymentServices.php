@@ -27,7 +27,11 @@ class PaymentServices
 
         if (!$cliente->data) {
             $cliente = $this->createCustumer($user);
+
+            return $cliente;
         }
+
+        //dd($cliente);
         return $cliente->data[0];
 
 
@@ -37,7 +41,7 @@ class PaymentServices
     {
         $dados = array(
             'name' => $user->name,
-            'cpfCnpj' => $user->documento,
+            'cpfCnpj' => $user->cpf,
             'email' => $user->email,
         );
 

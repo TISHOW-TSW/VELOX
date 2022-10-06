@@ -148,6 +148,12 @@ width: 100%;">
 
                 <div class="form-group">
 
+                    <input class="form-control inputfundo" placeholder="CPF" id="cpf" type="teste"
+                           name="cpf" value="{{ old('cpf') }}" required/>
+                </div>
+
+                <div class="form-group">
+
                     <input class="form-control inputfundo" placeholder="PHONE" id="telefone" type="teste"
                            name="telefone" value="{{ old('telefone') }}" required/>
                 </div>
