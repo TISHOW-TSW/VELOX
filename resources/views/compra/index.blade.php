@@ -108,14 +108,14 @@
                             </h2>
                         </center>
                         <h2>Selecionar Metodo de Pagamento</h2>
-                        <button class="btn intas">
+                        <a href="{{url('gerarpix',$compra->id)}}" class="btn intas">
                             PIX
-                        </button>
+                        </a>
                         <br>
                         <br>
-                        <button class="btn intas">
+                        <a class="btn intas">
                             CREDITO/DEBITO
-                        </button>
+                        </a>
                         <br>
                         <br>
 

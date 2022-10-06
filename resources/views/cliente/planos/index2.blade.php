@@ -111,13 +111,13 @@
 
 
 
-                                            Fueling
+                                            Abastecendo
                                         </button>
                                     @endif
 
                                     @if ($busca->campanha2() == 2)
 
-
+                                            <img style="display: none" id="aparecer" class="img img-responsive" src="{{url('acelera.gif')}}" alt="">
                                         <div style="border-radius: 10px" class="progress">
                                             <div class="progress">
                                                 <div style="background-color: purple" class="progress-bar"
@@ -211,6 +211,7 @@
 @section('js')
     <script>
         $(document).ready(function() {
+
             document.getElementsByClassName("nave").style.filter = "grayscale(100%)";
             var heights = $(".intas").map(function() {
                     return $(this).height();
@@ -223,7 +224,7 @@
 
 
         function carreganave(ship) {
-
+            $('#aparecer').show();
             $("#ship" + ship).attr("disabled", "disabled");
             var interval = setInterval(updateProgress, 1000); // run updateProgress() every second
 

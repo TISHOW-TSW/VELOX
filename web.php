@@ -1,40 +1,31 @@
 <?php
 
 use App\Helpers\LogActivity as HelpersLogActivity;
-use App\Http\Controllers\AcaoController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MetaController;
 use App\Http\Controllers\PlanoController;
 use App\Http\Controllers\VantagemController;
-use App\Mail\PaymentMail;
 use App\Models\Anexo;
 use App\Models\Assinatura;
-use App\Models\Batalha;
 use App\Models\Caixa;
-use App\Models\Chat;
-use App\Models\Compra;
 use App\Models\Conta;
 use App\Models\Credito;
 use App\Models\Doc;
 use App\Models\Endereco;
 use App\Models\Estado;
+use App\Models\Extra;
 use App\Models\Extrato;
 use App\Models\Historico;
+use App\Models\Interesse;
 use App\Models\LogActivity;
 use App\Models\Meta;
-use App\Models\Movimento;
 use App\Models\Plano;
+use App\Models\Premio;
 use App\Models\Produto;
 use App\Models\Relatorio;
-use App\Models\Resposta;
 use App\Models\Saque;
-use App\Models\Saqueindica;
-use App\Models\Saquerendimento;
-use App\Models\Soma;
+use App\Models\Treinamento;
 use App\Models\User;
-use App\Models\Valorindicacao;
-use App\Models\Valorredimento;
-use App\Models\Video;
 use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
@@ -42,10 +33,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use BlockmoveAPI\APIClient;
-use BlockmoveAPI\APIException;
-use BlockmoveAPI\APIRequestException;
-use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,28 +54,6 @@ Route::get("/logout", function () {
 Route::get('testevenda', function () {
     return view('vendas.index');
 });
-
-Route::get('admin/chat', function () {
-    $chats  = Chat::orderByDesc('created_at')->orderBy('aberto', 'desc')->get();
-
-    // dd($aberto);
-    return view('chat.index', compact('chats'));
-})->middleware(['auth']);
-
-Route::get('chat/close/{id}', function ($id) {
-    $chat = Chat::find($id);
-    $chat->fill(['aberto' => 1]);
-    $chat->save();
-
-    return redirect('admin/chat');
-})->middleware(['auth']);
-Route::get('chat/open/{id}', function ($id) {
-    $chat = Chat::find($id);
-    $chat->fill(['aberto' => 0]);
-    $chat->save();
-
-    return redirect('admin/chat');
-})->middleware(['auth']);
 
 Route::get('testeapi', function () {
     return view('teste.api');
@@ -117,6 +82,7 @@ Route::get('indicacao/v2/{id}', function ($id) {
 Route::get('/dashboard', function () {
     $planos = Plano::orderBy('valor', 'asc')->get();
     $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
+    $extras = Extra::all();
     $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
 
     if (Auth::user()->ordem == 12) {
@@ -134,7 +100,7 @@ Route::get('/dashboard', function () {
         return redirect(url('admin/dashboard'));
     }
 
-    return view('novodash.index', compact('planos', 'pin', 'indicados', 'users', 'proximo'));
+    return view('painel.index', compact('planos', 'pin', 'indicados', 'users', 'proximo', 'extras'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('teste', function () {
@@ -158,9 +124,9 @@ Route::get('corrige', function () {
 });
 Route::resource('metas', MetaController::class);
 
-Route::get('purchase/{id}', [AdminController::class, 'faturas'])->middleware(['auth']);
+Route::get('assinatura/{id}', [AdminController::class, 'faturas'])->middleware(['auth']);
 
-Route::get('recruit/{id}', function ($id) {
+Route::get('indicacao/{id}', function ($id) {
     $user = User::where('link', $id)->first();
     //dd($user);
     if (isset($user)) {
@@ -177,9 +143,16 @@ Route::post('registerindicado', function (Request $request) {
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'confirmed'],
+        'cpf' => ['cpf_ou_cnpj', 'required', 'unique:users'],
         'telefone' => ['required'],
-
-
+        'nascimento' => ['required', 'date'],
+        'cep' => ['required'],
+        'endereco' => ['required'],
+        'bairro' => ['required'],
+        'cidade' => ['required'],
+        'uf' => ['required'],
+        'n' => ['required'],
+        'aceite' => ['required']
     ]);
 
     //dd($request->all());
@@ -189,13 +162,51 @@ Route::post('registerindicado', function (Request $request) {
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
+        'cpf' => preg_replace("/[^0-9]/", "", $request->cpf),
         'telefone' => $request->telefone,
-        'link' => md5($request->email),
+        'link' => md5($request->cpf),
         'quem' => $request->quem,
-
+        'nascimento' => $request->nascimento
 
     ]);
 
+    $estado = \App\Models\Estado::where("name", $request->uf)->first();
+
+
+    if (!($estado)) {
+        $estado = \App\Models\Estado::create(['name' => $request->uf]);
+    }
+    $cidade = \App\Models\Cidade::where("name", $request->cidade)->where("estado_id", $estado->id)->first();
+
+    if (!($cidade)) {
+        $cidade = \App\Models\Cidade::create(['name' => $request->cidade, 'estado_id' => $estado->id]);
+    }
+
+    $bairro = \App\Models\Bairro::where('name', $request->bairro)->where("estado_id", $estado->id)->where("cidade_id", $cidade->id)->first();
+
+    //dd($bairro);
+    if (!($bairro)) {
+        $bairro = \App\Models\Bairro::create(
+            [
+                'name' => $request->bairro,
+                'estado_id' => $estado->id,
+                'cidade_id' => $cidade->id
+            ]
+        );
+    }
+
+    $grava = [
+        'cep' => $request->cep,
+        'endereco' => $request->endereco,
+        'bairro_id' => $bairro->id,
+        'user_id' => $user->id,
+        'cidade_id' => $cidade->id,
+        'estado_id' => $estado->id,
+        'n' => $request->n,
+        'complemento' => $request->complemento
+    ];
+
+    \App\Models\Endereco::create($grava);
 
     event(new Registered($user));
 
@@ -205,38 +216,8 @@ Route::post('registerindicado', function (Request $request) {
 });
 
 
-Route::get('player', function () {
-    $direto = Auth::user()->indicados->pluck('link')->toArray();
-
-    //dd($direto);
-
-    if (count($direto) > 0) {
-        $indicados = User::whereIn("quem", $direto)->get();
-        //dd($indicados);
-    } else {
-        $indicados = [];
-    }
-
-    $primeiros = User::whereIn("quem", $direto)->pluck('link');
-    if (count($primeiros) > 0) {
-        $segundos = User::whereIn("quem", $primeiros)->get();
-    } else {
-        $segundos = [];
-    }
-    if (count($segundos) > 0) {
-        $terceiros = User::whereIn("quem", $segundos)->get();
-    } else {
-        $terceiros = [];
-    }
-    if (count($terceiros) > 0) {
-        $quartos = User::whereIn("quem", $terceiros)->get();
-    } else {
-        $quartos = [];
-    }
-    //  dd($primeiros);
-
-
-    return view('indicacao.diretos', compact('indicados', 'segundos', 'terceiros', 'quartos'));
+Route::get('diretos', function () {
+    return view('indicacao.diretos');
 })->middleware(['auth']);
 
 Route::get('primeiro', function () {
@@ -253,27 +234,12 @@ Route::get('primeiro', function () {
     } else {
         $indicados = [];
     }
-
-
-
-
-    $primeiros = User::whereIn("quem", $direto)->pluck('link');
-    if (count($primeiros) > 0) {
-        $segundos = User::whereIn("quem", $primeiros)->get();
-    } else {
-        $segundos = [];
-    }
-    if (count($segundos) > 0) {
-        $terceiros = User::whereIn("quem", $segundos)->get();
-    } else {
-        $terceiros = [];
-    }
     //  dd($primeiros);
-
+    $nivel = "Primeiro";
 
     // dd($indicados);
-    return view('indicacao.primeiro', compact('indicados', 'segundos', 'terceiros'));
-});
+    return view('indicacao.primeiro', compact('indicados', 'nivel'));
+})->middleware(['auth']);
 
 
 Route::get('segundo', function () {
@@ -288,15 +254,12 @@ Route::get('segundo', function () {
     } else {
         $indicados = [];
     }
-
-
-
     // dd($indicados);
     $nivel = "Segundo";
 
     // dd($indicados);
     return view('indicacao.primeiro', compact('indicados', 'nivel'));
-});
+})->middleware(['auth']);
 
 Route::get('terceiro', function () {
 
@@ -328,43 +291,53 @@ Route::get('terceiro', function () {
 
     // dd($indicados);
     return view('indicacao.primeiro', compact('indicados', 'nivel'));
+})->middleware(['auth']);
+
+Route::get('admin/extras', function () {
+    $extras = Extra::all();
+    return view('admin.extra.index', compact('extras'));
+})->middleware(['auth']);
+Route::get('admin/extra/edit/{id}', function ($id) {
+    $extra = Extra::find($id);
+    return view('admin.extra.edit', compact('extra'));
+})->middleware(['auth']);
+Route::post('admin/extras/edit/', function (Request $request) {
+    // dd($request->all());
+    $extra = Extra::find($request->id);
+    $extra->fill($request->all());
+    $extra->save();
+    return redirect(url('admin/extras'));
+})->middleware(['auth']);
+Route::get('admin/extras/create', function () {
+    // $extras = Extra::all();
+    return view('admin.extra.create');
 });
+Route::post('admin/extras/create', function (Request $request) {
+    // $extras = Extra::all();
+
+    $validated = $request->validate([
+        'name'    => 'required',
 
 
-Route::get('customer/invoices', function () {
-    $busca = Assinatura::where('user_id', Auth::user()->id)->first();
+    ]);
+
+    Extra::create($request->all());
+
+    return redirect(url('admin/extras'));
+    //   return view('admin.extra.create');
+});
+Route::get('cliente/faturas', function () {
+    $busca = Assinatura::where('unico', 1)->where('user_id', Auth::user()->id)->first();
 
     return view('cliente.faturas.index', compact('busca'));
 })->middleware(['auth']);
 
-Route::get('rewards', function () {
-    $buscas = Valorredimento::where('user_id', Auth::user()->id)->get();
-    $reward = Valorredimento::where('user_id', Auth::user()->id)->sum('valor');
-    $tempo = Compra::where("user_id", Auth::user()->id)->where("ativo", 1)->first();
-    if (isset($tempo)) {
-        $finishTime = Carbon::parse($tempo['created_at']);
-    } else {
-        $finishTime = Carbon::now();
-    }
-    $startTime = Carbon::now();
-    $totalDuration = $finishTime->diffInMinutes($startTime);
-    //dd($totalDuration);
-    return view('financeiro.geral', compact('buscas', 'reward', 'totalDuration'));
+Route::get('financeiro/geral', function () {
+    return view('financeiro.geral');
 })->middleware(['auth']);
 
-Route::get('player/bonus2', function () {
-    $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
-    $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
-    return view('relatorio.geral', compact('users'));
-})->middleware(['auth']);
-Route::get('player/bonus', function () {
-    $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
-    $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
-
-    $buscas = Valorindicacao::where('user_id', Auth::user()->id)->get();
-    $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
-    //  dd($reward);
-    return view('relatorio.geral2', compact('users', 'buscas', 'reward'));
+Route::get('cliente/vendas', function () {
+    return view('relatorio.geral');
 })->middleware(['auth']);
 Route::get('cliente/pontos', function () {
     return view('relatorio.pontos');
@@ -372,93 +345,51 @@ Route::get('cliente/pontos', function () {
 
 Route::get('cliente/saque', function () {
     //dd(Auth::user()->saldo);
-    return view('saque.index');
+
+    $hoje = Carbon::now();
+    // dd($hoje->format('l'));
+    $agora = 0;
+    if (($hoje->format('l') == "Monday") || ($hoje->format('l') == "Wednesday") || ($hoje->format('l') == "Friday")) {
+        $agora = 1;
+    }
+    return view('saque.index', compact('agora'));
 })->middleware(['auth']);
 
-Route::get('carryout/withdrawal', function () {
+Route::get('realizar/saque', function () {
 
-    //  $valor = Auth::user()->sobra;
+    $valor = Auth::user()->sobra;
 
-    $buscas = Valorredimento::where("user_id", Auth::user()->id)->get();
-    $total =  $buscas->sum('valor');
 
-    if ($total > 25) {
-        $valores =
-            [
-                'valor' => -$buscas->sum('valor'),
-                'status' => 0,
-                'user_id' => Auth::user()->id
-            ];
-        //dd($valores);
-
-        //  \App\Models\Saque::create($valores);
-
-        $dados = [
-            'tipo' => 1,
-            'descricao' => 'withdrawal ref. reward',
-            'valor' => -$buscas->sum('valor'),
+    $valores =
+        [
+            'valor' => $valor,
+            'status' => 0,
             'user_id' => Auth::user()->id
         ];
-        Valorredimento::create($dados);
 
-        //dd($pontuacao);
-    }
-    //   \App\Models\Movimento::create($dados);
 
-    return redirect()->back();
-})->middleware(['auth']);
-Route::get('carryout/withdrawal/squad', function () {
+    \App\Models\Saque::create($valores);
 
-    //  $valor = Auth::user()->sobra;
+    $dados = [
+        'tipo' => 1,
+        'descricao' => 'saque ref. bonus de rede',
+        'valor' => $valor,
+        'user_id' => Auth::user()->id
+    ];
+    //dd($pontuacao);
 
-    $buscas = Valorindicacao::where("user_id", Auth::user()->id)->get();
-    $total =  $buscas->sum('valor');
-
-    if ($total > 25) {
-        $valores =
-            [
-                'valor' => -$buscas->sum('valor'),
-                'status' => 0,
-                'user_id' => Auth::user()->id
-            ];
-        //dd($valores);
-
-        //  \App\Models\Saque::create($valores);
-
-        $dados = [
-            'tipo' => 1,
-            'descricao' => 'withdrawal ref. bonus',
-            'valor' => -$buscas->sum('valor'),
-            'user_id' => Auth::user()->id
-        ];
-        Valorindicacao::create($dados);
-
-        Saqueindica::create([
-            'data' => Carbon::now(),
-            'valor' => $buscas->sum('valor'),
-            'user_id' => Auth::user()->id
-        ]);
-
-        //dd($pontuacao);
-    }
-    //   \App\Models\Movimento::create($dados);
+    \App\Models\Movimento::create($dados);
 
     return redirect()->back();
 })->middleware(['auth']);
 
-Route::get('/ships2', function () {
+Route::get('cliente/combos', function () {
     $planos = Plano::orderBy('valor', 'asc')->get();
+    $extras = Extra::all();
     // $users = User::all()->with('rated')->get()->sortByDesc('rated.rating');
     //    $planos = Plano::all()->with('vantagems')->get()->sortByDesc('vantagems.created_at');
     // dd($planos);
-    return view('cliente.planos.index', compact('planos'));
-})->middleware(['auth']);
-Route::get('/ships', function () {
-    $planos = Plano::orderBy('valor', 'asc')->get();
-    // $users = User::all()->with('rated')->get()->sortByDesc('rated.rating');
-    //    $planos = Plano::all()->with('vantagems')->get()->sortByDesc('vantagems.created_at');
-    // dd($planos);
-    return view('cliente.planos.index2', compact('planos'));
+    return view('cliente.planos.index', compact('planos', 'extras'));
 })->middleware(['auth']);
 
 Route::get('endereco', function () {
@@ -474,31 +405,35 @@ Route::get('admin/dashboard', function () {
     }
     $agora = Carbon::now();
 
-    $entrada = Caixa::where("tipo", 1)->sum('valor');
-    $faturaspendentes = Compra::where("ativo", 0)->with('plano')->whereMonth('created_at', $agora)->count();
-    $faturaspagas = Compra::where("ativo", 1)->with('plano')->whereMonth('created_at', $agora)->count();
-    $valorespendentes = Compra::where("ativo", 0)->get();
+    $entrada = Caixa::where("tipo", 1)->whereMonth('created_at', $agora)->sum('valor');
+    $faturaspendentes = Assinatura::where("status", 0)->with('plano')->whereMonth('inicio', $agora)->count();
+    $faturaspagas = Assinatura::where("status", 1)->with('plano')->whereMonth('inicio', $agora)->count();
+    $valorespendentes = Assinatura::where("status", 0)->whereMonth('inicio', $agora)->get();
 
 
     $users = User::withCount('indicados')->orderByDesc('indicados_count')->limit(10)->get();
     $estados = Estado::withCount('enderecos')->orderByDesc('enderecos_count')->get();
 
+    //dd($users);
+    //$users = User::withCount('indicados')->get();
+
+    //dd($users);
+    //dd($valorespendentes);
     $totalpendente = 0;
     foreach ($valorespendentes as $valorespendente) {
         $totalpendente += $valorespendente->plano->valor;
     }
 
 
-    $usuarios = User::whereHas('compras')->get();
-    ///dd($usuarios);
-    $nousers = User::doesnthave('compras')->get()->pluck('id')->toArray();
+    $usuarios = User::whereHas('assinaturas')->get();
+    $nousers = User::doesnthave('assinaturas')->get()->pluck('id')->toArray();
 
     $controle = [];
 
     $semassinatura = [];
 
     foreach ($usuarios as $user) {
-        if ($user->compras[0]->ativo == 1) {
+        if ($user->assinaturas[0]->status == 1) {
 
             $controle[] = $user->id;
         } else {
@@ -516,7 +451,7 @@ Route::get('admin/dashboard', function () {
 
     //dd($totalpendente);
     $saida = Caixa::where("tipo", 0)->whereMonth('created_at', $agora)->sum('valor');
-    $saques = Saqueindica::where("status", 1)->whereMonth('created_at', $agora)->sum('valor') + Saquerendimento::where("status", 1)->whereMonth('created_at', $agora)->sum('valor');
+    $saques = Saque::where("status", 1)->whereMonth('created_at', $agora)->sum('valor');
     // dd($faturaspendentes);
 
 
@@ -524,20 +459,21 @@ Route::get('admin/dashboard', function () {
 })->middleware(['auth']);
 
 Route::get('admin/faturas', function () {
-
-    $compras = Compra::all();
+    //$faturas = Assinatura::all();
     HelpersLogActivity::addToLog('Acessou aba Faturas');
-    return view('admin.faturas', compact('compras'));
+    return view('admin.faturas');
 })->middleware(['auth']);
 
-Route::get('myaccount', function () {
+Route::get('minhaconta', function () {
     $docs = Doc::all();
     return view('cliente.minhaconta', compact('docs'));
 })->middleware(['auth']);
 
 Route::post('endereco', function (Request $request) {
+    // dd($request->all());
 
     $estado = \App\Models\Estado::where("name", $request->uf)->first();
+
 
     if (!($estado)) {
         $estado = \App\Models\Estado::create(['name' => $request->uf]);
@@ -622,8 +558,10 @@ Route::post('alterendereco', function (Request $request) {
 
 Route::post('cadconta', function (Request $request) {
     $validated = $request->validate([
-
+        'banco_id' => 'required',
+        'name'    => 'required',
         'agencia' => 'required',
+        'conta' => 'required',
 
     ]);
     $request['user_id'] = Auth::user()->id;
@@ -632,9 +570,10 @@ Route::post('cadconta', function (Request $request) {
 });
 Route::post('admin/cadconta', function (Request $request) {
     $validated = $request->validate([
-
+        'banco_id' => 'required',
+        'name'    => 'required',
         'agencia' => 'required',
-
+        'conta' => 'required',
 
     ]);
 
@@ -692,7 +631,7 @@ Route::get('cliente/pagarplano/{id}', function ($id) {
 
 
     $assinatura = Assinatura::find($id);
-    $asaas = new \CodePhix\Asaas\Asaas('41891bad9d2d17a3ba2af9f77ec179751010bd79e9439e919194925827aba3d1', 'homologacao');
+    $asaas = new \CodePhix\Asaas\Asaas('d48b8d7d12855aea3a7b81f89b861dbb61ed78813c746f785a847151bb746878', 'producao');
 
 
     $cliente = $asaas->Cliente()->getByCpf(Auth::user()->cpf);
@@ -792,26 +731,23 @@ Route::post('admin/consulta/faturas', function (Request $request) {
 
     $inicio = Carbon::createFromFormat('d/m/Y', $datas[0])->format('Y-m-d');
     $final = Carbon::createFromFormat('d/m/Y', $datas[1])->format('Y-m-d');
-    $inicio = Carbon::parse($inicio);
-    $final = Carbon::parse($final)->addDay(1);
-    //  $final =
 
     //  dd($inicio);
 
     if ($request->status == 1) {
-        $buscas = Compra::where('ativo', 1)->whereBetween('created_at', [$inicio, $final])->get();
+        $buscas = Assinatura::where('status', 1)->whereBetween('inicio', [$inicio, $final])->get();
         // dd($buscas);
         HelpersLogActivity::addToLog('Pequisou faturas Pagas Periodo de ' . $inicio . ' à ' . $final);
         return view('admin.faturas', compact('buscas'));
     }
     if ($request->status == 0) {
-        $buscas = Compra::where('ativo', 0)->whereBetween('created_at', [$inicio, $final])->get();
-        //dd($buscas);
+        $buscas = Assinatura::where('status', 0)->whereBetween('inicio', [$inicio, $final])->get();
+        // dd($buscas);
         HelpersLogActivity::addToLog('Pequisou faturas Pendente Periodo de ' . $inicio . ' à ' . $final);
         return view('admin.faturas', compact('buscas'));
     }
     if ($request->status == 2) {
-        $buscas = Compra::whereBetween('created_at', [$inicio, $final])->get();
+        $buscas = Assinatura::whereBetween('inicio', [$inicio, $final])->get();
         // dd($buscas);
         HelpersLogActivity::addToLog('Pequisou faturas Geral Periodo de ' . $inicio . ' à ' . $final);
         return view('admin.faturas', compact('buscas'));
@@ -838,37 +774,20 @@ Route::post('admin/consulta/relatorio', function (Request $request) {
 });
 
 Route::get('admin/saque', function () {
-    $tipo = 'de Rendimento';
-    $saques = Saquerendimento::all();
-    $saqueindicaos = Saqueindica::all();
+    $tipo = 'TODOS';
+    $saques = \App\Models\Saque::all();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos'));
+    return view('admin.saque.todos', compact('saques', 'tipo'));
 })->middleware(['auth']);
 
 
-Route::get('admin/rendimento/visualizar/saque/{id}', function ($id) {
-    $saque = \App\Models\Saquerendimento::find($id);
+Route::get('admin/visualizar/saque/{id}', function ($id) {
+    $saque = \App\Models\Saque::find($id);
 
     return view('admin.saque.visualizar', compact('saque'));
 })->middleware(['auth']);
-Route::get('admin/rendimento/cancelar/saque/{id}', function ($id) {
-    $saque = \App\Models\Saquerendimento::find($id);
-
-    $dados = [
-        'tipo' => 0,
-        'descricao' => "cancel withdraw",
-        'valor' =>  $saque->valor,
-        'user_id' => Auth::user()->id
-    ];
-
-
-    Valorredimento::create($dados);
-
-    Saquerendimento::destroy($id);
-
-    return redirect()->back();
-
-    // dd($dados);
+Route::get('admin/cancelar/saque/{id}', function ($id) {
+    $saque = \App\Models\Saque::find($id);
 
     return view('admin.saque.cancelar', compact('saque'));
 })->middleware(['auth']);
@@ -1103,11 +1022,11 @@ Route::get('atualizarfaturas', function () {
 });
 
 
-Route::get('pagar/rendimento/saque/{id}', function ($id) {
+Route::get('pagar/saque/{id}', function ($id) {
 
-    $saque = Saquerendimento::find($id);
+    $saque = Saque::find($id);
 
-    $saque->fill(['status' => 1]);
+    $saque->fill(['status' => 1, 'liberacao' => Carbon::now()]);
     $saque->save();
 
 
@@ -1115,7 +1034,7 @@ Route::get('pagar/rendimento/saque/{id}', function ($id) {
         'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
         'valor' => $saque->valor,
         'tipo' => 0,
-        'user_id' => $saque->user_id,
+        'user_id' => Auth::user()->id,
     ];
 
     Caixa::create($grava);
@@ -1126,20 +1045,17 @@ Route::get('pagar/rendimento/saque/{id}', function ($id) {
 
 
 Route::get('admin/saque/ativos', function () {
-    $tipo = 'de Rendimentos';
-    //  $saques = \App\Models\Saque::where('status', 1)->get();
-    $saques = \App\Models\Saquerendimento::where('status', 1)->get();
-    $saqueindicaos = Saqueindica::where('status', 1)->get();
+    $tipo = 'PAGOS';
+    $saques = \App\Models\Saque::where('status', 1)->get();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos'));
+    return view('admin.saque.todos', compact('saques', 'tipo'));
 });
 
 Route::get('admin/saque/pendentes', function () {
-    $tipo = 'de Rendimentos';
-    $saques = \App\Models\Saquerendimento::where('status', 0)->get();
-    $saqueindicaos = Saqueindica::where('status', 0)->get();
+    $tipo = 'PENDENTES';
+    $saques = \App\Models\Saque::where('status', 0)->get();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos'));
+    return view('admin.saque.todos', compact('saques', 'tipo'));
 });
 Route::get('admin/saque/estornados', function () {
     $tipo = 'ESTORNADO';
@@ -1178,6 +1094,15 @@ Route::post('admin/user/edit', function (Request $request) {
     $request->validate([
         'name' => 'required',
         'email' => ['required'],
+        'cpf' => ['required', 'cpf'],
+        'nascimento' => ['required'],
+        'telefone' => 'required',
+        'cep' => ['required'],
+        'endereco' => ['required'],
+        'bairro' => ['required'],
+        'cidade' => ['required'],
+        'uf' => ['required'],
+        'n' => ['required'],
     ]);
 
     $user = User::find($request->id);
@@ -1193,6 +1118,48 @@ Route::post('admin/user/edit', function (Request $request) {
     $user->fill($request->all());
     $user->save();
 
+    $estado = \App\Models\Estado::where("name", $request->uf)->first();
+
+
+    if (!($estado)) {
+        $estado = \App\Models\Estado::create(['name' => $request->uf]);
+    }
+    $cidade = \App\Models\Cidade::where("name", $request->cidade)->where("estado_id", $estado->id)->first();
+
+    if (!($cidade)) {
+        $cidade = \App\Models\Cidade::create(['name' => $request->cidade, 'estado_id' => $estado->id]);
+    }
+
+    $bairro = \App\Models\Bairro::where('name', $request->bairro)->where("estado_id", $estado->id)->where("cidade_id", $cidade->id)->first();
+
+    //dd($bairro);
+    if (!($bairro)) {
+        $bairro = \App\Models\Bairro::create(
+            [
+                'name' => $request->bairro,
+                'estado_id' => $estado->id,
+                'cidade_id' => $cidade->id
+            ]
+        );
+    }
+
+    $grava = [
+        'cep' => $request->cep,
+        'endereco' => $request->endereco,
+        'bairro_id' => $bairro->id,
+        'user_id' => $user->id,
+        'cidade_id' => $cidade->id,
+        'estado_id' => $estado->id,
+        'n' => $request->n,
+        'complemento' => $request->complemento
+    ];
+
+    if ($user->endereco) {
+        $user->endereco->fill($grava);
+        $user->endereco->save();
+    } else {
+        Endereco::create($grava);
+    }
 
     HelpersLogActivity::addToLog('Dados Alterados ' . $controle);
     return redirect()->back();
@@ -1287,8 +1254,16 @@ Route::post('admin/usuarios/edit', function (Request $request) {
     $request->validate([
         'name' => 'required',
         'email' => ['required'],
+        'cpf' => ['required', 'cpf'],
+        'nascimento' => ['required'],
+        'telefone' => 'required',
         'tipo' => ['required'],
-
+        'cep' => ['required'],
+        'endereco' => ['required'],
+        'bairro' => ['required'],
+        'cidade' => ['required'],
+        'uf' => ['required'],
+        'n' => ['required'],
     ]);
 
     $user = User::find($request->id);
@@ -1298,11 +1273,11 @@ Route::post('admin/usuarios/edit', function (Request $request) {
 Route::post('admin/buscarcpf', function (Request $request) {
     $request->validate([
 
-        'email' => ['required', 'email'],
+        'cpf' => ['required', 'cpf'],
 
     ]);
-    //  $request['cpf'] = preg_replace("/[^0-9]/", "", $request->cpf);
-    $user = User::where('email', $request->email)->first();
+    $request['cpf'] = preg_replace("/[^0-9]/", "", $request->cpf);
+    $user = User::where('cpf', $request->cpf)->first();
 
     if (empty($user)) {
         return redirect()->back();
@@ -1332,7 +1307,7 @@ Route::get('admin/relatorioplanos', function () {
     $logs = HelpersLogActivity::logActivityLists();
     $agora = Carbon::now();
     $planos = Plano::all();
-    $assinaturas = Compra::where("ativo", 1)->whereMonth('created_at', $agora)->get();
+    $assinaturas = Assinatura::where("status", 1)->whereMonth('inicio', $agora)->get();
     HelpersLogActivity::addToLog('Acessou Relatorio');
     // dd($premium);
     $relatorios = Relatorio::all();
@@ -1641,7 +1616,7 @@ Route::get("invalidar/{id}", function ($id) {
 });
 
 Route::get('admin/cortesia/{id}', function ($id) {
-    $fatura = Compra::find($id);
+    $fatura = Assinatura::find($id);
 
     $caixa = [
         'descricao' => 'Recebido da mensalidade cortesia do ' . $fatura->user->name,
@@ -1649,8 +1624,119 @@ Route::get('admin/cortesia/{id}', function ($id) {
         'tipo' => 1,
         'user_id' => $fatura->user->id,
     ];
+    if (!empty($fatura->user->quem)) {
+        $plano = Plano::find($fatura->plano->id);
 
-    $fatura->fill(['ativo' => 1]);
+        $user = User::where('link', $fatura->user->quem)->first();
+
+        $planolast = $user->assinaturas->last();
+
+        if (!empty($planolast)) {
+
+            $extrato = [
+                'user_id' => $user->id,
+                'indicado_id' => $fatura->user->id,
+                'pontos' => 0,
+                'saldo' => 0
+            ];
+
+
+            Extrato::create($extrato);
+            $pontuacao = $user->pontos + 0;
+            $dados = [
+                'tipo' => 0,
+                'descricao' => 'bonus ref. login ' . $fatura->user->name . ' Direto',
+                'valor' => 0,
+                'user_id' => $user->id
+            ];
+
+            \App\Models\Movimento::create($dados);
+            $user->fill(['pontos' => $pontuacao]);
+            $user->save();
+        }
+
+
+        $primeiro = User::where('link', $user->quem)->first();
+
+        if (!empty($primeiro)) {
+
+            $planolast1 = $primeiro->assinaturas->last();
+
+            //dd($planolast->plano->direto);
+
+
+            if (!empty($planolast1)) {
+                $extrato1 = [
+                    'user_id' => $primeiro->id,
+                    'indicado_id' => $fatura->user->id,
+                    'pontos' => 0,
+                    'saldo' => 0
+                ];
+
+                // dd($extrato);
+
+
+                Extrato::create($extrato1);
+                $pontuacao = $primeiro->pontos + 0;
+
+                //dd($pontuacao);
+                $primeiro->fill(['pontos' => $pontuacao]);
+                $primeiro->save();
+            }
+
+
+            $segundo = User::where('link', $primeiro->quem)->first();
+
+            if (!empty($segundo)) {
+
+                $planolast2 = $segundo->assinaturas->last();
+
+                if (!empty($planolast2)) {
+                    $extrato2 = [
+                        'user_id' => $segundo->id,
+                        'indicado_id' => $fatura->user->id,
+                        'pontos' => 0,
+                        'saldo' => 0
+                    ];
+
+
+                    Extrato::create($extrato2);
+                    $pontuacao = $segundo->pontos + 0;
+
+                    $segundo->fill(['pontos' => $pontuacao]);
+                    $segundo->save();
+                }
+
+
+                $terceiro = User::where('link', $segundo->quem)->first();
+
+                if (!empty($terceiro)) {
+
+                    $planolast3 = $terceiro->assinaturas->last();
+
+                    if (!empty($planolast3)) {
+                        $extrato3 = [
+                            'user_id' => $terceiro->id,
+                            'indicado_id' => $fatura->user->id,
+                            'pontos' => 0,
+                            'saldo' => 0
+                        ];
+
+
+
+                        Extrato::create($extrato3);
+                        $pontuacao = $segundo->pontos + 0;
+
+                        //dd($pontuacao);
+                        $terceiro->fill(['pontos' => $pontuacao]);
+                        $terceiro->save();
+                    }
+                }
+            }
+        }
+    } else {
+    }
+    $fatura->fill(['status' => 1, 'valor' => 0]);
     $fatura->save();
     Caixa::create($caixa);
     return redirect(url('admin/faturas'));
@@ -2032,22 +2118,21 @@ Route::get('admin/produto/cadfoto/{id}', function ($id) {
 
     return view('admin.produtos.cadfoto', compact('produto'));
 });
-Route::get('admin/plano/cadfoto/{id}', function ($id) {
-    $produto = Plano::find($id);
-
-    return view('painel.plano.cadfoto', compact('produto'));
-});
 Route::get('admin/produto/edit/{id}', function ($id) {
     $produto = Produto::find($id);
 
     return view('admin.produtos.edit', compact('produto'));
+});
+Route::get('admin/energia', function () {
+    $interesses = Interesse::all();
+    return view('energia.index', compact('interesses'));
 });
 
 Route::get('admin/produto/caddoc/{id}', function ($id) {
     $produto = Produto::find($id);
 
     return view('admin.produtos.caddoc', compact('produto'));
-});
+})->middleware(['auth']);
 
 Route::get('admin/produto/delete/{id}', function ($id) {
     $produto  = Produto::find($id);
@@ -2073,7 +2158,7 @@ Route::post('registerindicadoland', function (Request $request) {
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'confirmed'],
-        'cpf' => ['cpf', 'required', 'unique:users'],
+        'cpf' => ['cpf_ou_cnpj', 'required', 'unique:users'],
         'telefone' => ['required'],
         'nascimento' => ['required', 'date'],
         'cep' => ['required'],
@@ -2438,658 +2523,92 @@ Route::get('gerarpagamentoanual/{id}', function ($id) {
     // $LinkPagamento = $asaas->LinkPagamento()->getById($assinatura->buscador);
     //dd($LinkPagamento);
     return redirect($cobranca->invoiceUrl);
-});
+})->middleware(['auth']);
 
 Route::get('admin/ver/planos/{id}', function ($id) {
     $agora = Carbon::now();
     $plano = Plano::find($id);
-    $assinaturas = Compra::where("ativo", 1)->whereMonth('created_at', $agora)->where('plano_id', $plano->id)->get();
+    $assinaturas = Assinatura::where("status", 1)->whereMonth('inicio', $agora)->where('plano_id', $plano->id)->get();
     return view('admin.relatorio.visualizar', compact('plano', 'assinaturas'));
 })->middleware(['auth']);
 
-Route::get('cancelship/{id}', function ($id) {
 
-    $compra = Compra::where('id', $id)->where('user_id', Auth::user()->id)->first();
+Route::get('admin/treinamentos', function () {
+    $treinamentos = Treinamento::all();
 
-    if (isset($compra)) {
-
-        Compra::destroy($compra->id);
-
-        return redirect(url('customer/invoices'));
-    }
-    return redirect(url('customer/invoices'));
+    return view('admin.treinamentos.index', compact('treinamentos'));
 })->middleware(['auth']);
 
 
-Route::get('getupship/{id}', function ($id) {
-    $compra = Compra::find($id);
-
-    $busca = [
-        'user_id' => Auth::user()->id,
-        'plano_id' => $compra->plano->id,
-        'compra_id' => $compra->id,
-    ];
-
-
-    $rentabilidade = $compra->plano->valor * 0.10;
-
-    $dados = [
-        'tipo' => 0,
-        'descricao' => "ship' s reward " . $compra->plano->name,
-        'valor' =>  $rentabilidade,
-        'user_id' => Auth::user()->id
-    ];
-
-    //dd($dados);
-    //dd($pontuacao);
-
-    \App\Models\Valorredimento::create($dados);
-    Batalha::create($busca);
-    //dd($plano);
-
-    return redirect()->back();
+Route::get('admin/treinamentos/create', function () {
+    return view('admin.treinamentos.create');
 })->middleware(['auth']);
 
-
-Route::get('testepagamentoblock', function () {
-
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.nowpayments.io/v1/payment',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => '{
-  "price_amount": 3999.5,
-  "price_currency": "usd",
-  "pay_currency": "eth",
-  "ipn_callback_url": "https://nowpayments.io",
-  "order_id": "RGDBP-21314",
-  "order_description": "Apple Macbook Pro 2019 x 1"
-}',
-        CURLOPT_HTTPHEADER => array(
-            'x-api-key: AACR78H-2S2MB2Z-PGM8VX1-QTFH0C8',
-            'Content-Type: application/json'
-        ),
-    ));
-
-    $response = curl_exec($curl);
-
-    dd($response);
-
-    curl_close($curl);
-    echo $response;
-});
-
-
-Route::get('player/payment/{id}', function ($id) {
-
-    $compra = Compra::find($id);
-
-
-
-
-    return view('compra.index', compact(
-        'compra',
-
-    ));
-})->middleware(['auth']);
-
-Route::post('payment/origin', function (Request $request) {
-    $compra = Compra::find($request->compra_id);
-    $busca = $compra->registracompra($request->moeda, $compra->id);
-
-    //dd($busca);
-
-    $grava = [
-        'pay_address' => $busca['pay_address'],
-        'purchase_id' => $busca['purchase_id'],
-        'pay_amount' => $busca['pay_amount'],
-        'moeda' => $busca['pay_currency'],
-        'payment_id' => $busca['payment_id']
-
-    ];
-
-    $compra->fill($grava);
-
-    $compra->save();
-
-
-    return redirect(url('final/ship', $compra->id));
-    // dd($compra);
-})->middleware(['auth']);
-
-Route::get('gerarpix/{id}',function ($id, \App\Services\PaymentServices $paymentServices){
-
-    $compra = Compra::find($id);
-
-//dd($payment);
-    if (!$compra->asaas_link){
-
-        $custumer_id = ($paymentServices->verifyCustumer(Auth::user()));
-
-       // dd($custumer_id);
-
-      //  dd($compra);
-        $payment = $paymentServices->createPaymentBoleto($custumer_id, $compra);
-
-       // dd($payment);
-
-
-        $compra->fill(['asaas_link'=>$payment->invoiceUrl]);
-        $compra->fill(['buscador'=>$payment->id]);
-
-        $compra->save();
-
-    }
-
-
-
-
-    return redirect($compra->asaas_link);
-
-});
-
-Route::get('final/ship/{id}', function ($id) {
-    $compra = Compra::find($id);
-    return view('admin.block.index', compact('compra'));
-})->middleware(['auth']);
-
-
-Route::get('player/chat', function () {
-    //$novo  = Chat::orderByDesc
-    $chats = Chat::where('user_id', Auth::user()->id)->orderByDesc('created_at')->get();
-    return view('chat.index', compact('chats'));
-})->middleware(['auth']);
-Route::get('player/chat2', function () {
-
-    $chats = Chat::where('user_id', Auth::user()->id)->get();
-    return view('chat.index2', compact('chats'));
-})->middleware(['auth']);
-Route::post('newchat', function (Request $request) {
+Route::post('admin/treinamentos/create', function (Request $request) {
     $request->validate([
-        'message' => ['required', 'min:20'],
-
+        'name' => ['required', 'string', 'max:255'],
+        'video' => ['required', 'string', 'max:255'],
 
     ]);
 
-    $request['user_id'] = Auth::user()->id;
-    Chat::create($request->all());
+    Treinamento::create($request->all());
 
-    return redirect()->back();
-});
-Route::post('admin/newchat', function (Request $request) {
-    $request->validate([
-        'message' => ['required', 'min:20'],
-        'user_id' => ['required']
-
-
-    ]);
-
-    //$request['user_id'] = ;
-    Chat::create($request->all());
-
-    return redirect()->back();
-});
-
-Route::get('reply/{id}', function ($id) {
-    $chat = Chat::find($id);
-
-    if (isset($chat->respostas)) {
-
-        foreach ($chat->respostas->where('user_id', '!=', Auth::user()->id) as $resposta) {
-            $resposta->fill(['visto' => 1]);
-            $resposta->save();
-        }
-    }
-    return view('chat.responder', compact('chat'));
-});
-
-Route::post('suport/reply', function (Request $request) {
-    $request->validate([
-        'message' => ['required'],
-
-    ]);
-    $request['user_id'] = Auth::user()->id;
-
-    Resposta::create($request->all());
-
-    return redirect()->back()
-        ->with('success', 'Reply');
+    return redirect(url('admin/treinamentos'));
 })->middleware(['auth']);
 
 
+Route::get('treinamentos', function () {
+    $treinamentos = Treinamento::all();
+    return view('treinamentos.index', compact('treinamentos'));
+})->middleware(['auth']);
 
-/*  Route::get('novoteste', function (AcaoController $acaoController) {
+Route::get('conheca/{id}', function ($id) {
+    $extra = Extra::find($id);
+    $existe = Interesse::where('user_id', Auth::user()->id)->where('extra_id', $id)->first();
+    return view('extra.conheca', compact('extra', 'existe'));
+})->middleware(['auth']);
+Route::get("interesse/{id}", function ($id) {
+    $grava = ['user_id' => Auth::user()->id, 'extra_id' => $id];
+    Interesse::create($grava);
+    return redirect(url('cliente/combos'));
+})->middleware(['auth']);
 
-    // $user = User::find(3);
-    //dd($user->segundo());
-    $faturas = Compra::where('ativo', 0)->orderBy('id', 'asc')->where('pay_address', "!=", 'NULL')->get();
+Route::get('admin/delete/user/{id}', function ($id) {
+    $user = User::find($id);
+    User::destroy($id);
 
-    //dd($faturas);
+    return 'ok';
+});
+Route::get('admin/delete/fatura/{id}', function ($id) {
+    //$user = Assinatura::find($id);
+    Assinatura::destroy($id);
 
-    foreach ($faturas as $fatura) {
-        //dd($fatura);
+    return 'ok';
+});
+Route::get('admin/niveis', function () {
+    $metas = Meta::withCount('users')->get();
+    return view('admin.nivel.index', compact('metas'));
+});
 
+Route::get('admin/ver/nivel/{id}', function ($id) {
 
+    $meta = Meta::find($id);
+    //dd($meta);
+    $usuarios = User::where("ordem", $meta->id)->get();
+    //dd($usuarios);
+    // $assinaturas = Assinatura::where("status", 1)->whereMonth('inicio', $agora)->where('plano_id', $plano->id)->get();
+    return view('admin.nivel.visualizar', compact('meta', 'usuarios'));
+});
 
-        $cobranca = $fatura->consultahash();
+Route::get('admin/entrega/premio/user/{user}/meta/{meta}', function ($user, $meta) {
 
-        if ($cobranca['payment_status'] == "finished") {
-            $fatura->fill(['ativo' => 1]);
-            $fatura->save();
-            if (!empty($fatura->user->quarto())) {
-                $direto = $acaoController::calculorenda($fatura, 4);
-            }
-            if (!empty($fatura->user->terceiro())) {
-                $direto = $acaoController::calculorenda($fatura, 3);
-            }
-            if (!empty($fatura->user->segundo())) {
-                $direto = $acaoController::calculorenda($fatura, 2);
-            }
-            if (!empty($fatura->user->primeiro())) {
-                $direto = $acaoController::calculorenda($fatura, 1);
-            }
-            if (!empty($fatura->user->direto())) {
-                $direto = $acaoController::calculorenda($fatura, 0);
-            }
-            //  return $direto;
-
-        }
-    }
-})->middleware(['auth']); */
-
-Route::post('cadvideo', function (Request $request) {
-
-    $request->validate([
-        'video' => ['required', 'url'],
-
-    ]);
-
-
-    $request['user_id'] = Auth::user()->id;
-
-
-    Video::create($request->all());
+    Premio::create(['user_id' => $user, 'meta_id' => $meta, 'status' => 1]);
 
     return redirect()->back();
-})->middleware(['auth']);
-
-
-Route::get('admin/video', function () {
-    $videos = Video::where('valido', 0)->get();
-    return view('video', compact('videos'));
-})->middleware(['auth']);
-
-Route::get('admin/validar/{id}', function ($id) {
-    $video = Video::find($id);
-    $dados = [
-        'tipo' => 0,
-        'descricao' => 'bonus ref. video ' . $video->video,
-        'valor' => 2.5,
-        'user_id' => $video->user_id,
-    ];
-    //dd($dados);
-
-
-    \App\Models\Movimento::create($dados);
-
-    $video->fill(['valido' => 1]);
-    $video->save();
-
-    return redirect()->back();
-})->middleware(['auth']);
-Route::get('admin/invalidar/{id}', function ($id) {
-    $video = Video::find($id);
-
-
-    $video->fill(['valido' => 2]);
-    $video->save();
-
-    return redirect()->back();
-})->middleware(['auth']);
-
-
-Route::get('corrigetudo', function () {
-    //$faturas = Compra::where('ativo', 0)->orderBy('id', 'asc')->get();
-    $faturas = Compra::all();
-    foreach ($faturas as $fatura) {
-        /*  $fatura->fill([
-            'pay_address' => 'TNPuQvFnWPJskiPjC2ig2pRrB9Z565VmWp',
-            'purchase_id' => '5153901902',
-            'pay_amount' => 32.217209,
-            'moeda' => 'trx',
-            'payment_id' => '6187445628'
-        ]);*/
-
-        $fatura->fill(['ativo' => 0]);
-
-        $fatura->save();
-    }
 });
 
-
-
-Route::get('gerarsaque', function () {
-    $users = User::all();
-    // $valor = Auth::user()->sobra;
-
-
-
-    //dd($pontuacao);
-
-
-    foreach ($users as $user) {
-
-        if ($user->sobra > 2) {
-            $valores =
-                [
-                    'valor' => $user->sobra,
-                    'status' => 0,
-                    'user_id' => Auth::user()->id
-                ];
-
-
-
-
-            $dados = [
-                'tipo' => 1,
-                'descricao' => 'withdrawal ref. bonus',
-                'valor' => $user->sobra,
-                'user_id' => Auth::user()->id
-            ];
-            \App\Models\Saque::create($valores);
-            \App\Models\Movimento::create($dados);
-        }
-    }
+Route::get('admin/premios', function () {
+    $premios = Premio::all();
+    return view('admin.relatorio.premio', compact('premios'));
 });
-
-Route::get('contultahash/{id}', function ($id) {
-
-    $compra = Compra::find($id);
-
-
-    dd($compra->consultahash2());
-});
-
-
-Route::get('error404', function () {
-    return view('error404');
-});
-Route::get('compracortesia', function () {
-    $cortesia = Compra::where('');
-});
-
-Route::get('concertavalores', function () {
-    $users = User::has('movimentos')->get();
-
-    // dd($users);
-
-    foreach ($users as $user) {
-        $buscas = Movimento::where("user_id", $user->id)->where('descricao', 'like', "%reward%")->get();
-        //dd($buscas);
-
-        foreach ($buscas as $busca) {
-            $grava = [
-                'descricao' => $busca->descricao,
-                'valor' => $busca->valor,
-                'tipo' => $busca->tipo,
-                'user_id' => $busca->user_id
-
-            ];
-            Valorredimento::create($grava);
-        }
-    };
-});
-
-Route::get('testevaloressaque', function () {
-    $rendimentos = Valorredimento::where('valor', '<', 0)->get();
-    $bonifica = Valorindicacao::where('valor', '<', 0)->get();
-
-    //dd($rendimentos);
-
-    foreach ($rendimentos as $rendimento) {
-        $grava = [
-            'valor' => -$rendimento->valor,
-            'data' => $rendimento->created_at,
-            'user_id' => $rendimento->user_id,
-        ];
-
-        Saquerendimento::create($grava);
-    }
-});
-
-Route::get('geratudo', function (AcaoController $acaoController) {
-    $compras = Compra::whereIn('id', [108, 109, 110])->get();
-    //dd($compras);
-
-    foreach ($compras as $fatura) {
-        //dd($fatura);
-
-
-
-
-        // $cobranca = $fatura->consultahash();
-
-
-        $fatura->fill(['ativo' => 1]);
-        $fatura->save();
-        $details = [
-            'title' => 'Corfirm Payment',
-            'url' => url('dashboard')
-        ];
-
-        Mail::to($fatura->user->email)->send(new PaymentMail($details));
-        $grava = [
-            'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
-            'valor' => $fatura->plano->valor,
-            'tipo' => 1,
-            'user_id' => $fatura->user->id,
-        ];
-
-        Caixa::create($grava);
-
-        if (!empty($fatura->user->quarto())) {
-            $direto = $acaoController::calculorenda($fatura, 4);
-        }
-        if (!empty($fatura->user->terceiro())) {
-            $direto = $acaoController::calculorenda($fatura, 3);
-        }
-        if (!empty($fatura->user->segundo())) {
-            $direto = $acaoController::calculorenda($fatura, 2);
-        }
-        if (!empty($fatura->user->primeiro())) {
-            $direto = $acaoController::calculorenda($fatura, 1);
-        }
-        if (!empty($fatura->user->direto())) {
-            $direto = $acaoController::calculorenda($fatura, 0);
-        }
-        //  return $direto;
-
-
-    }
-});
-
-
-
-Route::get('atualizarfaturas', function () {
-    $faturas = Compra::where('buscador', "!=", 'NULL')->get();
-
-
-   // dd($faturas);
-
-    foreach ($faturas as $fatura) {
-        $asaas = new \CodePhix\Asaas\Asaas('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDI4MzY6OiRhYWNoXzI2ZWQ3NTZlLTk1NTktNGMwMS05ZDZlLTI1NGZhYjdlYjY4Mg==', 'homologacao');
-        $cobranca = $asaas->Cobranca()->getById($fatura->buscador);
-
-        //dd($cobranca);
-
-        if ($cobranca->status == 'CONFIRMED'||$cobranca->status == 'RECEIVED') {
-
-             //dd($fatura);
-
-
-            if ($fatura->status == 0) {
-                $fatura->fill(
-                    [
-                        'tipo' => $cobranca->billingType,
-                        'status' => 1,
-                        'ativo' => 1,
-                        'dia_pagamento'=>Carbon::now(),
-                        'valor'=>$fatura->plano->valor
-
-                    ]);
-                $fatura->save();
-
-                $grava = [
-                    'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
-                    'valor' => $fatura->plano->valor,
-                    'tipo' => 1,
-                    'user_id' => Auth::user()->id,
-                ];
-                Caixa::create($grava);
-            }
-
-
-/*
-            if (!empty($fatura->user->quem)) {
-                $plano = Plano::find($fatura->plano->id);
-                //dd($plano);
-
-                $user = User::where('link', $fatura->user->quem)->first();
-
-
-                $planolast = $user->assinaturas->last();
-
-                if (!empty($planolast)) {
-                    $extrato = [
-                        'user_id' => $user->id,
-                        'indicado_id' => $fatura->user->id,
-                        'pontos' => $plano->pontos,
-                        'saldo' => $plano->valor
-                    ];
-
-
-                    Extrato::create($extrato);
-                    $pontuacao = $user->pontos + $plano->pontos;
-                    $dados = [
-                        'tipo' => 0,
-                        'descricao' => 'bonus ref. login ' . $fatura->user->name . ' Direto',
-                        'valor' => $plano->valor,
-                        'user_id' => $user->id
-                    ];
-                    //dd($pontuacao);
-
-                    \App\Models\Movimento::create($dados);
-                    $user->fill(['pontos' => $pontuacao]);
-                    $user->save();
-                }
-
-
-                $primeiro = User::where('link', $user->quem)->first();
-
-                if (!empty($primeiro)) {
-
-                    $planolast1 = $primeiro->assinaturas->last();
-
-                    //dd($planolast->plano->direto);
-
-
-                    if (!empty($planolast1)) {
-                        $extrato1 = [
-                            'user_id' => $primeiro->id,
-                            'indicado_id' => $fatura->user->id,
-                            'pontos' => $plano->pontos,
-                            'saldo' => 0
-                        ];
-
-                        // dd($extrato);
-
-
-                        Extrato::create($extrato1);
-                        $pontuacao = $primeiro->pontos + $plano->pontos;
-
-                        //dd($pontuacao);
-                        $primeiro->fill(['pontos' => $pontuacao]);
-                        $primeiro->save();
-                    }
-
-
-                    $segundo = User::where('link', $primeiro->quem)->first();
-
-                    if (!empty($segundo)) {
-
-                        $planolast2 = $segundo->assinaturas->last();
-
-                        //dd($planolast->plano->direto);
-
-
-                        if (!empty($planolast2)) {
-                            $extrato2 = [
-                                'user_id' => $segundo->id,
-                                'indicado_id' => $fatura->user->id,
-                                'pontos' => $plano->pontos,
-                                'saldo' => 0
-                            ];
-
-                            // dd($extrato);
-
-
-                            Extrato::create($extrato2);
-                            $pontuacao = $segundo->pontos + $plano->pontos;
-
-                            //dd($pontuacao);
-                            $segundo->fill(['pontos' => $pontuacao]);
-                            $segundo->save();
-                        }
-
-
-                        $terceiro = User::where('link', $segundo->quem)->first();
-
-                        if (!empty($terceiro)) {
-
-                            $planolast3 = $terceiro->assinaturas->last();
-
-                            //dd($planolast->plano->direto);
-
-
-                            if (!empty($planolast3)) {
-                                $extrato3 = [
-                                    'user_id' => $terceiro->id,
-                                    'indicado_id' => $fatura->user->id,
-                                    'pontos' => $plano->pontos,
-                                    'saldo' => 0
-                                ];
-
-                                // dd($extrato);
-
-
-                                Extrato::create($extrato3);
-                                $pontuacao = $segundo->pontos + $plano->pontos;
-
-                                //dd($pontuacao);
-                                $terceiro->fill(['pontos' => $pontuacao]);
-                                $terceiro->save();
-                            }
-                        }
-                    }
-                }
-            } else {
-            }
-
-*/
-        }
-        // dd($cobranca);
-        //dd($fatura);
-    }
-
-    // dd($faturas);
-});
-
-
 require __DIR__ . '/auth.php';

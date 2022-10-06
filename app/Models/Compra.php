@@ -15,10 +15,16 @@ class Compra extends Model
         'plano_id',
         'ativo',
         'cortesia',
+        'asaas_link',
+        'metodo',
         'pay_address',
         'purchase_id',
         'pay_amount',
         'moeda',
+        'buscador',
+        'status',
+        'valor',
+        'dia_pagamento',
         'payment_id'
     ];
 
