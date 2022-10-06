@@ -201,9 +201,9 @@ width: 100%;">
         </div>
     </div>
 </body>
-<script>
-    < script src = "{{ asset('admin/bower_components/jquery/dist/jquery.min.js') }}" >
-</script>
+
+<script src="{{ asset('admin/bower_components/jquery/dist/jquery.min.js') }}" >
+
 
 <script type="text/javascript">
     function googleTranslateElementInit() {

@@ -1,5 +1,6 @@
 @extends('painel.padrao')
 @section('css')
+
     <style>
         body {
             color: white;
@@ -30,7 +31,7 @@
 @endsection
 @section('content')
     <br><br>
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <div class="container">
         <div class="box collapsed-box caixa">
             <div class="box-header">
@@ -64,7 +65,7 @@
 
         <div class="box collapsed-box caixa">
             <div class="box-header">
-                <h3 class="box-title"> Wallet BNB</h3>
+                <h3 class="box-title"> Pix Key</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                     </button>
@@ -72,63 +73,55 @@
             </div>
             <div class="box-body">
 
-
-                <form action="{{ url('cadconta') }}" method="post">
-                    @csrf
-
-                    <div class="form-group">
-                        <label for="">Wallet BNB</label>
-                        <input style=" background-color: transparent;color:white" type="text" id="agencia" name="agencia"
-                            class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <button class="btn btn-success btn-block">register</button>
-                    </div>
-                </form>
-                <br>
-
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Wallet </th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse(Auth::user()->contas as $conta)
-                            <tr>
-
-                                <td>{{ $conta->agencia }}</td>
-
-
-                            </tr>
-
-                        @empty
-                        @endforelse
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="box collapsed-box caixa">
-            <div class="box-header">
-                <h3 class="box-title"> Video</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="box-body">
-
-                @if (Auth::user()->videodisponivel() == 1)
-                    <form action="{{ url('cadvideo') }}" method="post">
+                @if(isset(Auth::user()->pix))
+                    <form action="{{ url('editapix/'.Auth::user()->pix->id) }}" method="post">
+                        @method('PUT')
                         @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        <div class="form-group">
+                            <label for="name">Selecione um banco</label>
+                            <select  id="banco-api" class="form-control">
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Código:</label>
+                            <input type="text" class="form-control" name="cod_banco" id="cod_banco" value="{{ Auth::user()->pix->cod_banco }}" >
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Banco:</label>
+                            <input type="text" class="form-control" name="banco" id="banco" value="{{ Auth::user()->pix->banco }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chave">Pix Key</label>
+                            <input name="chave" id="chave" class="form-control" type="text" value="{{ Auth::user()->pix->chave }}" required/>
+                        </div>
 
                         <div class="form-group">
-                            <label for="">video link</label>
-                            <input style=" background-color: transparent;color:white" type="url" id="video" name="video"
-                                class="form-control">
+                            <button class="btn btn-success btn-block">Edit</button>
+                        </div>
+                    </form>
+                @else
+                    <form action="{{ url('cadconta') }}" method="post">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        <div class="form-group">
+                            <label for="name">Selecione um banco</label>
+                            <select  id="banco-api" class="form-control">
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Código:</label>
+                            <input type="text" class="form-control" name="cod_banco" id="cod_banco" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Banco:</label>
+                            <input type="text" class="form-control" name="banco" id="banco" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chave">Pix Key</label>
+                            <input name="chave" id="chave" class="form-control" type="text" />
                         </div>
 
                         <div class="form-group">
@@ -136,30 +129,49 @@
                         </div>
                     </form>
                 @endif
-                <br>
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Video </th>
-                            <th>Status</th>
+            </div>
+        </div>
+        <div class="box collapsed-box caixa">
+            <div class="box-header">
+                <h3 class="box-title">Bankon</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse(Auth::user()->videos as $video)
-                            <tr>
+                @if (isset(Auth::user()->bankon))
+                    <form action="{{ url('editabankon/'.Auth::user()->bankon->id) }}" method="post">
+                        @method('PUT')
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
-                                <td>{{ $video->video }}</td>
+                        <div class="form-group">
+                            <label for="cod_bankon">Bankon:</label>
+                            <input type="text" class="form-control" name="cod_bankon" id="cod_bankon" value="{{ Auth::user()->bankon->cod_bankon }}" required>
+                        </div>
 
-                                <td>{{ $video->status }}</td>
-                            </tr>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-block">Edit</button>
+                        </div>
+                    </form>
+                @else
+                    <form action="{{ url('cadbankon') }}" method="post">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
-                        @empty
-                        @endforelse
+                        <div class="form-group">
+                            <label for="cod_bankon">Bankon:</label>
+                            <input type="text" class="form-control" name="cod_bankon" id="cod_bankon" required>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-block">register</button>
+                        </div>
+                    </form>
+                @endif
 
-                    </tbody>
-                </table>
             </div>
         </div>
 
@@ -240,4 +252,35 @@
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#banco-api').select2()
+            const bancoSelect = document.getElementById('banco-api')
+            const codForm = document.getElementById('cod_banco')
+            const bancoForm = document.getElementById('banco')
+            console.log(bancoSelect)
+
+
+
+            $.ajax({
+                type: 'GET',
+                url: 'https://brasilapi.com.br/api/banks/v1',
+                success: function(response) {
+                    $.each(response, function(i, obj) {
+                        bancoSelect.options[bancoSelect.length] =  new Option(obj.name, obj.code)
+                    })
+
+                }
+            })
+
+            $('#banco-api').on('select2:select', event => {
+                console.log(event.params.data)
+                codForm.value = event.params.data.id
+                bancoForm.value = event.params.data.text
+            })
+
+
+
+        })
+    </script>
 @endsection
