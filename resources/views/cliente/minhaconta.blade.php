@@ -3,7 +3,7 @@
 
     <style>
         body {
-            color: white;
+
         }
 
         .caixa {
@@ -24,14 +24,14 @@
         }
 
         input {
-            background-color: transparent
+
         }
 
     </style>
 @endsection
 @section('content')
     <br><br>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <div class="container">
         <div class="box collapsed-box caixa">
             <div class="box-header">
@@ -63,7 +63,7 @@
 
 
 
-        <div class="box collapsed-box caixa">
+        <div class="panel collapsed-box caixa">
             <div class="box-header">
                 <h3 class="box-title"> Pix Key</h3>
                 <div class="box-tools pull-right">
@@ -80,6 +80,7 @@
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                         <div class="form-group">
                             <label for="name">Selecione um banco</label>
+                            <br>
                             <select  id="banco-api" class="form-control">
                                 <option value="">Select...</option>
                             </select>
@@ -106,13 +107,15 @@
                         @csrf
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                         <div class="form-group">
-                            <label for="name">Selecione um banco</label>
+                            <label>Selecione um banco</label>
+                            <br>
                             <select  id="banco-api" class="form-control">
                                 <option value="">Select...</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="name">Código:</label>
+                            <
                             <input type="text" class="form-control" name="cod_banco" id="cod_banco" required>
                         </div>
                         <div class="form-group">

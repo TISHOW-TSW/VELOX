@@ -7,9 +7,16 @@
 
         .caixa {
             border-radius: 15px;
-            opacity: 55%;
-            background-color: #43308a;
-            color: white
+            /*opacity: 55%*/
+            background-color:rgba(39, 34, 40, 0.9);
+            border: 3px solid rgba(233, 0, 0,0.4);
+            color: white;
+            padding-bottom: 30px;
+            display:flex;
+            flex-direction: column;
+            justify-content: space-around;
+            text-transform: uppercase;
+
         }
 
         .dataTables_wrapper .dataTables_paginate .paginate_button {
