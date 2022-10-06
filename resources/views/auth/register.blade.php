@@ -22,7 +22,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="{{asset('/apple-icon-144x144.png')}}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{asset('/apple-icon-152x152.png')}}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{asset('/apple-icon-180x180.png')}}">
-    <link rel="icon" type="image/png" sizes="192x192"  href="{{asset('/android-icon-192x192.png')}}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{asset('/android-icon-192x192.png')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{asset('/favicon-32x32.png')}}">
     <link rel="icon" type="image/png" sizes="96x96" href="{{asset('/favicon-96x96.png')}}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{asset('/favicon-16x16.png')}}">
@@ -31,13 +31,25 @@
     <meta name="msapplication-TileImage" content="{{asset('/ms-icon-144x144.png')}}">
     <meta name="theme-color" content="#ffffff">
 </head>
-
 <style>
     @font-face {
         font-family: GraublauWeb;
         src: url("{{ url('fontnova.otf') }}") format("opentype");
     }
 
+    .caixa {
+        border-radius: 15px;
+        /*opacity: 55%*/
+        background-color: rgba(39, 34, 40, 0.6);
+        border: 3px solid rgba(233, 0, 0, 0.4);
+        color: white;
+        padding-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        text-transform: uppercase;
+        padding: 15px;
+    }
 
 
     .btn {
@@ -45,10 +57,24 @@
         border-radius: 10px;
         text-transform: uppercase;
         width: 170px;
-        border-color: #b20a5d;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         background-color: transparent;
         color: white;
         box-shadow: 0px 2px 6px white;
+
+    }
+
+    .btn2 {
+        border-width: 2px;
+
+        text-transform: uppercase;
+        font-weight: bolder;
+        width: 250px;
+        padding: 10px;
+        border: 3px solid rgba(233, 0, 0, 0.4);
+        background-color: transparent;
+        color: yellow;
+        box-shadow: 0px 2px 6px rgba(233, 0, 0, 0.4);
 
     }
 
@@ -57,16 +83,13 @@
     }
 
 
-
-
     .inputfundo {
         border-width: 2px;
-        border-radius: 10px;
+
         border-color: white;
         background-color: transparent;
-        box-shadow: 0px 2px 6px #b20a5d;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         color: white;
-
 
 
     }
@@ -74,19 +97,19 @@
     .inputfundo:focus {
 
 
-        border: 1px solid #381897;
+        border: 1px solid white;
         border-radius: 10px;
     }
 
     .inputfundo:hover {
-        border: 1px solid #381897;
+        border: 1px solid white;
         border-radius: 10px;
     }
 
     .inputfundo:focus:hover {
 
 
-        border: 1px solid #381897;
+        border: 1px solid white;
         border-radius: 10px;
 
     }
@@ -106,43 +129,48 @@ background-size: cover;
 height: 100%;
 width: 100%;">
 
-    <div style="margin-top: 45px" class="container">
-        <center>
-            <img width="300px" class="img img-responsive" src="{{ asset(url('logo.png')) }}" alt="">
-        </center>
-    </div>
-    <div style="margin-top: 20px" class="container">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
+<div style="margin-top: 45px" class="container">
+    <center>
+        <img width="300px" class="img img-responsive" src="{{ asset(url('logo.png')) }}" alt="">
+    </center>
+</div>
+<div style="margin-top: 20px" class="container">
+    <div class="col-md-offset-4 col-md-4">
+
+        <div class="panel caixa">
             <form class="m-t" method="POST" action="{{ route('register') }}">
                 @csrf
 
                 <!-- Name -->
                 <div class="form-group">
                     <input placeholder="NAME" class="form-control inputfundo" id="name" type="text" name="name"
-                        value="{{ old('name') }}" required autofocus />
+                           value="{{ old('name') }}" required autofocus/>
                 </div>
                 <!-- Email Address -->
                 <div class="form-group">
                     <input class="form-control inputfundo" placeholder="EMAIL" id="email" type="email" name="email"
-                        value="{{ old('email') }}" required />
+                           value="{{ old('email') }}" required/>
                 </div>
+                <div class="form-group">
 
+                    <input class="form-control inputfundo" placeholder="CPF" id="cpf" type="teste"
+                           name="cpf" value="{{ old('cpf') }}" required/>
+                </div>
                 <div class="form-group">
 
                     <input class="form-control inputfundo" placeholder="PHONE" id="telefone" type="teste"
-                        name="telefone" value="{{ old('telefone') }}" required />
+                           name="telefone" value="{{ old('telefone') }}" required/>
                 </div>
                 <!-- Password -->
                 <div class="form-group">
                     <input placeholder="PASSWORD" class="form-control inputfundo" id="password" type="password"
-                        name="password" required autocomplete="new-password" />
+                           name="password" required autocomplete="new-password"/>
                 </div>
 
                 <!-- Confirm Password -->
                 <div class="form-group">
                     <input class="form-control inputfundo" placeholder="CONFIRM PASSWORD" id="password_confirmation"
-                        type="password" name="password_confirmation" requ ired />
+                           type="password" name="password_confirmation" requ ired/>
                 </div>
                 <br>
                 <br>
@@ -163,43 +191,43 @@ width: 100%;">
                 </div>
             @endif
         </div>
-        <div class="col-md-4"></div>
 
     </div>
+</div>
 
-    <!-- Mainly scripts -->
-    <script src="js/jquery-2.1.1.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <!-- iCheck -->
-    <script src="js/plugins/iCheck/icheck.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.i-checks').iCheck({
-                checkboxClass: 'icheckbox_square-green',
-                radioClass: 'iradio_square-green',
-            });
+<!-- Mainly scripts -->
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
         });
-        $("#cep").change(function() {
+    });
+    $("#cep").change(function () {
 
-            var valor = document.getElementById('cep').value;
+        var valor = document.getElementById('cep').value;
 
-            // alert(valor);
-            $.ajax({
-                type: 'GET',
-                url: 'https://viacep.com.br/ws/' + valor + '/json/',
+        // alert(valor);
+        $.ajax({
+            type: 'GET',
+            url: 'https://viacep.com.br/ws/' + valor + '/json/',
 
-                success: function(data) {
-                    var names = data.bairro
-                    $('input[name="endereco"]').val(data.logradouro);
-                    $('input[name="bairro"]').val(data.bairro);
-                    $('input[name="cidade"]').val(data.localidade);
-                    $('input[name="uf"]').val(data.uf);
-                    //alert(names);
-                    // $('#cand').html(data);
-                }
-            });
+            success: function (data) {
+                var names = data.bairro
+                $('input[name="endereco"]').val(data.logradouro);
+                $('input[name="bairro"]').val(data.bairro);
+                $('input[name="cidade"]').val(data.localidade);
+                $('input[name="uf"]').val(data.uf);
+                //alert(names);
+                // $('#cand').html(data);
+            }
         });
-    </script>
+    });
+</script>
 </body>
 
 </html>

@@ -18,7 +18,6 @@ class CreatePlanosTable extends Migration
             $table->string('name');
             $table->float('valor');
             $table->tinyInteger('ativo')->default(0);
-            $table->integer('direto');
             $table->integer('primeiro');
             $table->integer('segundo');
             $table->integer('terceiro');

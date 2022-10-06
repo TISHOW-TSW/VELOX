@@ -13,7 +13,6 @@ class Plano extends Model
         'name',
         'valor',
         'ativo',
-        'direto',
         'primeiro',
         'segundo',
         'terceiro',

@@ -28,11 +28,7 @@
                                 <input id="currency" data-thousands="" type="text" name="valor" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="">Direto</label>
-                                <input type="text" name="direto" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="">Primeiro Nivel</label>
+                                <label for="">Primeiro</label>
                                 <input type="text" name="primeiro" class="form-control">
                             </div>
 
@@ -44,30 +40,8 @@
                                 <label for="">Terceiro Nivel</label>
                                 <input type="text" name="terceiro" class="form-control">
                             </div>
-                            <div class="form-group">
-                                <label for="">Quarto Nivel</label>
-                                <input type="text" name="quarto" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="">Quinto Nivel</label>
-                                <input type="text" name="quinto" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="">Pontos</label>
-                                <input type="text" name="pontos" class="form-control">
-                            </div>
 
-                            <div class="form-group">
-                                <label for="">Vantagens</label><br>
 
-                                @forelse ($vantagens as $vantagem)
-                                    <label> <input type="checkbox" name="vantagem_id[]" value="{{ $vantagem->id }}"
-                                            id="inlineCheckpanel1">
-                                        {{ $vantagem->name }} </label><br>
-                                @empty
-                                @endforelse
-
-                            </div>
                             <div class="form-group">
                                 <button class="btn btn-primary btn-block">Salvar</button>
                             </div>

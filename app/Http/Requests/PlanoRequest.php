@@ -26,7 +26,7 @@ class PlanoRequest extends FormRequest
         return [
             'name' => 'required',
             'valor' => 'required',
-            'direto' => 'required',
+
             'primeiro' => 'required',
             'segundo' => 'required',
             'terceiro' => 'required',

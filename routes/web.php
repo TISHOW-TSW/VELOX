@@ -2470,13 +2470,12 @@ Route::get('getupship/{id}', function ($id) {
 
     $dados = [
         'tipo' => 0,
-        'descricao' => "ship' s reward " . $compra->plano->name,
+        'descricao' => "Redimento do carro " . $compra->plano->name,
         'valor' =>  $rentabilidade,
         'user_id' => Auth::user()->id
     ];
 
-    //dd($dados);
-    //dd($pontuacao);
+
 
     \App\Models\Valorredimento::create($dados);
     Batalha::create($busca);
@@ -2951,7 +2950,7 @@ Route::get('atualizarfaturas', function () {
             }
 
 
-/*
+
             if (!empty($fatura->user->quem)) {
                 $plano = Plano::find($fatura->plano->id);
                 //dd($plano);
@@ -3046,38 +3045,12 @@ Route::get('atualizarfaturas', function () {
 
                         $terceiro = User::where('link', $segundo->quem)->first();
 
-                        if (!empty($terceiro)) {
 
-                            $planolast3 = $terceiro->assinaturas->last();
-
-                            //dd($planolast->plano->direto);
-
-
-                            if (!empty($planolast3)) {
-                                $extrato3 = [
-                                    'user_id' => $terceiro->id,
-                                    'indicado_id' => $fatura->user->id,
-                                    'pontos' => $plano->pontos,
-                                    'saldo' => 0
-                                ];
-
-                                // dd($extrato);
-
-
-                                Extrato::create($extrato3);
-                                $pontuacao = $segundo->pontos + $plano->pontos;
-
-                                //dd($pontuacao);
-                                $terceiro->fill(['pontos' => $pontuacao]);
-                                $terceiro->save();
-                            }
-                        }
                     }
                 }
             } else {
             }
 
-*/
         }
         // dd($cobranca);
         //dd($fatura);
