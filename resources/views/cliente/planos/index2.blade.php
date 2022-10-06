@@ -56,7 +56,7 @@
 
             @forelse ($planos as $plano)
                 <div style="margin-top:30px" class="col- col-md-3">
-                    <div id="selecionado{{ $plano->id }}" class="panel  borda ">
+                    <div id="selecionado{{ $plano->id }}" class="panel  borda intasf">
                         <div class="panel-body outro text-center">
                             <h2 style="color: #ffd700;" class=" text-center">{{ $plano->name }}</h2>
 
