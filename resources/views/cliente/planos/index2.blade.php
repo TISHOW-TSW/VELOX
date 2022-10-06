@@ -76,8 +76,11 @@
                                 @else
 
                                 @endif
+
+
                                  class="img img-responsive nave"
-                                src="{{ asset('arquivos/planos/' . $plano->img) }}" alt="">
+                                src="{{ "https://nftcash.sfo3.digitaloceanspaces.com/" . $plano->img }}" alt="">
+
                             </center>
                         </div>
 

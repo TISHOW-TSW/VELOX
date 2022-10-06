@@ -649,7 +649,7 @@ z-index:1000;">
                 <div id="google_translate_element"></div>
             </center>
         @endif
-
+@include('flash-message')
         @yield('content')
 
         <!-- /.container -->

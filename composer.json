@@ -15,6 +15,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravellegends/pt-br-validator": "^8.0",
+        "league/flysystem-aws-s3-v3": "~1.0",
         "nowpayments/nowpayments-api-php": "dev-main",
         "realrashid/sweet-alert": "^5.0",
         "shakurov/coinbase": "^0.7.7",

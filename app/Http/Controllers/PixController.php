@@ -71,8 +71,9 @@ class PixController extends Controller
      */
     public function update(Request $request, Pix $pix)
     {
+
         $pix->update($request->all());
-        return redirect()->back()->with('succes', 'Chave pix editada com sucesso!');
+        return redirect()->back()->with('success', 'Chave pix editada com sucesso!');
     }
 
     /**

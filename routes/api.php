@@ -37,7 +37,7 @@ Route::get('dados/{id}', function ($id) {
 
     for ($i = $start; $i <= $end; $i->addDay()) {
 
-        $assinaturas = \App\Models\Assinatura::whereIn('user_id', $ids)->whereDate('inicio', $start)->where('status',1)->count();
+        $assinaturas = \App\Models\Assinatura::whereIn('user_id', $ids)->whereDate('inicio', $start)->where('status', 1)->count();
 
         if ($assinaturas > 0) {
             $controle[] = ['name' => $i->format('d-m-Y'), 'total' => $assinaturas];
@@ -64,7 +64,6 @@ Route::get('buscadados/{id}', function ($id) {
 Route::get('buscaplano/{id}', function ($id) {
 
     $plano = Plano::find($id);
-
 
 
     //$novo = [];
@@ -98,7 +97,7 @@ Route::post('file-upload/frente', function (Request $request) {
     //  return ($busca);
     if (count($busca) > 0) {
         $image->move(public_path('arquivos'), $new_name);
-        $salvar =  $busca->first();
+        $salvar = $busca->first();
         $salvar->fill(['verso' => $new_name]);
         $salvar->save();
         //dd($cliente->doc);
@@ -160,7 +159,7 @@ Route::post('file-upload/produto/upload', function (Request $request) {
 
 
     $image->move(public_path('arquivos/produtos'), $new_name);
-    $salvar =  $busca;
+    $salvar = $busca;
     $salvar->fill(['img' => $new_name]);
     $salvar->save();
     //dd($cliente->doc);
@@ -178,9 +177,14 @@ Route::post('file-upload/produto/upload', function (Request $request) {
     return $output;
 });
 Route::post('file-upload/plano/upload', function (Request $request) {
+
+    //dd($request->all());
     $rules = array(
         'file' => 'required|mimes:jpeg,jpg,png,pdf|max:32760'
     );
+
+
+    $plano = Plano::find($request->produto_id);
 
     $error = Validator::make($request->all(), $rules);
 
@@ -188,38 +192,50 @@ Route::post('file-upload/plano/upload', function (Request $request) {
         return response()->json(['errors' => $error->errors()->all()]);
     }
 
-    //return $request->all();
-    // $cliente = User::find($request->cliente_id);
-
-    // return ($cliente);
-    $image = $request->file('file');
-
-    $new_name = rand() . '.' . $image->getClientOriginalExtension();
-    //$image->move(public_path('arquivos'), $new_name);
-    // $busca = $cliente->anexos->where("doc_id", $request->doc_id);
-    $busca = Plano::find($request->produto_id);
-    //return ($busca);
-    if (!empty($busca->img)) {
-        unlink('arquivos/planos/' . $busca->img);
-    }
+    //dd($request->all());
 
 
-    $image->move(public_path('arquivos/planos'), $new_name);
-    $salvar =  $busca;
-    $salvar->fill(['img' => $new_name]);
-    $salvar->save();
-    //dd($cliente->doc);
-    ///  $cliente->doc->fill(['frente' => $new_name]);
+    $file = $request->file('file');
+    // ou
+    $file = $request->file;
+    $nameFile = "";
+    if ($request->hasFile('file') && $request->file('file')->isValid()) {
 
+        // Define um aleatório para o arquivo baseado no timestamps atual
+        $name = uniqid(date('HisYmd'));
+        //    dd($name);
 
-    // $cliente->doc->save();
+        // Recupera a extensão do arquivo
+        $extension = $request->file->extension();
 
+        // dd($extension);
+
+        // Define finalmente o nome
+        $nameFile = "{$name}.{$extension}";
+
+        // Faz o upload:
+        //$upload = $request->file->storeAs('comprovantes', $nameFile, 'public');
+
+        //  $upload = Storage::disk('digitalocean')->putFile('comprovantes', $nameFile, 'public');
+        $upload = Storage::disk('digitalocean')->putFile('carros', request()->file, 'public');
+
+        // return $nameFile;
+        // Se tiver funcionado o arquivo foi armazenado em storage/app/public/categories/nomedinamicoarquivo.extensao
+        //$produto = \App\Models\Produto::find($request['produto_id']);
+        // $produto->fill(['file' => $nameFile]);
+        $plano->update(['img' => $upload]);
+        //  \App\Models\Comprovante::create(['file' => $upload, 'compra_id' => $request->compra_id]);
+        // $produto->save();
+        // Verifica se NÃO deu certo o upload (Redireciona de volta)
+        if (!$upload) {
+            return ('error' . ' Falha ao fazer upload');
+        }
+    };
 
     $output = array(
         'success' => 'Image uploaded successfully',
-        'image' => '<img src="/images/' . $new_name . '" class="img-thumbnail" />'
+        'image' => '<img src="/produtos/' . $nameFile . '" class="img-thumbnail" />'
     );
-
     return $output;
 });
 Route::post('file-upload/produto/doc/upload', function (Request $request) {
@@ -249,7 +265,7 @@ Route::post('file-upload/produto/doc/upload', function (Request $request) {
     $busca = Produto::find($request->produto_id);
     //return ($busca);
     $image->move(public_path('arquivos/produtos/doc'), $new_name);
-    $salvar =  $busca;
+    $salvar = $busca;
     $salvar->fill(['arquivo' => $new_name]);
     $salvar->save();
     //dd($cliente->doc);

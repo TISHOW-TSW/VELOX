@@ -79,7 +79,7 @@
 
                             <h3 style="color: white" class="d-inline-block d-sm-none">{{ $compra->plano->name }}</h3>
                             <div class="col-12">
-                                <img class="img img-responsive" src="{{ url('arquivos/planos/', $compra->plano->img) }}"
+                                <img class="img img-responsive" src="{{ "https://nftcash.sfo3.digitaloceanspaces.com/". $compra->plano->img }}"
                                     class="product-image" alt="Product Image">
 
                             </div>
@@ -108,14 +108,12 @@
                             </h2>
                         </center>
                         <h2>Selecionar Metodo de Pagamento</h2>
-                        <a href="{{url('gerarpix',$compra->id)}}" class="btn intas">
-                            PIX
+                        <a target="_blank" href="{{url('gerarpix',$compra->id)}}" class="btn intas">
+                            PIX/CREDITO
                         </a>
                         <br>
                         <br>
-                        <a class="btn intas">
-                            CREDITO/DEBITO
-                        </a>
+
                         <br>
                         <br>
 
