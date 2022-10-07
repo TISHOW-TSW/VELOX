@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Bus;
@@ -14,7 +15,7 @@ use phpDocumentor\Reflection\Types\This;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'email',
         'cpf',
         'password',
+        'login',
         'telefone',
         'link',
         'contador',

@@ -146,6 +146,10 @@ width: 100%;">
                     <input placeholder="NAME" class="form-control inputfundo" id="name" type="text" name="name"
                            value="{{ old('name') }}" required autofocus/>
                 </div>
+                <div class="form-group">
+                    <input placeholder="LOGIN" class="form-control inputfundo" id="login" type="text" name="login"
+                           value="{{ old('login') }}" required />
+                </div>
                 <!-- Email Address -->
                 <div class="form-group">
                     <input class="form-control inputfundo" placeholder="EMAIL" id="email" type="email" name="email"

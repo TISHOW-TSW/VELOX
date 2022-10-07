@@ -155,9 +155,8 @@ width: 100%;">
 
                     <!-- Email Address -->
                     <div class="form-group">
-
-                        <input placeholder="EMAIL" id="email" class="form-control boleado input-lg inputfundo"
-                            type="email" name="email" :value="old('email')" required autocomplete="off" />
+                        <input placeholder="LOGIN" class="form-control inputfundo" id="login" type="text" name="login"
+                               value="{{ old('login') }}" required />
                     </div>
 
                     <!-- Password -->

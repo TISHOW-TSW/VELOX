@@ -386,6 +386,11 @@ x
                                 name="name" value="{{ old('name') }}" required autofocus />
                         </div>
 
+                        <div class="form-group">
+                            <input placeholder="LOGIN" class="form-control inputfundo" id="login" type="text" name="login"
+                                   value="{{ old('login') }}" required />
+                        </div>
+
                         <input type="hidden" name="quem" value="{{ $user->link }}">
 
                         <!-- Email Address -->

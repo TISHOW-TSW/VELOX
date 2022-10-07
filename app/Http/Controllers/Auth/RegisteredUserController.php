@@ -41,6 +41,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'login' => ['required', 'string', 'unique:users'],
             'cpf' => ['required', 'cpf'],
             'telefone' => ['required'],
 
@@ -50,6 +51,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'login' => $request->login,
             'telefone' => $request->telefone,
             'link' => md5($request->email),
             'cpf' => $request->cpf
