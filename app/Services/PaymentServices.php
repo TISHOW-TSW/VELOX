@@ -6,6 +6,7 @@ use App\Models\Compra;
 use App\Models\User;
 use Carbon\Carbon;
 use CodePhix\Asaas\Asaas;
+use CodePhix\Asaas\Connection;
 
 class PaymentServices
 {
@@ -21,7 +22,10 @@ class PaymentServices
 
     public function verifyCustumer(User $user)
     {
-        //dd($user);
+
+
+        $connection = new Connection('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDI4MzY6OiRhYWNoXzI2ZWQ3NTZlLTk1NTktNGMwMS05ZDZlLTI1NGZhYjdlYjY4Mg==', 'homologacao');
+        $this->asaas->http = $connection;
         //$cliente = $this->asaas->Cliente()->getByCpf($user->cpf);
         $option = '?cpfCnpj=' . $user->cpf;
         $cliente= $this->asaas->http->get('/customers',$option);
