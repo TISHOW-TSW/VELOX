@@ -22,7 +22,14 @@ class PaymentServices
     public function verifyCustumer(User $user)
     {
         //dd($user);
-        $cliente = $this->asaas->Cliente()->getByCpf($user->cpf);
+        //$cliente = $this->asaas->Cliente()->getByCpf($user->cpf);
+        $option = '?cpfCnpj=' . $user->cpf;
+        $cliente= $this->asaas->http->get('/customers',$option);
+
+
+
+
+     //  return $this->http->get('/customers', $option);
 
 
         if (!$cliente->data) {
