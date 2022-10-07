@@ -102,8 +102,8 @@ class Cliente
         }
     }
     public function getByCpf($cpf){
-//novodoc
-        // https://www.asaas.com/api/v3/customers?cpfCnpj=42885229519
+
+
         $option = '?cpfCnpj=' . $cpf;
         return $this->http->get('/customers', $option);
     }
