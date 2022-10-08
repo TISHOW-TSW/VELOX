@@ -2591,6 +2591,40 @@ Route::get('gerarpix/{id}',function ($id, \App\Services\PaymentServices $payment
 
 });
 
+Route::get('geraroix2/{id}',function ($id, \App\Services\PaymentServices $paymentServices){
+
+    $compra = Compra::find($id);
+
+//dd($payment);
+    if (!$compra->asaas_link){
+
+        $custumer_id = ($paymentServices->verifyCustumer(Auth::user()));
+
+        // dd($custumer_id);
+
+        //  dd($compra);
+        $payment = $paymentServices->createPaymentBoleto($custumer_id, $compra);
+
+        // dd($payment);
+
+
+        $compra->fill(['asaas_link'=>$payment->invoiceUrl]);
+        $compra->fill(['buscador'=>$payment->id]);
+
+        $compra->save();
+
+    }
+
+
+$paymentServices->createPaymentPix($compra);
+
+    return redirect($compra->asaas_link);
+
+});
+
+
+
+
 Route::get('final/ship/{id}', function ($id) {
     $compra = Compra::find($id);
     return view('admin.block.index', compact('compra'));
@@ -2914,7 +2948,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
 
 
 Route::get('atualizarfaturas', function (AcaoController $acaoController) {
-    $faturas = Compra::where('buscador', "!=", 'NULL')->get();
+    $faturas = Compra::where('buscador', "!=", 'NULL')->where('status',0)->get();
 
 
    // dd($faturas);
