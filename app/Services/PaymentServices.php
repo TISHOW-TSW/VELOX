@@ -117,4 +117,15 @@ class PaymentServices
 
     }
 
+
+    public function createPaymentPix(Compra $compra)
+    {
+
+      $busca =  $this->asaas->Pix()->create($compra->buscador);
+      //$busca =  $this->asaas->Cobranca()->getById($compra->buscador);
+
+      dd($busca);
+        dd($compra);
+    }
+
 }

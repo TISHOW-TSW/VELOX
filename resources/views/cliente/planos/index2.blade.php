@@ -61,10 +61,7 @@
                             <h2 style="color: #ffd700;" class=" text-center">{{ $plano->name }}</h2>
 
 
-                                @forelse ($plano->vantagems as $vantagem)
-                                    <li style="font-size: 19px"> +{{ $vantagem->name }} </li>
-                                @empty
-                                @endforelse
+
 
                             </h6>
                             <center>
@@ -87,8 +84,8 @@
 
                         <center>
 
-                            @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->first())
-                                @if ($busca->ativo == 1)
+                            @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->where('status',1)->first())
+                                @if ($busca->status == 1)
 
                                     @if ($busca->campanha2() == 1)
                                         <div style="border-radius: 10px" class="progress">
@@ -138,13 +135,13 @@
                                     @endif
                                 @endif
 
-                                @if ($busca->ativo == 0)
+                                @if ($busca->status == 0)
                                     <br><br>
                                     <a class="btn" href="{{ url('customer/invoices') }}">
                                         {{ $busca->ativo_formated }}
                                     </a>
                                 @endif
-                                @if ($busca->ativo == 2)
+                                @if ($busca->status == 2)
                                     <br><br>
                                     <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                         $ {{ number_format($plano->valor, 2, ',', '.') }}

@@ -69,7 +69,7 @@ Route::get('testevenda', function () {
 });
 
 Route::get('admin/chat', function () {
-    $chats  = Chat::orderByDesc('created_at')->orderBy('aberto', 'desc')->get();
+    $chats = Chat::orderByDesc('created_at')->orderBy('aberto', 'desc')->get();
 
     // dd($aberto);
     return view('chat.index', compact('chats'));
@@ -119,22 +119,19 @@ Route::get('/dashboard', function () {
     $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
     $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
 
-    if (Auth::user()->ordem == 12) {
-        $nivel = Auth::user()->ordem;
-        $pin = Meta::where("ordem", $nivel)->first();
-    } else {
-        $nivel = Auth::user()->ordem;
-        $pin = Meta::where("ordem", $nivel)->first();
-        $busca = Auth::user()->ordem + 1;
-        $proximo = Meta::where("ordem", $busca)->first();
 
-        //dd($pin);
-    }
+
+
+
+    $buscas = Valorindicacao::where('user_id', Auth::user()->id)->get();
+    $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
+
+
     if (Auth::user()->tipo != 0) {
         return redirect(url('admin/dashboard'));
     }
 
-    return view('novodash.index', compact('planos', 'pin', 'indicados', 'users', 'proximo'));
+    return view('novodash.index', compact('planos',  'indicados', 'users', 'reward','buscas'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('teste', function () {
@@ -177,7 +174,7 @@ Route::post('registerindicado', function (Request $request) {
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'confirmed'],
-        'cpf'=>['cpf','required'],
+        'cpf' => ['cpf', 'required'],
         'telefone' => ['required'],
 
 
@@ -189,7 +186,7 @@ Route::post('registerindicado', function (Request $request) {
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
-        'cpf'=> $request->cpf,
+        'cpf' => $request->cpf,
         'password' => Hash::make($request->password),
         'telefone' => $request->telefone,
         'link' => md5($request->email),
@@ -257,8 +254,6 @@ Route::get('primeiro', function () {
     }
 
 
-
-
     $primeiros = User::whereIn("quem", $direto)->pluck('link');
     if (count($primeiros) > 0) {
         $segundos = User::whereIn("quem", $primeiros)->get();
@@ -290,7 +285,6 @@ Route::get('segundo', function () {
     } else {
         $indicados = [];
     }
-
 
 
     // dd($indicados);
@@ -382,7 +376,7 @@ Route::get('carryout/withdrawal', function () {
     //  $valor = Auth::user()->sobra;
 
     $buscas = Valorredimento::where("user_id", Auth::user()->id)->get();
-    $total =  $buscas->sum('valor');
+    $total = $buscas->sum('valor');
 
     if ($total > 25) {
         $valores =
@@ -414,7 +408,7 @@ Route::get('carryout/withdrawal/squad', function () {
     //  $valor = Auth::user()->sobra;
 
     $buscas = Valorindicacao::where("user_id", Auth::user()->id)->get();
-    $total =  $buscas->sum('valor');
+    $total = $buscas->sum('valor');
 
     if ($total > 25) {
         $valores =
@@ -718,7 +712,7 @@ Route::get('cliente/pagarplano/{id}', function ($id) {
 
         $clientenovo = $cliente;
     } else {
-        $clientenovo =  $cliente->data[0]->id;
+        $clientenovo = $cliente->data[0]->id;
     }
 
     //dd($cliente);
@@ -727,19 +721,18 @@ Route::get('cliente/pagarplano/{id}', function ($id) {
 
 
         $dadosCobranca = array(
-            'customer'             => $clientenovo,
-            'billingType'          => 'UNDEFINED',
-            'value'                => $assinatura->valor,
-            'dueDate'              => Carbon::now()->format('Y-m-d'),
-            'description'          => $assinatura->plano->name . ' ' . "Pagamento referente ao mês de " . Carbon::create($assinatura->inicio)->monthName,
-            'externalReference'    => '',
-            'installmentCount'     => '',
-            'installmentValue'     => '',
-            'discount'             => '',
-            'interest'             => '',
-            'fine'                 => '',
+            'customer' => $clientenovo,
+            'billingType' => 'UNDEFINED',
+            'value' => $assinatura->valor,
+            'dueDate' => Carbon::now()->format('Y-m-d'),
+            'description' => $assinatura->plano->name . ' ' . "Pagamento referente ao mês de " . Carbon::create($assinatura->inicio)->monthName,
+            'externalReference' => '',
+            'installmentCount' => '',
+            'installmentValue' => '',
+            'discount' => '',
+            'interest' => '',
+            'fine' => '',
         );
-
 
 
         $cobranca = $asaas->Cobranca()->create($dadosCobranca);
@@ -854,7 +847,7 @@ Route::get('admin/rendimento/cancelar/saque/{id}', function ($id) {
     $dados = [
         'tipo' => 0,
         'descricao' => "cancel withdraw",
-        'valor' =>  $saque->valor,
+        'valor' => $saque->valor,
         'user_id' => Auth::user()->id
     ];
 
@@ -918,17 +911,17 @@ Route::get('testecliente', function () {
     }
 
     $dadosCobranca = array(
-        'customer'             => $cliente->data[0]->id,
-        'billingType'          => "UNDEFINED",
-        'value'                => 50,
-        'dueDate'              => "2022-01-24",
-        'description'          => "Qualquer livro por apenas R$: 50,00",
-        'externalReference'    => '',
-        'installmentCount'     => '',
-        'installmentValue'     => '',
-        'discount'             => '',
-        'interest'             => '',
-        'fine'                 => '',
+        'customer' => $cliente->data[0]->id,
+        'billingType' => "UNDEFINED",
+        'value' => 50,
+        'dueDate' => "2022-01-24",
+        'description' => "Qualquer livro por apenas R$: 50,00",
+        'externalReference' => '',
+        'installmentCount' => '',
+        'installmentValue' => '',
+        'discount' => '',
+        'interest' => '',
+        'fine' => '',
     );
 
     $cobranca = $asaas->Cobranca()->getById('pay_4489705199214310');
@@ -938,7 +931,6 @@ Route::get('testecliente', function () {
 
 Route::get('atualizarfaturas', function () {
     $faturas = Assinatura::where('buscador', "!=", 'NULL')->get();
-
 
 
     foreach ($faturas as $fatura) {
@@ -964,7 +956,6 @@ Route::get('atualizarfaturas', function () {
                 ];
                 Caixa::create($grava);
             }
-
 
 
             if (!empty($fatura->user->quem)) {
@@ -1121,7 +1112,6 @@ Route::get('pagar/rendimento/saque/{id}', function ($id) {
 });
 
 
-
 Route::get('admin/saque/ativos', function () {
     $tipo = 'de Rendimentos';
     //  $saques = \App\Models\Saque::where('status', 1)->get();
@@ -1224,7 +1214,7 @@ Route::get('upgrade/{id}', function ($id) {
             }
         }
     } else {
-        $naobuscar =  Auth::user()->assinaturas->where('status', 1)->where('unico', 1)->first();
+        $naobuscar = Auth::user()->assinaturas->where('status', 1)->where('unico', 1)->first();
 
         $assinaturas = Auth::user()->assinaturas->where('status', 1)->whereNotIn('id', $naobuscar->id);
         // dd(count($assinaturas));
@@ -1415,8 +1405,6 @@ Route::get('gerarelatorio', function () {
 })->middleware(['auth']);
 
 
-
-
 Route::get('add-to-log', function () {
     HelpersLogActivity::addToLog('My Testing Add To Log.');
     dd('log insert successfully.');
@@ -1458,7 +1446,7 @@ Route::get('pagamento/unico', function () {
 
         $clientenovo = $cliente;
     } else {
-        $clientenovo =  $cliente->data[0]->id;
+        $clientenovo = $cliente->data[0]->id;
     }
     $saldo = Auth::user()->creditos->sum('valor');
     $emaberto = Auth::user()->abertas()->sum('valor');
@@ -1485,14 +1473,14 @@ Route::get('pagamento/unico', function () {
         ]; */
         if ($saldo > 0) {
             $grava2 = [
-                'valor' =>  $emaberto,
+                'valor' => $emaberto,
                 'user_id' => Auth::user()->id,
                 'plano_id' => $ultimo->plano->id,
 
             ];
         } else {
             $grava2 = [
-                'valor' =>  $valor,
+                'valor' => $valor,
                 'user_id' => Auth::user()->id,
                 'plano_id' => $ultimo->plano->id,
 
@@ -1500,10 +1488,7 @@ Route::get('pagamento/unico', function () {
         }
 
 
-
-
-
-        $busca =  Credito::create($grava2);
+        $busca = Credito::create($grava2);
     }
 
 
@@ -1511,19 +1496,18 @@ Route::get('pagamento/unico', function () {
 
 
         $dadosCobranca = array(
-            'customer'             => $clientenovo,
-            'billingType'          => 'UNDEFINED',
-            'value'                => $emaberto,
-            'dueDate'              => Carbon::now()->format('Y-m-d'),
-            'description'          => $busca->user->name . ' ' . "Pagamento Unico",
-            'externalReference'    => '',
-            'installmentCount'     => '',
-            'installmentValue'     => '',
-            'discount'             => '',
-            'interest'             => '',
-            'fine'                 => '',
+            'customer' => $clientenovo,
+            'billingType' => 'UNDEFINED',
+            'value' => $emaberto,
+            'dueDate' => Carbon::now()->format('Y-m-d'),
+            'description' => $busca->user->name . ' ' . "Pagamento Unico",
+            'externalReference' => '',
+            'installmentCount' => '',
+            'installmentValue' => '',
+            'discount' => '',
+            'interest' => '',
+            'fine' => '',
         );
-
 
 
         $cobranca = $asaas->Cobranca()->create($dadosCobranca);
@@ -1589,7 +1573,6 @@ Route::post('docs/create', function (Request $request) {
 
 
 Route::get('bitbit', function () {
-
 
 
     // dd($imagem);
@@ -1737,7 +1720,6 @@ Route::get('corrigefaturas', function () {
                         //dd($planolast->plano->direto);
 
 
-
                         if (!empty($planolast1)) {
 
                             if (count($aberta->user->assinaturas->where("status", 1)) > 1) {
@@ -1745,12 +1727,12 @@ Route::get('corrigefaturas', function () {
                                     'user_id' => $primeiro->id,
                                     'indicado_id' => $aberta->user->id,
                                     'pontos' => $plano->pontos,
-                                    'saldo' => ($plano->valor - ($plano->valor * ((100 -  $planolast1->plano->primeiro) / 100)))
+                                    'saldo' => ($plano->valor - ($plano->valor * ((100 - $planolast1->plano->primeiro) / 100)))
                                 ];
                                 $dados1 = [
                                     'tipo' => 0,
                                     'descricao' => 'bonus ref. login ' . $aberta->user->name . ' Primeiro Nivel ' . $plano->name,
-                                    'valor' => ($plano->valor - ($plano->valor * ((100 -  $planolast1->plano->primeiro) / 100))),
+                                    'valor' => ($plano->valor - ($plano->valor * ((100 - $planolast1->plano->primeiro) / 100))),
                                     'user_id' => $primeiro->id
                                 ];
                             } else {
@@ -1793,13 +1775,13 @@ Route::get('corrigefaturas', function () {
                                         'user_id' => $segundo->id,
                                         'indicado_id' => $aberta->user->id,
                                         'pontos' => $plano->pontos,
-                                        'saldo' => ($plano->valor - ($plano->valor * ((100 -  $planolast2->plano->segundo) / 100)))
+                                        'saldo' => ($plano->valor - ($plano->valor * ((100 - $planolast2->plano->segundo) / 100)))
                                     ];
 
                                     $dados2 = [
                                         'tipo' => 0,
                                         'descricao' => 'bonus ref. login ' . $aberta->user->name . ' Segundo Nivel ' . $plano->name,
-                                        'valor' => ($plano->valor - ($plano->valor * ((100 -  $planolast2->plano->segundo) / 100))),
+                                        'valor' => ($plano->valor - ($plano->valor * ((100 - $planolast2->plano->segundo) / 100))),
                                         'user_id' => $segundo->id
                                     ];
                                 } else {
@@ -1840,12 +1822,12 @@ Route::get('corrigefaturas', function () {
                                             'user_id' => $terceiro->id,
                                             'indicado_id' => $aberta->user->id,
                                             'pontos' => $plano->pontos,
-                                            'saldo' => ($plano->valor - ($plano->valor * ((100 -  $planolast3->plano->terceiro) / 100)))
+                                            'saldo' => ($plano->valor - ($plano->valor * ((100 - $planolast3->plano->terceiro) / 100)))
                                         ];
                                         $dados3 = [
                                             'tipo' => 0,
                                             'descricao' => 'bonus ref. login ' . $aberta->user->name . ' Terceiro Nivel ' . $plano->name,
-                                            'valor' => ($plano->valor - ($plano->valor * ((100 -  $planolast3->plano->terceiro) / 100))),
+                                            'valor' => ($plano->valor - ($plano->valor * ((100 - $planolast3->plano->terceiro) / 100))),
                                             'user_id' => $terceiro->id
                                         ];
                                     } else {
@@ -1862,7 +1844,6 @@ Route::get('corrigefaturas', function () {
                                             'user_id' => $terceiro->id
                                         ];
                                     }
-
 
 
                                     \App\Models\Movimento::create($dados3);
@@ -1882,7 +1863,6 @@ Route::get('corrigefaturas', function () {
         }
     }
 });
-
 
 
 Route::get('cliente/pagarcredito/{id}', function ($id) {
@@ -1917,7 +1897,7 @@ Route::get('cliente/pagarcredito/{id}', function ($id) {
 
         $clientenovo = $cliente;
     } else {
-        $clientenovo =  $cliente->data[0]->id;
+        $clientenovo = $cliente->data[0]->id;
     }
 
     //dd($cliente);
@@ -1926,19 +1906,18 @@ Route::get('cliente/pagarcredito/{id}', function ($id) {
 
 
         $dadosCobranca = array(
-            'customer'             => $clientenovo,
-            'billingType'          => 'UNDEFINED',
-            'value'                => $assinatura->valor,
-            'dueDate'              => Carbon::now()->format('Y-m-d'),
-            'description'          => $assinatura->plano->name . ' ' . "Pagamento referente ao mês de " . Carbon::create($assinatura->inicio)->monthName,
-            'externalReference'    => '',
-            'installmentCount'     => '',
-            'installmentValue'     => '',
-            'discount'             => '',
-            'interest'             => '',
-            'fine'                 => '',
+            'customer' => $clientenovo,
+            'billingType' => 'UNDEFINED',
+            'value' => $assinatura->valor,
+            'dueDate' => Carbon::now()->format('Y-m-d'),
+            'description' => $assinatura->plano->name . ' ' . "Pagamento referente ao mês de " . Carbon::create($assinatura->inicio)->monthName,
+            'externalReference' => '',
+            'installmentCount' => '',
+            'installmentValue' => '',
+            'discount' => '',
+            'interest' => '',
+            'fine' => '',
         );
-
 
 
         $cobranca = $asaas->Cobranca()->create($dadosCobranca);
@@ -2047,7 +2026,7 @@ Route::get('admin/produto/caddoc/{id}', function ($id) {
 });
 
 Route::get('admin/produto/delete/{id}', function ($id) {
-    $produto  = Produto::find($id);
+    $produto = Produto::find($id);
 
     //dd($produto);
 
@@ -2150,9 +2129,6 @@ Route::get('gerarfaturamensal/{user_id}/plano/{plano_id}', function ($user_id, $
     //dd(count(Auth::user()->assinaturas));
 
 
-
-
-
     //dd($plano);
 
     $hoje = Carbon::now();
@@ -2197,9 +2173,6 @@ Route::get('gerarfaturaunica/{user_id}/plano/{plano_id}', function ($user_id, $p
     $plano = Plano::find($plano_id);
 
     //dd(count(Auth::user()->assinaturas));
-
-
-
 
 
     //dd($plano);
@@ -2276,7 +2249,7 @@ Route::get('gerarpagamentomensal/{id}', function ($id) {
 
         $clientenovo = $cliente;
     } else {
-        $clientenovo =  $cliente->data[0]->id;
+        $clientenovo = $cliente->data[0]->id;
     }
 
     //dd($cliente);
@@ -2285,19 +2258,18 @@ Route::get('gerarpagamentomensal/{id}', function ($id) {
 
 
         $dadosCobranca = array(
-            'customer'             => $clientenovo,
-            'billingType'          => 'UNDEFINED',
-            'value'                => $assinatura->valor,
-            'dueDate'              => Carbon::now()->format('Y-m-d'),
-            'description'          => $assinatura->plano->name . ' ' . "Pagamento referente ao mês de " . Carbon::create($assinatura->inicio)->monthName,
-            'externalReference'    => '',
-            'installmentCount'     => '',
-            'installmentValue'     => '',
-            'discount'             => '',
-            'interest'             => '',
-            'fine'                 => '',
+            'customer' => $clientenovo,
+            'billingType' => 'UNDEFINED',
+            'value' => $assinatura->valor,
+            'dueDate' => Carbon::now()->format('Y-m-d'),
+            'description' => $assinatura->plano->name . ' ' . "Pagamento referente ao mês de " . Carbon::create($assinatura->inicio)->monthName,
+            'externalReference' => '',
+            'installmentCount' => '',
+            'installmentValue' => '',
+            'discount' => '',
+            'interest' => '',
+            'fine' => '',
         );
-
 
 
         $cobranca = $asaas->Cobranca()->create($dadosCobranca);
@@ -2350,7 +2322,7 @@ Route::get('gerarpagamentoanual/{id}', function ($id) {
 
         $clientenovo = $cliente;
     } else {
-        $clientenovo =  $cliente->data[0]->id;
+        $clientenovo = $cliente->data[0]->id;
     }
     $saldo = $user->creditos->sum('valor');
     $emaberto = $user->abertas()->sum('valor');
@@ -2377,14 +2349,14 @@ Route::get('gerarpagamentoanual/{id}', function ($id) {
         ]; */
         if ($saldo > 0) {
             $grava2 = [
-                'valor' =>  $emaberto,
+                'valor' => $emaberto,
                 'user_id' => $user->id,
                 'plano_id' => $ultimo->plano->id,
 
             ];
         } else {
             $grava2 = [
-                'valor' =>  $valor,
+                'valor' => $valor,
                 'user_id' => $user->id,
                 'plano_id' => $ultimo->plano->id,
 
@@ -2392,10 +2364,7 @@ Route::get('gerarpagamentoanual/{id}', function ($id) {
         }
 
 
-
-
-
-        $busca =  Credito::create($grava2);
+        $busca = Credito::create($grava2);
     }
 
 
@@ -2403,19 +2372,18 @@ Route::get('gerarpagamentoanual/{id}', function ($id) {
 
 
         $dadosCobranca = array(
-            'customer'             => $clientenovo,
-            'billingType'          => 'UNDEFINED',
-            'value'                => $emaberto,
-            'dueDate'              => Carbon::now()->format('Y-m-d'),
-            'description'          => $busca->user->name . ' ' . "Pagamento Unico",
-            'externalReference'    => '',
-            'installmentCount'     => '',
-            'installmentValue'     => '',
-            'discount'             => '',
-            'interest'             => '',
-            'fine'                 => '',
+            'customer' => $clientenovo,
+            'billingType' => 'UNDEFINED',
+            'value' => $emaberto,
+            'dueDate' => Carbon::now()->format('Y-m-d'),
+            'description' => $busca->user->name . ' ' . "Pagamento Unico",
+            'externalReference' => '',
+            'installmentCount' => '',
+            'installmentValue' => '',
+            'discount' => '',
+            'interest' => '',
+            'fine' => '',
         );
-
 
 
         $cobranca = $asaas->Cobranca()->create($dadosCobranca);
@@ -2460,6 +2428,7 @@ Route::get('cancelship/{id}', function ($id) {
 
 Route::get('getupship/{id}', function ($id) {
     $compra = Compra::find($id);
+    //dd($compra->rendimentos);
 
     $busca = [
         'user_id' => Auth::user()->id,
@@ -2468,21 +2437,26 @@ Route::get('getupship/{id}', function ($id) {
     ];
 
 
-    $rentabilidade = $compra->plano->valor * 0.10;
+    if (count($compra->rendimentos) != 5) {
 
-    $dados = [
-        'tipo' => 0,
-        'descricao' => "Redimento do carro " . $compra->plano->name,
-        'valor' =>  $rentabilidade,
-        'user_id' => Auth::user()->id
-    ];
+        $rentabilidade = $compra->plano->valor * 0.10;
+
+        $dados = [
+            'tipo' => 0,
+            'descricao' => "Redimento do carro " . $compra->plano->name,
+            'valor' => $rentabilidade,
+            'user_id' => Auth::user()->id
+        ];
 
 
+        \App\Models\Valorredimento::create($dados);
+        Batalha::create($busca);
 
-    \App\Models\Valorredimento::create($dados);
-    Batalha::create($busca);
+    }
     //dd($plano);
-
+    if (count($compra->rendimentos) == 5) {
+        $compra->update(['status' => 2]);
+    }
     return redirect()->back();
 })->middleware(['auth']);
 
@@ -2528,8 +2502,6 @@ Route::get('player/payment/{id}', function ($id) {
     $compra = Compra::find($id);
 
 
-
-
     return view('compra.index', compact(
         'compra',
 
@@ -2560,43 +2532,12 @@ Route::post('payment/origin', function (Request $request) {
     // dd($compra);
 })->middleware(['auth']);
 
-Route::get('gerarpix/{id}',function ($id, \App\Services\PaymentServices $paymentServices){
+Route::get('gerarpix/{id}', function ($id, \App\Services\PaymentServices $paymentServices) {
 
     $compra = Compra::find($id);
 
 //dd($payment);
-    if (!$compra->asaas_link){
-
-        $custumer_id = ($paymentServices->verifyCustumer(Auth::user()));
-
-       // dd($custumer_id);
-
-      //  dd($compra);
-        $payment = $paymentServices->createPaymentBoleto($custumer_id, $compra);
-
-       // dd($payment);
-
-
-        $compra->fill(['asaas_link'=>$payment->invoiceUrl]);
-        $compra->fill(['buscador'=>$payment->id]);
-
-        $compra->save();
-
-    }
-
-
-
-
-    return redirect($compra->asaas_link);
-
-});
-
-Route::get('geraroix2/{id}',function ($id, \App\Services\PaymentServices $paymentServices){
-
-    $compra = Compra::find($id);
-
-//dd($payment);
-    if (!$compra->asaas_link){
+    if (!$compra->asaas_link) {
 
         $custumer_id = ($paymentServices->verifyCustumer(Auth::user()));
 
@@ -2608,21 +2549,48 @@ Route::get('geraroix2/{id}',function ($id, \App\Services\PaymentServices $paymen
         // dd($payment);
 
 
-        $compra->fill(['asaas_link'=>$payment->invoiceUrl]);
-        $compra->fill(['buscador'=>$payment->id]);
+        $compra->fill(['asaas_link' => $payment->invoiceUrl]);
+        $compra->fill(['buscador' => $payment->id]);
 
         $compra->save();
 
     }
 
 
-$paymentServices->createPaymentPix($compra);
-
     return redirect($compra->asaas_link);
 
 });
 
+Route::get('geraroix2/{id}', function ($id, \App\Services\PaymentServices $paymentServices) {
 
+    $compra = Compra::find($id);
+
+//dd($payment);
+    if (!$compra->asaas_link) {
+
+        $custumer_id = ($paymentServices->verifyCustumer(Auth::user()));
+
+        // dd($custumer_id);
+
+        //  dd($compra);
+        $payment = $paymentServices->createPaymentBoleto($custumer_id, $compra);
+
+        // dd($payment);
+
+
+        $compra->fill(['asaas_link' => $payment->invoiceUrl]);
+        $compra->fill(['buscador' => $payment->id]);
+
+        $compra->save();
+
+    }
+
+
+    $paymentServices->createPaymentPix($compra);
+
+    return redirect($compra->asaas_link);
+
+});
 
 
 Route::get('final/ship/{id}', function ($id) {
@@ -2692,7 +2660,6 @@ Route::post('suport/reply', function (Request $request) {
     return redirect()->back()
         ->with('success', 'Reply');
 })->middleware(['auth']);
-
 
 
 /*  Route::get('novoteste', function (AcaoController $acaoController) {
@@ -2804,11 +2771,9 @@ Route::get('corrigetudo', function () {
 });
 
 
-
 Route::get('gerarsaque', function () {
     $users = User::all();
     // $valor = Auth::user()->sobra;
-
 
 
     //dd($pontuacao);
@@ -2823,8 +2788,6 @@ Route::get('gerarsaque', function () {
                     'status' => 0,
                     'user_id' => Auth::user()->id
                 ];
-
-
 
 
             $dados = [
@@ -2902,8 +2865,6 @@ Route::get('geratudo', function (AcaoController $acaoController) {
         //dd($fatura);
 
 
-
-
         // $cobranca = $fatura->consultahash();
 
 
@@ -2946,12 +2907,11 @@ Route::get('geratudo', function (AcaoController $acaoController) {
 });
 
 
-
 Route::get('atualizarfaturas', function (AcaoController $acaoController) {
-    $faturas = Compra::where('buscador', "!=", 'NULL')->where('status',0)->get();
+    $faturas = Compra::where('buscador', "!=", 'NULL')->where('status', 0)->get();
 
 
-   // dd($faturas);
+    // dd($faturas);
 
     foreach ($faturas as $fatura) {
         $asaas = new \CodePhix\Asaas\Asaas('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDI4MzY6OiRhYWNoXzI2ZWQ3NTZlLTk1NTktNGMwMS05ZDZlLTI1NGZhYjdlYjY4Mg==', 'homologacao');
@@ -2959,9 +2919,9 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController) {
 
         //dd($cobranca);
 
-        if ($cobranca->status == 'CONFIRMED'||$cobranca->status == 'RECEIVED') {
+        if ($cobranca->status == 'CONFIRMED' || $cobranca->status == 'RECEIVED') {
 
-             //dd($fatura);
+            //dd($fatura);
 
 
             if ($fatura->status == 0) {
@@ -2970,8 +2930,8 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController) {
                         'tipo' => $cobranca->billingType,
                         'status' => 1,
                         'ativo' => 1,
-                        'dia_pagamento'=>Carbon::now(),
-                        'valor'=>$fatura->plano->valor
+                        'dia_pagamento' => Carbon::now(),
+                        'valor' => $fatura->plano->valor
 
                     ]);
                 $fatura->save();
@@ -2997,7 +2957,6 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController) {
 
                 $direto = $acaoController->calculorenda($fatura, 1);
             }
-
 
 
         }

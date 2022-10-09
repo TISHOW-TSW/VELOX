@@ -37,9 +37,9 @@ class Compra extends Model
     public function getAtivoFormatedAttribute()
     {
         if ($this->ativo == 0) {
-            return 'PENDING';
+            return 'PENDENTE';
         } else {
-            return 'PAY';
+            return 'ATIVO';
         }
     }
 
@@ -69,6 +69,7 @@ class Compra extends Model
             return 2;
         }
     }
+
     public function campanha2()
     {
         $batalha = Batalha::where('user_id', $this->attributes['user_id'])->where('compra_id', $this->attributes['id'])->orderBy('created_at', 'desc')->first();
@@ -155,7 +156,7 @@ class Compra extends Model
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>  '{
+            CURLOPT_POSTFIELDS => '{
                 "price_amount": ' . $ship->plano->valor . ',
                 "price_currency": "usd",
                 "pay_currency": "' . $busca . '",
@@ -210,6 +211,12 @@ class Compra extends Model
     public function somas()
     {
         return $this->hasMany(Soma::class);
+    }
+
+
+    public function rendimentos()
+    {
+        return $this->hasMany(Batalha::class,'compra_id','id');
     }
 
     public function consultahash2()

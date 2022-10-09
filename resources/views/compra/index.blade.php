@@ -9,7 +9,7 @@
         .caixa {
             border-radius: 15px;
 
-            background-color: rgba(233, 0, 0,0.4);
+            background-color: rgba(233, 0, 0, 0.4);
             color: white
         }
 
@@ -67,7 +67,6 @@
     <div class="container">
 
 
-
     </div>
 
     <div class="container">
@@ -79,13 +78,11 @@
 
                             <h3 style="color: white" class="d-inline-block d-sm-none">{{ $compra->plano->name }}</h3>
                             <div class="col-12">
-                                <img class="img img-responsive" src="{{ "https://nftcash.sfo3.digitaloceanspaces.com/". $compra->plano->img }}"
-                                    class="product-image" alt="Product Image">
+                                <img class="img img-responsive"
+                                     src="{{ "https://nftcash.sfo3.digitaloceanspaces.com/". $compra->plano->img }}"
+                                     class="product-image" alt="Product Image">
 
                             </div>
-
-
-
 
 
                         </div>
@@ -109,33 +106,23 @@
                         </center>
                         <h2>Selecionar Metodo de Pagamento</h2>
                         <a target="_blank" href="{{url('gerarpix',$compra->id)}}" class="btn intas">
-                            PIX/CREDITO
+                            CREDITO
                         </a>
-                        <br>
-                        <br>
+                        <a target="_blank" href="{{url('geraroix2',$compra->id)}}" class="btn intas">
+                            PIX
+                        </a>
 
                         <br>
                         <br>
 
                         <br>
+                        <br>
 
-
-
-
-
-
-
+                        <br>
 
 
                     </div>
                 </div>
-
-
-
-
-
-
-
 
 
             </div>
@@ -152,8 +139,6 @@
             document.getElementById('sel' + ship).style.backgroundColor = '#055863';
             $('input[name="moeda"]').attr('value', ship);
             // calculate percent of progress per second
-
-
 
 
         }
