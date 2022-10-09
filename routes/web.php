@@ -173,6 +173,7 @@ Route::post('registerindicado', function (Request $request) {
     $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'login' => ['required', 'string', 'unique:users'],
         'password' => ['required', 'confirmed'],
         'cpf' => ['cpf', 'required'],
         'telefone' => ['required'],
@@ -185,6 +186,7 @@ Route::post('registerindicado', function (Request $request) {
 
     $user = User::create([
         'name' => $request->name,
+        'login' => $request->login,
         'email' => $request->email,
         'cpf' => $request->cpf,
         'password' => Hash::make($request->password),
