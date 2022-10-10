@@ -828,8 +828,9 @@ Route::get('admin/saque', function () {
     $tipo = 'de Rendimento';
     $saques = Saquerendimento::all();
     $saqueindicaos = Saqueindica::all();
+    $saquesRaiz = \App\Models\Saqueraiz::all();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos'));
+    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz'));
 })->middleware(['auth']);
 
 
