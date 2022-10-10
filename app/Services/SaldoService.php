@@ -11,7 +11,7 @@ class SaldoService
     public function createSaldoRaiz(Compra $compra)
     {
         $saldoRaiz = SaldoRaiz::create([
-            'valor' => $compra->produto->valor,
+            'valor' => $compra->plano->valor,
             'user_id' => $compra->user_id,
             'compra_id' => $compra->id
         ]);
