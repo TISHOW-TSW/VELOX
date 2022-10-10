@@ -184,7 +184,7 @@
 
 
          style="
-              background-image: url('{{ asset('fundo2.jpeg')}}');
+              background-image: url('{{ asset('fundo2.png')}}');
 
 
 
