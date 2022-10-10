@@ -108,9 +108,9 @@
                         <a target="_blank" href="{{url('gerarpix',$compra->id)}}" class="btn intas">
                             CREDITO
                         </a>
-                        <a target="_blank" href="{{url('geraroix2',$compra->id)}}" class="btn intas">
+                        <button data-toggle="modal" data-target="#myModal"  class="btn intas">
                             PIX
-                        </a>
+                        </button>
 
                         <br>
                         <br>
@@ -126,6 +126,27 @@
 
 
             </div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 style="color: #0a0a0a" class="modal-title">PIX</h4>
+                </div>
+                <div class="modal-body">
+                    <iframe src="{{url('geraroix2',$compra->id)}}" width="100%" height="500" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
+                            allowtransparency="true"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection

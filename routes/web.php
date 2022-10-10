@@ -949,7 +949,7 @@ Route::get('atualizarfaturas', function () {
                     'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
                     'valor' => $fatura->plano->valor,
                     'tipo' => 1,
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $fatura->user->id,
                 ];
                 Caixa::create($grava);
             }
@@ -2501,6 +2501,8 @@ Route::get('player/payment/{id}', function ($id) {
     $compra = Compra::find($id);
 
 
+
+
     return view('compra.index', compact(
         'compra',
 
@@ -2585,9 +2587,14 @@ Route::get('geraroix2/{id}', function ($id, \App\Services\PaymentServices $payme
     }
 
 
-    $paymentServices->createPaymentPix($compra);
+   $pix =  $paymentServices->createPaymentPix($compra);
 
-    return redirect($compra->asaas_link);
+
+  //inde dd($pix);
+
+    //return redirect($compra->asaas_link);
+
+    return view('cliente.faturas.pix',compact('pix'));
 
 });
 
@@ -2906,7 +2913,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
 });
 
 
-Route::get('atualizarfaturas', function (AcaoController $acaoController) {
+Route::get('atualizarfaturas', function (AcaoController $acaoController, \App\Services\SaldoService $saldoService) {
     $faturas = Compra::where('buscador', "!=", 'NULL')->where('status', 0)->get();
 
 
@@ -2934,6 +2941,10 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController) {
 
                     ]);
                 $fatura->save();
+
+
+                $saldoService->createSaldoRaiz($fatura);
+
 
                 $grava = [
                     'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
