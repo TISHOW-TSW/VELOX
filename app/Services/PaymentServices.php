@@ -15,7 +15,7 @@ class PaymentServices
 
     public function __construct()
     {
-        $asaas = new Asaas('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDI4MzY6OiRhYWNoXzI2ZWQ3NTZlLTk1NTktNGMwMS05ZDZlLTI1NGZhYjdlYjY4Mg==', 'homologacao');
+        $asaas = new Asaas('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAyMTc4NzA6OiRhYWNoXzRmOWRmMjE4LTMzMGQtNDc1OC04ODFlLTA0YTU1NTA4ZDMyOQ==', 'production');
         $this->asaas = $asaas;
 
     }
@@ -24,7 +24,7 @@ class PaymentServices
     {
 
 
-        $connection = new Connection('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDI4MzY6OiRhYWNoXzI2ZWQ3NTZlLTk1NTktNGMwMS05ZDZlLTI1NGZhYjdlYjY4Mg==', 'homologacao');
+        $connection = new Connection('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAyMTc4NzA6OiRhYWNoXzRmOWRmMjE4LTMzMGQtNDc1OC04ODFlLTA0YTU1NTA4ZDMyOQ==', 'production');
         $this->asaas->http = $connection;
         //$cliente = $this->asaas->Cliente()->getByCpf($user->cpf);
         $option = '?cpfCnpj=' . $user->cpf;
