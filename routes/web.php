@@ -829,8 +829,9 @@ Route::get('admin/saque', function () {
     $saques = Saquerendimento::all();
     $saqueindicaos = Saqueindica::all();
     $saquesRaiz = \App\Models\Saqueraiz::all();
+    $saquesCancelamento = \App\Models\Saquecancelamento::all();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz'));
+    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
 })->middleware(['auth']);
 
 
@@ -3073,5 +3074,47 @@ Route::post('saqueraiz', function(Request $request, \App\Services\SaldoService $
     return redirect()->back()->with('success', 'Saque de raiz solicitado com sucesso');
 });
 
+Route::get('cancelar/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService) {
+    $fatura = $compra;
+    $valor = $saldoService->valorCancelamento($fatura->saldoRaiz);
+    if($valor < 0) $valor = 0;
+
+    return view('cliente.saque.cancelamento',compact('fatura', 'valor'));
+});
+
+Route::post('cancelarraiz', function(Request $request, \App\Services\SaldoService $saldoService){
+    if($request->valor == 0){
+        return redirect()->back()->with('Error', 'Saldo indisponível para saque');
+    }
+
+    if($request->meio_saque == null){
+        return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
+    }
+
+    $compra = Compra::find($request->compra_id);
+
+    $saldoService->cancelamento($compra->saldoRaiz);
+
+
+    $grava = [
+        'descricao' => 'Saque de cancelamento no valor de R$'.$request->valor.',00',
+        'valor' => $request->valor,
+        'tipo' => 2,
+        'user_id' => Auth::user()->id,
+    ];
+    Caixa::create($grava);
+
+    \App\Models\Saquecancelamento::create([
+        'valor' => $request->valor,
+        'data' => Carbon::now(),
+        'status' => 0,
+        'user_id' => Auth::user()->id,
+        'meio_saque' => $request->meio_saque,
+    ]);
+
+
+
+    return redirect()->back()->with('success', 'Saque de cancelamento solicitado com sucesso');
+});
 
 require __DIR__ . '/auth.php';

@@ -47,14 +47,20 @@ class SaldoService
         $saldoRaiz->saldoRendimento->update();
     }
 
+    public function valorCancelamento(SaldoRaiz $saldoRaiz)
+    {
+        $valor = (($saldoRaiz->valor * 77)/100) - $saldoRaiz->saldoRendimento->saque_rendimento;
+        return $valor;
+    }
+
     public function cancelamento(SaldoRaiz $saldoRaiz)
     {
-        $valor = (($saldoRaiz->valor * 77)/100) - $saldoRaiz->saldoRendimento()->saque_rendimento;
+        $valor = (($saldoRaiz->valor * 77)/100) - $saldoRaiz->saldoRendimento->saque_rendimento;
         $saldoRaiz->valor = 0.00;
         $saldoRaiz->update();
         $saldoRaiz->saldoRendimento->valor = 0.00;
         $saldoRaiz->saldoRendimento->update();
-        return $valor;
+        $valor = (($saldoRaiz->valor * 77)/100) - $saldoRaiz->saldoRendimento->saque_rendimento;
     }
 
 

@@ -162,6 +162,55 @@
 
             </div>
         </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">Saques Cancelamentos</h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Valor a receber</th>
+                            <th>Status</th>
+                            <th>Solicitado em</th>
+                            <th>Limite de Pagamento</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        @forelse($saquesCancelamento as $saque)
+                            <tr>
+                                <td>{{ $saque->id }}</td>
+                                <td>{{ $saque->user->name }}
+                                <td>$ {{ $saque->valor }}</td>
+                                <td>{{ $saque->status_formated }}</td>
+                                <td>{{ $saque->created_at->format('d-m-Y') }}</td>
+                                <td>{{ $saque->created_at->addDays(2)->format('d-m-Y') }}</td>
+                                <td>
+                                    @if ($saque->status == 0)
+                                        <a class="btn btn-primary"
+                                           href="{{ url('admin/rendimento/visualizar/saque', $saque->id) }}">Visualizar</a>
+
+                                        <a class="btn btn-danger"
+                                           href="{{ url('admin/rendimento/cancelar/saque', $saque->id) }}">Cancelar</a>
+                                    @else
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                        @endforelse
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
     </div>
 @endsection
 @section('js')
