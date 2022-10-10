@@ -211,7 +211,7 @@ Route::get('player', function () {
 
     //dd($direto);
 
-
+    $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
 
     $primeiros = User::where("quem", Auth::user()->link)->get();
 
@@ -232,7 +232,7 @@ Route::get('player', function () {
 
 
 
-    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros'));
+    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros','reward'));
 })->middleware(['auth']);
 
 Route::get('primeiro', function () {
@@ -400,14 +400,17 @@ Route::get('carryout/withdrawal', function () {
 
     return redirect()->back();
 })->middleware(['auth']);
-Route::get('carryout/withdrawal/squad', function () {
+Route::post('carryout/withdrawal/squad', function (Request $request) {
 
+   // dd($request->all());
     //  $valor = Auth::user()->sobra;
 
     $buscas = Valorindicacao::where("user_id", Auth::user()->id)->get();
     $total = $buscas->sum('valor');
 
-    if ($total > 25) {
+    //dd($total);
+
+    if ($total > 20) {
         $valores =
             [
                 'valor' => -$buscas->sum('valor'),
@@ -420,7 +423,7 @@ Route::get('carryout/withdrawal/squad', function () {
 
         $dados = [
             'tipo' => 1,
-            'descricao' => 'withdrawal ref. bonus',
+            'descricao' => 'Saque Referentea ao meu time',
             'valor' => -$buscas->sum('valor'),
             'user_id' => Auth::user()->id
         ];
@@ -429,14 +432,16 @@ Route::get('carryout/withdrawal/squad', function () {
         Saqueindica::create([
             'data' => Carbon::now(),
             'valor' => $buscas->sum('valor'),
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
+            'meio'=> $request->meio_id
         ]);
 
         //dd($pontuacao);
+        return redirect()->back()->with('success','Saque Realizado com Sucesso');
     }
     //   \App\Models\Movimento::create($dados);
 
-    return redirect()->back();
+    return redirect()->back()->with('error','Saldo menor que R$ 20,00');
 })->middleware(['auth']);
 
 Route::get('/ships2', function () {
