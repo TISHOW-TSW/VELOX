@@ -2499,6 +2499,8 @@ Route::get('player/payment/{id}', function ($id) {
     $compra = Compra::find($id);
 
 
+
+
     return view('compra.index', compact(
         'compra',
 
@@ -2583,9 +2585,14 @@ Route::get('geraroix2/{id}', function ($id, \App\Services\PaymentServices $payme
     }
 
 
-    $paymentServices->createPaymentPix($compra);
+   $pix =  $paymentServices->createPaymentPix($compra);
 
-    return redirect($compra->asaas_link);
+
+  //inde dd($pix);
+
+    //return redirect($compra->asaas_link);
+
+    return view('cliente.faturas.pix',compact('pix'));
 
 });
 

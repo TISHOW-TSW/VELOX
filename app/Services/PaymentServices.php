@@ -28,12 +28,10 @@ class PaymentServices
         $this->asaas->http = $connection;
         //$cliente = $this->asaas->Cliente()->getByCpf($user->cpf);
         $option = '?cpfCnpj=' . $user->cpf;
-        $cliente= $this->asaas->http->get('/customers',$option);
+        $cliente = $this->asaas->http->get('/customers', $option);
 
 
-
-
-     //  return $this->http->get('/customers', $option);
+        //  return $this->http->get('/customers', $option);
 
 
         if (!$cliente->data) {
@@ -80,8 +78,6 @@ class PaymentServices
         );
 
 
-
-
         $cobranca = $this->asaas->Cobranca()->create($dadosCobranca);
 //dd($cobranca);
 
@@ -108,8 +104,6 @@ class PaymentServices
         );
 
 
-
-
         $cobranca = $this->asaas->Cobranca()->create($dadosCobranca);
 
 
@@ -121,11 +115,13 @@ class PaymentServices
     public function createPaymentPix(Compra $compra)
     {
 
-      $busca =  $this->asaas->Pix()->create($compra->buscador);
-      //$busca =  $this->asaas->Cobranca()->getById($compra->buscador);
+        $busca = $this->asaas->Pix()->create($compra->buscador);
+        //$busca =  $this->asaas->Cobranca()->getById($compra->buscador);
 
-      dd($busca);
-        dd($compra);
+        // dd($busca);
+        // dd($compra);
+
+        return $busca;
     }
 
 }
