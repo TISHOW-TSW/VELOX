@@ -38,7 +38,7 @@
 
 
                                 <h3 class="m-b-0 text-white">
-                                    R${{ number_format($fatura->saldoRaiz->saldoRendimento->valor, 2, ',', '.')}}</h3>
+                                    R${{ number_format($fatura->saldoRaiz->valor, 2, ',', '.')}}</h3>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign text-white"></i>
@@ -54,11 +54,11 @@
 
             <div class="panel-body table-border-style">
 
-                <form action="{{url('saquerendimento')}}" method="post">
+                <form action="{{url('saqueraiz')}}" method="post">
                     @csrf
                     <input type="hidden" value="{{$fatura->id}}" name="compra_id">
                     <input type="hidden" name="meio_saque" id="meio_saque" value="">
-                    <input type="hidden" name="valor" id="valor" value="{{ $fatura->saldoRaiz->saldoRendimento->valor }}">
+                    <input type="hidden" name="valor" id="valor" value="{{ $fatura->saldoRaiz->valor }}">
                     <div class="row">
                         <div class="col-md-3 col-sm-12">
                             <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"

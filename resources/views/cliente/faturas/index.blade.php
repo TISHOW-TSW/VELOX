@@ -74,11 +74,16 @@
                                                     <a href="{{ url('cancelar', $assinatura->id) }}"
                                                        class="btn">Cancelar Contrato</a>
 
-                                                @else
+                                                @endif
+                                                @if($assinatura->status == 0)
                                                     <a href="{{ url('player/payment', $assinatura->id) }}"
                                                         class="btn">Efetuar Pagamento</a>
                                                     <a href="{{ url('cancelship', $assinatura->id) }}"
                                                         class="btn">Cancelar</a>
+                                                @endif
+                                                @if($assinatura->status == 2)
+                                                    <a href="{{url('sacarraiz',$assinatura->id)}}" class="btn">Sacar Raiz</a>
+                                                    <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn">Sacar Rendimento</a>
                                                 @endif
 
                                             </td>
