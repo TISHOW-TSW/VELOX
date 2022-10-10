@@ -263,4 +263,9 @@ class Compra extends Model
     {
         return $this->rendimentos->sum('valor');
     }
+
+    public function saldoRaiz()
+    {
+        return $this->hasOne(SaldoRaiz::class);
+    }
 }
