@@ -38,7 +38,7 @@
 
 
                                 <h3 class="m-b-0 text-white">
-                                    R${{ number_format($fatura->totalRendimento(), 2, ',', '.')}}</h3>
+                                    R${{ number_format($fatura->saldoRaiz->saldoRendimento->valor, 2, ',', '.')}}</h3>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign text-white"></i>
@@ -56,8 +56,9 @@
 
                 <form action="{{url('saquerendimento')}}" method="post">
                     @csrf
-                    <input type="hidden" value="{{$fatura->id}}" name="fatura_id">
+                    <input type="hidden" value="{{$fatura->id}}" name="compra_id">
                     <input type="hidden" name="meio_saque" id="meio_saque" value="">
+                    <input type="hidden" name="valor" id="valor" value="{{ $fatura->saldoRaiz->saldoRendimento->valor }}">
                     <div class="row">
                         <div class="col-md-3 col-sm-12">
                             <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
@@ -113,73 +114,7 @@
                                 @endif
 
 
-                                @if(isset(Auth::user()->contaBancaria))
-                                    <div class="tab-pane fade" id="v-pills-conta_bancaria" role="tabpanel"
-                                         aria-labelledby="v-pills-conta_bancaria-tab">
 
-
-                                        <div class="table-responsive">
-                                            <table class="table table-striped">
-                                                <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_banco')}}</strong></td>
-                                                    <td>
-                                                        {{\Illuminate\Support\Facades\Auth::user()->contaBancaria->codbanco}}
-
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_agencia')}}</strong></td>
-                                                    <td>
-                                                        {{Auth::user()->contaBancaria->agencia}}
-
-
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_conta')}}</strong></td>
-                                                    <td>
-                                                        {{Auth::user()->contaBancaria->conta}}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_tipo_conta')}}</strong></td>
-                                                    <td>
-                                                        {{Auth::user()->contaBancaria->tipo_formated}}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_titular')}}</strong></td>
-                                                    <td>
-                                                        {{Auth::user()->contaBancaria->titular_name}}
-
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_documento')}}</strong></td>
-                                                    <td>
-                                                        {{Auth::user()->contaBancaria->titular_documento}}
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-
-                                        <br/>
-
-                                        <div class="row mb-3">
-                                            <div class="col-md-12">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            data-feather="dollar-sign"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control" name="valor_banco"
-                                                           placeholder="{{trans('sistema.saq_informe_valor')}}">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                @endif
 
 
                                 @if(isset(Auth::user()->pix))

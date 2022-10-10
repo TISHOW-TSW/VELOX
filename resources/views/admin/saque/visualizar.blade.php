@@ -56,7 +56,11 @@
                         <td>Valor Solicitado</td>
                         <td>$ {{number_format($saque->valor,2,',','.')}}</td>
                     </tr>
+                    <tr>
+                        <td>Meio saque</td>
+                        <td>{{ $saque->meio_saque == 2 ? 'PIX: '.$saque->user->pix->chave : 'BANKON: '.$saque->user->bankon->cod_bankon }}</td>
 
+                    </tr>
 
                     </tbody>
                 </table>

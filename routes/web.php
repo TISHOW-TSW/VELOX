@@ -2912,6 +2912,21 @@ Route::get('geratudo', function (AcaoController $acaoController) {
     }
 });
 
+Route::get('ativamanual/{compra}', function(Compra $compra, \App\Services\SaldoService $saldoService){
+    $compra->fill([
+        'tipo' => '$cobranca->billingType',
+        'status' => 1,
+        'ativo' => 1,
+        'dia_pagamento' => Carbon::now(),
+        'valor' => $compra->plano->valor
+
+    ]);
+    $compra->save();
+
+
+    $saldoService->createSaldoRaiz($compra);
+});
+
 
 Route::get('atualizarfaturas', function (AcaoController $acaoController, \App\Services\SaldoService $saldoService) {
     $faturas = Compra::where('buscador', "!=", 'NULL')->where('status', 0)->get();
@@ -2981,6 +2996,33 @@ Route::get('sacarrendimento/{id}',function ($id){
     $fatura = Compra::find($id);
 
     return view('cliente.saque.rendimento',compact('fatura'));
+});
+
+Route::post('saquerendimento', function(Request $request, \App\Services\SaldoService $saldoService){
+    if($request->valor < 10){
+        return redirect()->back()->with('Error', 'O valor mínimo necessário é de R$10,00');
+    }
+
+    $compra = Compra::find($request->compra_id);
+
+    $saldoService->saqueRendimento($compra->saldoRaiz->saldoRendimento);
+
+
+    $grava = [
+        'descricao' => 'Saque de rendimento no valor de R$'.$request->valor.',00',
+        'valor' => $request->valor,
+        'tipo' => 2,
+        'user_id' => Auth::user()->id,
+    ];
+    Caixa::create($grava);
+
+    Saquerendimento::create([
+        'valor' => $request->valor,
+        'data' => Carbon::now(),
+        'status' => 0,
+        'user_id' => Auth::user()->id,
+        'meio_saque' => $request->meio_saque,
+    ]);
 });
 
 
