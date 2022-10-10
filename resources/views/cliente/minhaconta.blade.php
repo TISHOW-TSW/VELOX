@@ -115,7 +115,6 @@
                         </div>
                         <div class="form-group">
                             <label for="name">Código:</label>
-                            <
                             <input type="text" class="form-control" name="cod_banco" id="cod_banco" required>
                         </div>
                         <div class="form-group">
