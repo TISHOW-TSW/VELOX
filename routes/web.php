@@ -2911,7 +2911,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
 });
 
 
-Route::get('atualizarfaturas', function (AcaoController $acaoController) {
+Route::get('atualizarfaturas', function (AcaoController $acaoController, \App\Services\SaldoService $saldoService) {
     $faturas = Compra::where('buscador', "!=", 'NULL')->where('status', 0)->get();
 
 
@@ -2939,6 +2939,10 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController) {
 
                     ]);
                 $fatura->save();
+
+
+                $saldoService->createSaldoRaiz($fatura);
+
 
                 $grava = [
                     'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
