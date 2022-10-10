@@ -235,7 +235,7 @@
                                         <a style="margin-bottom: 8px" class="btn"
                                            href="{{ url('rewards') }}">Rendimentos</a>
                                         <a style="margin-bottom: 8px" class="btn"
-                                           href="{{ url('player/bonus') }}">Bonus</a>
+                                           href="{{ url('customer/invoices') }}">Corridas</a>
                                         <a style="margin-bottom: 8px" class="btn"
                                            href="{{ url('player') }}">Equipe</a>
                                     </ul>
@@ -246,8 +246,9 @@
                                     <li style="background-color: transparent" class="dropdown text-center">
                                         <a style="background-color: transparent" href="#" class="dropdown-toggle"
                                            data-toggle="dropdown" role="button" aria-haspopup="true"
-                                           aria-expanded="false"><i style="font-size: 30px;color: rgba(233, 0, 0,1)"
-                                                                    class="fa fa-adjust"></i></a>
+                                           aria-expanded="false"><div style="color: white; font-size: 15px;font-weight: bolder">
+                                                {{Auth::user()->login}}
+                                            </div></a>
 
                                         <ul style="background-color: transparent;border-color: transparent"
                                             class="dropdown-menu text-center">

@@ -36,11 +36,16 @@ class Compra extends Model
 
     public function getAtivoFormatedAttribute()
     {
-        if ($this->ativo == 0) {
+        if ($this->status == 0) {
             return 'PENDENTE';
-        } else {
-            return 'ATIVO';
         }
+       if ($this->status == 1){
+           return 'ATIVO';
+       }
+       if ($this->status == 2){
+           return 'EXPIRADA';
+       }
+
     }
 
     public function user()
@@ -247,5 +252,10 @@ class Compra extends Model
 
         return $json;
         echo $response;
+    }
+
+    public function diasContados(){
+        $porcentagem = round(((count($this->rendimentos) * 100)/5), 2);
+        return $porcentagem;
     }
 }

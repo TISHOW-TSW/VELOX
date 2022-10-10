@@ -29,7 +29,7 @@
             <div class="col-md-12">
                 <div style="border-radius: 15px" class="painel caixa">
                     <div class="panel-heading">
-                        <h5 class="panel-title">Payment per Ship
+                        <h5 class="panel-title">Planos/Carros
                         </h5>
                     </div>
                     <div style="opacity: 100%" class="box-body">
@@ -42,34 +42,43 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+<td>#</td>
+                                        <th>Carro</th>
 
-                                        <th>Ship</th>
-
-                                        <th>Value</th>
+                                        <th>Valor</th>
+                                        <th>Corridas</th>
                                         <th>Status</th>
-                                        <th class="text-center">Action</th>
+                                        <th class="text-center">Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     @forelse (Auth::user()->compras as $assinatura)
                                         <tr>
-
+    <td>{{$assinatura->id}}</td>
                                             <td>{{ $assinatura->plano->name }}</td>
 
                                             <td>
-                                                ${{ number_format($assinatura->plano->valor, 2, ',', '.') }}
+                                                R${{ number_format($assinatura->plano->valor, 2, ',', '.') }}
                                             </td>
+                                            <td><div class="progress">
+
+                                                    <div class="progress-bar bg-red-gradient" role="progressbar" style="width: {{$assinatura->diasContados()}}%;" aria-valuenow="{{count($assinatura->rendimentos)}}" aria-valuemin="0" aria-valuemax="100">
+                                                        {{count($assinatura->rendimentos)}}/5</div>
+                                                </div></td>
                                             <td>{{ $assinatura->ativo_formated }}</td>
                                             <td class="text-center">
 
                                                 @if ($assinatura->ativo == 1)
-                                                    <button class="btn">Paid</button>
+                                                    <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn">Sacar Rendimento</a>
+                                                    <a href="{{ url('cancelar', $assinatura->id) }}"
+                                                       class="btn">Cancelar Contrato</a>
+
                                                 @else
                                                     <a href="{{ url('player/payment', $assinatura->id) }}"
-                                                        class="btn">Payment</a>
+                                                        class="btn">Efetuar Pagamento</a>
                                                     <a href="{{ url('cancelship', $assinatura->id) }}"
-                                                        class="btn">Cancel</a>
+                                                        class="btn">Cancelar</a>
                                                 @endif
 
                                             </td>

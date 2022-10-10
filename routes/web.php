@@ -207,37 +207,32 @@ Route::post('registerindicado', function (Request $request) {
 
 
 Route::get('player', function () {
-    $direto = Auth::user()->indicados->pluck('link')->toArray();
+    //$direto = Auth::user()->indicados->pluck('link')->toArray();
 
     //dd($direto);
 
-    if (count($direto) > 0) {
-        $indicados = User::whereIn("quem", $direto)->get();
-        //dd($indicados);
-    } else {
-        $indicados = [];
-    }
 
-    $primeiros = User::whereIn("quem", $direto)->pluck('link');
+
+    $primeiros = User::where("quem", Auth::user()->link)->get();
+
+
     if (count($primeiros) > 0) {
-        $segundos = User::whereIn("quem", $primeiros)->get();
+        $segundos = User::whereIn("quem", $primeiros->pluck('link')->toArray())->get();
     } else {
         $segundos = [];
     }
+
+   // dd($segundos);
     if (count($segundos) > 0) {
-        $terceiros = User::whereIn("quem", $segundos)->get();
+        $terceiros = User::whereIn("quem", $segundos->pluck('link')->toArray())->get();
     } else {
         $terceiros = [];
     }
-    if (count($terceiros) > 0) {
-        $quartos = User::whereIn("quem", $terceiros)->get();
-    } else {
-        $quartos = [];
-    }
-    //  dd($primeiros);
+   // dd($terceiros);
 
 
-    return view('indicacao.diretos', compact('indicados', 'segundos', 'terceiros', 'quartos'));
+
+    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros'));
 })->middleware(['auth']);
 
 Route::get('primeiro', function () {
@@ -2455,8 +2450,8 @@ Route::get('getupship/{id}', function ($id) {
         Batalha::create($busca);
 
     }
-    //dd($plano);
-    if (count($compra->rendimentos) == 5) {
+    $compra2 = Compra::find($compra->id);
+    if (count($compra2->rendimentos) == 5) {
         $compra->update(['status' => 2]);
     }
     return redirect()->back();
@@ -2967,6 +2962,12 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController) {
     }
 
     // dd($faturas);
+});
+
+Route::get('sacarrendimento/{id}',function ($id){
+    $fatura = Compra::find($id);
+
+    return view('cliente.saque.rendimento',compact('fatura'));
 });
 
 

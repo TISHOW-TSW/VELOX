@@ -20,15 +20,19 @@ class AcaoController extends Controller
             case 1:
                 $escolha = $fatura->user->primeiro();
                 $frase = 'PRIMEIRO NIVEL';
+                $porc = $fatura->plano->primeiro;
 
                 break;
             case 2:
                 $escolha = $fatura->user->segundo();
                 $frase = 'SEGUNDO NIVEL';
+                $porc = $fatura->plano->segundo;
+
                 break;
             case 3:
                 $escolha = $fatura->user->terceiro();
                 $frase = 'TERCEIRO NIVEL';
+                $porc = $fatura->plano->terceiro;
                 break;
 
         }
@@ -116,7 +120,7 @@ class AcaoController extends Controller
             // $pontuacao = $user->pontos + $plano->pontos;
             $dados = [
                 'tipo' => 0,
-                'descricao' => 'bonus ref. login ' . $fatura->user->name . ' ' . $frase . ' ' . $fatura->plano->name,
+                'descricao' => 'Bonus de '.$porc.' sobre o carro '. $fatura->plano->name.' no valor de'. ' R$'.$saldo. ' do login'. $fatura->user->login . ' do seu ' . $frase,
                 'valor' => $saldo,
                 'user_id' => $escolha->id,
             ];

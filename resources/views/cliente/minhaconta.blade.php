@@ -200,7 +200,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-
+                                <td>#</td>
                                 <th>CARROS</th>
 
                                 <th>Value</th>
@@ -212,7 +212,7 @@
 
                             @forelse (Auth::user()->compras as $assinatura)
                                 <tr>
-
+<td>{{$assinatura->id}}</td>
                                     <td>{{ $assinatura->plano->name }}</td>
 
                                     <td>
@@ -222,12 +222,12 @@
                                     <td class="text-center">
 
                                         @if ($assinatura->ativo == 1)
-                                            <button class="btn">Paid</button>
+                                            <button class="btn">Pago</button>
                                         @else
                                             <a href="{{ url('player/payment', $assinatura->id) }}"
-                                                class="btn">Payment</a>
+                                                class="btn">Efetuar Pagamento</a>
                                             <a href="{{ url('cancelship', $assinatura->id) }}"
-                                                class="btn">Cancel</a>
+                                                class="btn">Cancelar</a>
                                         @endif
 
                                     </td>
