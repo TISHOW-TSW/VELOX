@@ -65,8 +65,74 @@
 @section('content')
     <br>
     <br>
+
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog caixa">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 style="color: #0a0a0a" class="modal-title">PIX</h4>
+                </div>
+                <div style="background-color: #0a0a0a" class="modal-body">
+                    <form action="{{ url('carryout/withdrawal/squad') }}" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label for="">Selecione Metodo para receber</label>
+
+                            <select class="form-control" name="meio_id" id="">
+
+                                @if(isset(Auth::user()->bankon))
+
+                                    <option value="1">BanKon : {{Auth::user()->bankon->cod_bankon}}</option>
+                                @endif
+
+                                @if(isset(Auth::user()->pix))
+                                        <option value="2">Pix: {{Auth::user()->pix->chave}}</option>
+
+                                @endif
+
+
+                            </select>
+
+
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-default" >Sacar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <div class="container">
         <div class="row">
+            <div class="col-lg-12">
+
+                <div class="small-box  caixa">
+                    <div class="inner">
+                        <h3>
+
+                          R$  {{ number_format($reward, 2, ',', '.') }}</h3>
+
+                        <p>Saldo De TIME</p>
+
+                            <button class="btn" data-toggle="modal" data-target="#myModal" >Saque de Rede</button>
+
+                    </div>
+                    <div class="icon">
+
+                    </div>
+
+                </div>
+
+            </div>
             <div class="col-md-12">
 
 
@@ -80,9 +146,9 @@
                             <table id="myTable" class="cell-border compact stripe">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
+                                        <th>Nome</th>
                                         <th>Email</th>
-                                        <th>phone</th>
+                                        <th>Whatsapp</th>
 
 
                                         <th>Status</th>
@@ -128,10 +194,10 @@
                             <table id="myTable1" class="cell-border compact stripe">
                                 <thead>
                                     <tr>
-                                        <th>name</th>
-                                        <th>leader</th>
+                                        <th>Nome</th>
+                                        <th>Lider</th>
                                         <th>Email</th>
-                                        <th>Phone</th>
+                                        <th>Whatsapp</th>
                                         <th>Status</th>
 
                                     </tr>
@@ -177,11 +243,11 @@
                             <table id="myTable2" class="cell-border compact stripe">
                                 <thead>
                                     <tr>
-                                        <th>name</th>
-                                        <th>leader</th>
+                                        <th>Nome</th>
+                                        <th>Lider</th>
                                         <th>Email</th>
 
-                                        <th>Phone</th>
+                                        <th>Whatsapp</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>

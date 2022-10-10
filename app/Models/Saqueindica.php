@@ -13,6 +13,7 @@ class Saqueindica extends Model
         'data',
         'status',
         'user_id',
+        'meio'
     ];
 
     public function user()
