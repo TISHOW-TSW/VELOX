@@ -3003,6 +3003,10 @@ Route::post('saquerendimento', function(Request $request, \App\Services\SaldoSer
         return redirect()->back()->with('Error', 'O valor mínimo necessário é de R$10,00');
     }
 
+    if($request->meio_saque == null){
+        return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
+    }
+
     $compra = Compra::find($request->compra_id);
 
     $saldoService->saqueRendimento($compra->saldoRaiz->saldoRendimento);
@@ -3023,6 +3027,49 @@ Route::post('saquerendimento', function(Request $request, \App\Services\SaldoSer
         'user_id' => Auth::user()->id,
         'meio_saque' => $request->meio_saque,
     ]);
+
+    return redirect()->back()->with('success', 'Saque de rendimento solicitado com sucesso');
+});
+
+Route::get('sacarraiz/{compra}', function (Compra $compra) {
+    $fatura = $compra;
+
+    return view('cliente.saque.raiz',compact('fatura'));
+});
+
+Route::post('saqueraiz', function(Request $request, \App\Services\SaldoService $saldoService){
+    if($request->valor == 0){
+        return redirect()->back()->with('Error', 'Saldo indisponível para saque');
+    }
+
+    if($request->meio_saque == null){
+        return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
+    }
+
+    $compra = Compra::find($request->compra_id);
+
+    $saldoService->saqueRaiz($compra->saldoRaiz);
+
+
+    $grava = [
+        'descricao' => 'Saque de raiz no valor de R$'.$request->valor.',00',
+        'valor' => $request->valor,
+        'tipo' => 2,
+        'user_id' => Auth::user()->id,
+    ];
+    Caixa::create($grava);
+
+    \App\Models\Saqueraiz::create([
+        'valor' => $request->valor,
+        'data' => Carbon::now(),
+        'status' => 0,
+        'user_id' => Auth::user()->id,
+        'meio_saque' => $request->meio_saque,
+    ]);
+
+
+
+    return redirect()->back()->with('success', 'Saque de raiz solicitado com sucesso');
 });
 
 
