@@ -169,7 +169,7 @@
                                 <div align="center">
 
                                     <h2>
-                                        <strong>Chave Pix:</strong> 46875479000100
+                                        <strong>Chave Pix:</strong> suportevelox5@gmail.com
 
                                     </h2>
                                 </div>
