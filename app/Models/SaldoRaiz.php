@@ -20,4 +20,8 @@ class SaldoRaiz extends Model
     {
         return $this->hasOne(SaldoRendimento::class);
     }
+    public function compra()
+    {
+        return $this->belongsTo(Compra::class);
+    }
 }

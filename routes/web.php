@@ -2423,7 +2423,7 @@ Route::get('cancelship/{id}', function ($id) {
 })->middleware(['auth']);
 
 
-Route::get('getupship/{id}', function ($id) {
+Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoService) {
     $compra = Compra::find($id);
     //dd($compra->rendimentos);
 
@@ -2448,6 +2448,8 @@ Route::get('getupship/{id}', function ($id) {
 
         \App\Models\Valorredimento::create($dados);
         Batalha::create($busca);
+        $saldoService->rendimento($compra->saldoRaiz);
+
 
     }
     $compra2 = Compra::find($compra->id);

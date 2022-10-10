@@ -1,18 +1,41 @@
 @extends('painel.padrao')
+@section('css')
+    <style>
+        body {
+            color: white
+        }
 
+        .caixa {
+            border-radius: 15px;
+            /*opacity: 55%*/
+            background-color:rgba(39, 34, 40, 0.9);
+            border: 3px solid rgba(233, 0, 0,0.4);
+            color: white;
+            padding-bottom: 30px;
+            display:flex;
+            flex-direction: column;
+            justify-content: space-around;
+            text-transform: uppercase;
+        }
+
+    </style>
+@endsection
 
 @section('content')
 
-    <div class="pcoded-content">
+    <div class="container">
 
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card prod-p-card bg-success">
-                    <div class="card-body">
-                        <div class="row align-items-center m-b-25">
+                <div class="panel caixa bg-success">
+                    <div class="panel-heading">
+                        <h3 class="m-b-5 text-white">Valor liberado</h3>
+                    </div>
+                    <div class="panel-body">
+
                             <div class="col">
-                                <h6 class="m-b-5 text-white">{{trans('sistema.saq_valor_liberado')}}</h6>
+
 
                                 <h3 class="m-b-0 text-white">
                                     R${{ number_format($fatura->totalRendimento(), 2, ',', '.')}}</h3>
@@ -20,18 +43,16 @@
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign text-white"></i>
                             </div>
-                        </div>
-                        <p class="m-b-0 text-white">{{trans('sistema.saq_valor_liberado_desc')}}</p>
+
+                        <p class="m-b-0 text-white">Valor disponível</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h5>{{trans('sistema.saq_selecione_valor')}}</h5>
-            </div>
-            <div class="card-body table-border-style">
+        <div class="panel caixa">
+
+            <div class="panel-body table-border-style">
 
                 <form action="{{url('saquerendimento')}}" method="post">
                     @csrf
@@ -47,14 +68,7 @@
                                     <li><a class="nav-link text-left select_account" id="v-pills-bankon-tab"
                                            data-toggle="pill" href="#v-pills-bankon" role="tab"
                                            aria-controls="v-pills-bankon" aria-selected="true"
-                                           data-account="1">{{trans('sistema.saq_tipo_bankon')}}</a></li>
-
-                                @endif
-                                @if(isset(Auth::user()->contaBancaria))
-                                    <li><a class="nav-link text-left select_account" id="v-pills-conta_bancaria-tab"
-                                           data-toggle="pill" href="#v-pills-conta_bancaria" role="tab"
-                                           aria-controls="v-pills-conta_bancaria" aria-selected="false"
-                                           data-account="3">{{trans('sistema.saq_tipo_conta_bancaria')}}</a></li>
+                                           data-account="1">Bankon</a></li>
 
                                 @endif
 
@@ -63,7 +77,7 @@
                                            data-toggle="pill"
                                            href="#v-pills-pix" role="tab" aria-controls="v-pills-pix"
                                            aria-selected="false"
-                                           data-account="5">{{trans('sistema.saq_tipo_pix')}}</a></li>
+                                           data-account="5">Pix</a></li>
 
                                 @endif
 
@@ -80,9 +94,9 @@
 
 
                                         <div class="table-responsive">
-                                            <table class="table table-striped">
+                                            <table class="table">
                                                 <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_bankon')}}</strong></td>
+                                                    <td><strong>cod_bankon</strong></td>
                                                     <td>
                                                         {{\Illuminate\Support\Facades\Auth::user()->bankon->cod_bankon}}
                                                     </td>
@@ -92,17 +106,7 @@
 
                                         <br/>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-12">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            data-feather="dollar-sign"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control" name="valor_bankon"
-                                                           placeholder="{{trans('sistema.saq_informe_valor')}}">
-                                                </div>
-                                            </div>
+
                                         </div>
                                     </div>
 
@@ -179,21 +183,21 @@
 
 
                                 @if(isset(Auth::user()->pix))
-                                    <div class="tab-pane fade" id="v-pills-pix" role="tabpanel"
+                                    <div class="tab-panel fade" id="v-pills-pix" role="tabpanel"
                                          aria-labelledby="v-pills-pix-tab">
 
                                         <div class="table-responsive">
-                                            <table class="table table-striped">
+                                            <table class="table">
                                                 <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_pix')}}</strong></td>
+                                                    <td><strong>chave pix</strong></td>
                                                     <td>
                                                         {{Auth::user()->pix->chave}}
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><strong>{{trans('sistema.saq_form_pix_conta')}}</strong></td>
+                                                    <td><strong>Banco</strong></td>
                                                     <td>
-                                                        {!! Auth::user()->pix->banco()!!}
+                                                        {!! Auth::user()->pix->banco !!}
                                                     </td>
                                                 </tr>
                                             </table>
@@ -201,18 +205,7 @@
 
                                         <br/>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-12">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            data-feather="dollar-sign"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control" name="valor_pix"
-                                                           placeholder="{{trans('sistema.saq_informe_valor')}}">
-                                                </div>
-                                            </div>
-                                        </div>
+
                                     </div>
 
                                 @endif
@@ -224,7 +217,7 @@
                         <div class="col-md-12">
 
                             <button type="submit" name="submit"
-                                    class="btn btn-success btn-block text-uppercase">{{trans('sistema.saq_solicitar_saque_button')}}</button>
+                                    class="btn btn-success btn-block text-uppercase">Solicitar saque</button>
 
 
                         </div>

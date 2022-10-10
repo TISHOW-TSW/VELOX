@@ -69,7 +69,7 @@
                                             <td>{{ $assinatura->ativo_formated }}</td>
                                             <td class="text-center">
 
-                                                @if ($assinatura->ativo == 1)
+                                                @if ($assinatura->status == 1)
                                                     <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn">Sacar Rendimento</a>
                                                     <a href="{{ url('cancelar', $assinatura->id) }}"
                                                        class="btn">Cancelar Contrato</a>
