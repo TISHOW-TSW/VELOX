@@ -38,6 +38,19 @@
         src: url("{{ url('fontnova.otf') }}") format("opentype");
     }
 
+    .caixa {
+        border-radius: 15px;
+        /*opacity: 55%*/
+        background-color: rgba(39, 34, 40, 0.6);
+        border: 3px solid rgba(233, 0, 0, 0.4);
+        color: white;
+        padding-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        text-transform: uppercase;
+        padding: 15px;
+    }
 
 
     .btn {
@@ -45,10 +58,24 @@
         border-radius: 10px;
         text-transform: uppercase;
         width: 170px;
-        border-color: #b20a5d;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         background-color: transparent;
         color: white;
         box-shadow: 0px 2px 6px white;
+
+    }
+
+    .btn2 {
+        border-width: 2px;
+
+        text-transform: uppercase;
+        font-weight: bolder;
+        width: 250px;
+        padding: 10px;
+        border: 3px solid rgba(233, 0, 0, 0.4);
+        background-color: transparent;
+        color: yellow;
+        box-shadow: 0px 2px 6px rgba(233, 0, 0, 0.4);
 
     }
 
@@ -57,17 +84,13 @@
     }
 
 
-
-
-
     .inputfundo {
         border-width: 2px;
-        border-radius: 10px;
+
         border-color: white;
         background-color: transparent;
-        box-shadow: 0px 2px 6px #b20a5d;
+        border: 3px solid rgba(233, 0, 0, 0.4);
         color: white;
-
 
 
     }
@@ -75,49 +98,21 @@
     .inputfundo:focus {
 
 
-        border: 1px solid #381897;
-        background-color: transparent;
+        border: 1px solid white;
         border-radius: 10px;
     }
 
     .inputfundo:hover {
-        border: 1px solid #381897;
-        background-color: transparent;
+        border: 1px solid white;
         border-radius: 10px;
     }
 
     .inputfundo:focus:hover {
 
 
-        border: 1px solid #381897;
-        background-color: transparent;
+        border: 1px solid white;
         border-radius: 10px;
 
-    }
-
-    .goog-te-banner-frame {
-        display: none;
-        background-color: transparent;
-        margin-top -40px:
-    }
-
-    .goog-te-combo {
-        color: #381897;
-        font-size: 22px;
-    }
-
-    .goog-logo-link {
-        display: none !important;
-    }
-
-    .goog-te-gadget {
-        color: transparent !important;
-
-    }
-
-    .goog-te-gadget .goog-te-combo {
-
-        font-size: 22px;
     }
 
 </style>
@@ -139,7 +134,7 @@ width: 100%;">
 
         <div class="row">
 
-            <div class="col-md-12" style="margin-top: 45px">
+            <div class="col-md-12" style="margin-top: 45px;margin-bottom: 35px">
                 <center>
                     <img width="300x" class="img img-responsive" src="{{ asset(url('logo.png')) }}" alt="">
                 </center>
@@ -149,7 +144,7 @@ width: 100%;">
 
             </div>
             <div class="col-md-4"></div>
-            <div class="col-md-4">
+            <div class="col-md-4 caixa">
                 <form class="m-t" method="POST" action="{{ route('login') }}">
                     @csrf
 
@@ -187,10 +182,7 @@ width: 100%;">
                     <br>
                     <br>
 
-                    <center>
-                        <h2 style="color: white">Language</h2>
-                        <div id="google_translate_element"></div>
-                    </center>
+
 
 
 
