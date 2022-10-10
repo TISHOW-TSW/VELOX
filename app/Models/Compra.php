@@ -258,4 +258,9 @@ class Compra extends Model
         $porcentagem = round(((count($this->rendimentos) * 100)/5), 2);
         return $porcentagem;
     }
+
+    public function totalRendimento()
+    {
+        return $this->rendimentos->sum('valor');
+    }
 }

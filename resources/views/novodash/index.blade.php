@@ -205,7 +205,7 @@
                                                 @endif
                                                     <p style="font-size: 35px;color: yellow"> R$ {{ number_format($plano->valor, 2, ',', '.') }}</p>
                                                 <a class="btn" href="#">
-                                                    BLOCKED
+                                                    BLOQUEADO
                                                 </a>
                                             @endif
                                         @endif
@@ -283,7 +283,7 @@
                     <div class="inner">
                         <h3>{{ Auth::user()->contador }}</h3>
 
-                        <p>Click on the link
+                        <p>CLIQUES NO LINK
                         </p>
                         <i class="fa fa-rocket"></i>
                     </div>
@@ -302,7 +302,7 @@
                         <h3> {{ count(Auth::user()->indicados) }}
                         </h3>
 
-                        <p>Players</p>
+                        <p>DIRETOS</p>
                         <i class="fa fa-diamond"></i>
                     </div>
                     <div class="icon">
@@ -318,7 +318,7 @@
                     <div class="inner">
                         <h3> {{ Auth::user()->totalindicados() }}</h3>
 
-                        <p>My Squads</p>
+                        <p>EQUIPE</p>
                         <i class="fa fa-users"></i>
                     </div>
                     <div class="icon">
