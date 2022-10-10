@@ -949,7 +949,7 @@ Route::get('atualizarfaturas', function () {
                     'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
                     'valor' => $fatura->plano->valor,
                     'tipo' => 1,
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $fatura->user->id,
                 ];
                 Caixa::create($grava);
             }
