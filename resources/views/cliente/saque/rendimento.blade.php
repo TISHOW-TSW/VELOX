@@ -1,4 +1,4 @@
-@extends('cliente.padrao')
+@extends('painel.padrao')
 
 
 @section('content')

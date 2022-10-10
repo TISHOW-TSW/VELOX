@@ -2440,7 +2440,7 @@ Route::get('getupship/{id}', function ($id) {
 
         $dados = [
             'tipo' => 0,
-            'descricao' => "Redimento do carro " . $compra->plano->name,
+            'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
             'valor' => $rentabilidade,
             'user_id' => Auth::user()->id
         ];

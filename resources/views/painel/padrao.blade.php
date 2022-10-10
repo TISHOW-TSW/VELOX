@@ -184,7 +184,7 @@
 
 
          style="
-              background-image: url('{{ asset('fundo2.jpeg')}}');
+              background-image: url('{{ asset('fundo2.png')}}');
 
 
 
@@ -254,8 +254,7 @@
                                             class="dropdown-menu text-center">
                                             <center>
                                                 <li><a
-                                                        class="btn" href="{{ url('myaccount') }}">My
-                                                        account</a></li>
+                                                        class="btn" href="{{ url('myaccount') }}">Minha Conta</a></li>
 
                                                 <li style="margin-top: 4px; margin-bottom: 15px">
                                                     <form method="POST" action="{{ route('logout') }}">
