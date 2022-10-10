@@ -120,9 +120,6 @@ Route::get('/dashboard', function () {
     $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
 
 
-
-
-
     $buscas = Valorindicacao::where('user_id', Auth::user()->id)->get();
     $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
 
@@ -131,7 +128,7 @@ Route::get('/dashboard', function () {
         return redirect(url('admin/dashboard'));
     }
 
-    return view('novodash.index', compact('planos',  'indicados', 'users', 'reward','buscas'));
+    return view('novodash.index', compact('planos', 'indicados', 'users', 'reward', 'buscas'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('teste', function () {
@@ -222,17 +219,16 @@ Route::get('player', function () {
         $segundos = [];
     }
 
-   // dd($segundos);
+    // dd($segundos);
     if (count($segundos) > 0) {
         $terceiros = User::whereIn("quem", $segundos->pluck('link')->toArray())->get();
     } else {
         $terceiros = [];
     }
-   // dd($terceiros);
+    // dd($terceiros);
 
 
-
-    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros','reward'));
+    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros', 'reward'));
 })->middleware(['auth']);
 
 Route::get('primeiro', function () {
@@ -402,7 +398,7 @@ Route::get('carryout/withdrawal', function () {
 })->middleware(['auth']);
 Route::post('carryout/withdrawal/squad', function (Request $request) {
 
-   // dd($request->all());
+    // dd($request->all());
     //  $valor = Auth::user()->sobra;
 
     $buscas = Valorindicacao::where("user_id", Auth::user()->id)->get();
@@ -433,15 +429,15 @@ Route::post('carryout/withdrawal/squad', function (Request $request) {
             'data' => Carbon::now(),
             'valor' => $buscas->sum('valor'),
             'user_id' => Auth::user()->id,
-            'meio'=> $request->meio_id
+            'meio' => $request->meio_id
         ]);
 
         //dd($pontuacao);
-        return redirect()->back()->with('success','Saque Realizado com Sucesso');
+        return redirect()->back()->with('success', 'Saque Realizado com Sucesso');
     }
     //   \App\Models\Movimento::create($dados);
 
-    return redirect()->back()->with('error','Saldo menor que R$ 20,00');
+    return redirect()->back()->with('error', 'Saldo menor que R$ 20,00');
 })->middleware(['auth']);
 
 Route::get('/ships2', function () {
@@ -931,167 +927,6 @@ Route::get('testecliente', function () {
     $cobranca = $asaas->Cobranca()->getById('pay_4489705199214310');
 
     dd($cobranca);
-});
-
-Route::get('atualizarfaturas', function () {
-    $faturas = Assinatura::where('buscador', "!=", 'NULL')->get();
-
-
-    foreach ($faturas as $fatura) {
-        $asaas = new \CodePhix\Asaas\Asaas('41891bad9d2d17a3ba2af9f77ec179751010bd79e9439e919194925827aba3d1', 'homologacao');
-        $cobranca = $asaas->Cobranca()->getById($fatura->buscador);
-
-        // dd($cobranca);
-
-        if ($cobranca->status == 'CONFIRMED') {
-
-            // dd($fatura);
-
-
-            if ($fatura->status == 0) {
-                $fatura->fill(['tipo' => $cobranca->billingType, 'status' => 1]);
-                $fatura->save();
-
-                $grava = [
-                    'descricao' => 'Recebido da mensalidade do ' . $fatura->user->name,
-                    'valor' => $fatura->plano->valor,
-                    'tipo' => 1,
-                    'user_id' => $fatura->user->id,
-                ];
-                Caixa::create($grava);
-            }
-
-
-            if (!empty($fatura->user->quem)) {
-                $plano = Plano::find($fatura->plano->id);
-                //dd($plano);
-
-                $user = User::where('link', $fatura->user->quem)->first();
-
-
-                $planolast = $user->assinaturas->last();
-
-                if (!empty($planolast)) {
-                    $extrato = [
-                        'user_id' => $user->id,
-                        'indicado_id' => $fatura->user->id,
-                        'pontos' => $plano->pontos,
-                        'saldo' => $plano->valor
-                    ];
-
-
-                    Extrato::create($extrato);
-                    $pontuacao = $user->pontos + $plano->pontos;
-                    $dados = [
-                        'tipo' => 0,
-                        'descricao' => 'bonus ref. login ' . $fatura->user->name . ' Direto',
-                        'valor' => $plano->valor,
-                        'user_id' => $user->id
-                    ];
-                    //dd($pontuacao);
-
-                    \App\Models\Movimento::create($dados);
-                    $user->fill(['pontos' => $pontuacao]);
-                    $user->save();
-                }
-
-
-                $primeiro = User::where('link', $user->quem)->first();
-
-                if (!empty($primeiro)) {
-
-                    $planolast1 = $primeiro->assinaturas->last();
-
-                    //dd($planolast->plano->direto);
-
-
-                    if (!empty($planolast1)) {
-                        $extrato1 = [
-                            'user_id' => $primeiro->id,
-                            'indicado_id' => $fatura->user->id,
-                            'pontos' => $plano->pontos,
-                            'saldo' => 0
-                        ];
-
-                        // dd($extrato);
-
-
-                        Extrato::create($extrato1);
-                        $pontuacao = $primeiro->pontos + $plano->pontos;
-
-                        //dd($pontuacao);
-                        $primeiro->fill(['pontos' => $pontuacao]);
-                        $primeiro->save();
-                    }
-
-
-                    $segundo = User::where('link', $primeiro->quem)->first();
-
-                    if (!empty($segundo)) {
-
-                        $planolast2 = $segundo->assinaturas->last();
-
-                        //dd($planolast->plano->direto);
-
-
-                        if (!empty($planolast2)) {
-                            $extrato2 = [
-                                'user_id' => $segundo->id,
-                                'indicado_id' => $fatura->user->id,
-                                'pontos' => $plano->pontos,
-                                'saldo' => 0
-                            ];
-
-                            // dd($extrato);
-
-
-                            Extrato::create($extrato2);
-                            $pontuacao = $segundo->pontos + $plano->pontos;
-
-                            //dd($pontuacao);
-                            $segundo->fill(['pontos' => $pontuacao]);
-                            $segundo->save();
-                        }
-
-
-                        $terceiro = User::where('link', $segundo->quem)->first();
-
-                        if (!empty($terceiro)) {
-
-                            $planolast3 = $terceiro->assinaturas->last();
-
-                            //dd($planolast->plano->direto);
-
-
-                            if (!empty($planolast3)) {
-                                $extrato3 = [
-                                    'user_id' => $terceiro->id,
-                                    'indicado_id' => $fatura->user->id,
-                                    'pontos' => $plano->pontos,
-                                    'saldo' => 0
-                                ];
-
-                                // dd($extrato);
-
-
-                                Extrato::create($extrato3);
-                                $pontuacao = $segundo->pontos + $plano->pontos;
-
-                                //dd($pontuacao);
-                                $terceiro->fill(['pontos' => $pontuacao]);
-                                $terceiro->save();
-                            }
-                        }
-                    }
-                }
-            } else {
-            }
-        }
-        // dd($cobranca);
-        //dd($fatura);
-    }
-
-    // dd($faturas);
 });
 
 
@@ -2508,8 +2343,6 @@ Route::get('player/payment/{id}', function ($id) {
     $compra = Compra::find($id);
 
 
-
-
     return view('compra.index', compact(
         'compra',
 
@@ -2594,14 +2427,14 @@ Route::get('geraroix2/{id}', function ($id, \App\Services\PaymentServices $payme
     }
 
 
-   $pix =  $paymentServices->createPaymentPix($compra);
+    $pix = $paymentServices->createPaymentPix($compra);
 
 
-  //inde dd($pix);
+    //inde dd($pix);
 
     //return redirect($compra->asaas_link);
 
-    return view('cliente.faturas.pix',compact('pix'));
+    return view('cliente.faturas.pix', compact('pix'));
 
 });
 
@@ -2705,6 +2538,9 @@ Route::post('suport/reply', function (Request $request) {
             if (!empty($fatura->user->primeiro())) {
                 $direto = $acaoController::calculorenda($fatura, 1);
             }
+
+
+
             if (!empty($fatura->user->direto())) {
                 $direto = $acaoController::calculorenda($fatura, 0);
             }
@@ -2919,7 +2755,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
     }
 });
 
-Route::get('ativamanual/{compra}', function(Compra $compra, \App\Services\SaldoService $saldoService){
+Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService, AcaoController $acaoController) {
     $compra->fill([
         'tipo' => '$cobranca->billingType',
         'status' => 1,
@@ -2932,6 +2768,30 @@ Route::get('ativamanual/{compra}', function(Compra $compra, \App\Services\SaldoS
 
 
     $saldoService->createSaldoRaiz($compra);
+
+
+    $grava = [
+        'descricao' => 'Recebido da mensalidade do ' . $compra->user->name,
+        'valor' => $compra->plano->valor,
+        'tipo' => 1,
+        'user_id' => $compra->user->id,
+    ];
+    Caixa::create($grava);
+
+    if (!empty($compra->user->terceiro())) {
+        $direto = $acaoController->calculorenda($compra, 3);
+    }
+    if (!empty($compra->user->segundo())) {
+        $direto = $acaoController->calculorenda($compra, 2);
+    }
+    if (!empty($compra->user->primeiro())) {
+
+        //dd($fatura->user->primeiro());
+
+        $direto = $acaoController->calculorenda($compra, 1);
+    }
+
+    return redirect()->back()->with('success','Ativado Com sucesso');
 });
 
 
@@ -2942,7 +2802,7 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController, \App\Se
     // dd($faturas);
 
     foreach ($faturas as $fatura) {
-        $asaas = new \CodePhix\Asaas\Asaas('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDI4MzY6OiRhYWNoXzI2ZWQ3NTZlLTk1NTktNGMwMS05ZDZlLTI1NGZhYjdlYjY4Mg==', 'homologacao');
+        $asaas = new \CodePhix\Asaas\Asaas('$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAyMTc4NzA6OiRhYWNoXzRmOWRmMjE4LTMzMGQtNDc1OC04ODFlLTA0YTU1NTA4ZDMyOQ==', 'production');
         $cobranca = $asaas->Cobranca()->getById($fatura->buscador);
 
         //dd($cobranca);
@@ -2999,18 +2859,19 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController, \App\Se
     // dd($faturas);
 });
 
-Route::get('sacarrendimento/{id}',function ($id){
+
+Route::get('sacarrendimento/{id}', function ($id) {
     $fatura = Compra::find($id);
 
-    return view('cliente.saque.rendimento',compact('fatura'));
+    return view('cliente.saque.rendimento', compact('fatura'));
 });
 
-Route::post('saquerendimento', function(Request $request, \App\Services\SaldoService $saldoService){
-    if($request->valor < 10){
+Route::post('saquerendimento', function (Request $request, \App\Services\SaldoService $saldoService) {
+    if ($request->valor < 10) {
         return redirect()->back()->with('Error', 'O valor mínimo necessário é de R$10,00');
     }
 
-    if($request->meio_saque == null){
+    if ($request->meio_saque == null) {
         return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
     }
 
@@ -3020,7 +2881,7 @@ Route::post('saquerendimento', function(Request $request, \App\Services\SaldoSer
 
 
     $grava = [
-        'descricao' => 'Saque de rendimento no valor de R$'.$request->valor.',00',
+        'descricao' => 'Saque de rendimento no valor de R$' . $request->valor . ',00',
         'valor' => $request->valor,
         'tipo' => 2,
         'user_id' => Auth::user()->id,
@@ -3041,15 +2902,15 @@ Route::post('saquerendimento', function(Request $request, \App\Services\SaldoSer
 Route::get('sacarraiz/{compra}', function (Compra $compra) {
     $fatura = $compra;
 
-    return view('cliente.saque.raiz',compact('fatura'));
+    return view('cliente.saque.raiz', compact('fatura'));
 });
 
-Route::post('saqueraiz', function(Request $request, \App\Services\SaldoService $saldoService){
-    if($request->valor == 0){
+Route::post('saqueraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
+    if ($request->valor == 0) {
         return redirect()->back()->with('Error', 'Saldo indisponível para saque');
     }
 
-    if($request->meio_saque == null){
+    if ($request->meio_saque == null) {
         return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
     }
 
@@ -3059,7 +2920,7 @@ Route::post('saqueraiz', function(Request $request, \App\Services\SaldoService $
 
 
     $grava = [
-        'descricao' => 'Saque de raiz no valor de R$'.$request->valor.',00',
+        'descricao' => 'Saque de raiz no valor de R$' . $request->valor . ',00',
         'valor' => $request->valor,
         'tipo' => 2,
         'user_id' => Auth::user()->id,
@@ -3075,24 +2936,23 @@ Route::post('saqueraiz', function(Request $request, \App\Services\SaldoService $
     ]);
 
 
-
     return redirect()->back()->with('success', 'Saque de raiz solicitado com sucesso');
 });
 
 Route::get('cancelar/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService) {
     $fatura = $compra;
     $valor = $saldoService->valorCancelamento($fatura->saldoRaiz);
-    if($valor < 0) $valor = 0;
+    if ($valor < 0) $valor = 0;
 
-    return view('cliente.saque.cancelamento',compact('fatura', 'valor'));
+    return view('cliente.saque.cancelamento', compact('fatura', 'valor'));
 });
 
-Route::post('cancelarraiz', function(Request $request, \App\Services\SaldoService $saldoService){
-    if($request->valor == 0){
+Route::post('cancelarraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
+    if ($request->valor == 0) {
         return redirect()->back()->with('Error', 'Saldo indisponível para saque');
     }
 
-    if($request->meio_saque == null){
+    if ($request->meio_saque == null) {
         return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
     }
 
@@ -3102,7 +2962,7 @@ Route::post('cancelarraiz', function(Request $request, \App\Services\SaldoServic
 
 
     $grava = [
-        'descricao' => 'Saque de cancelamento no valor de R$'.$request->valor.',00',
+        'descricao' => 'Saque de cancelamento no valor de R$' . $request->valor . ',00',
         'valor' => $request->valor,
         'tipo' => 2,
         'user_id' => Auth::user()->id,
@@ -3118,8 +2978,13 @@ Route::post('cancelarraiz', function(Request $request, \App\Services\SaldoServic
     ]);
 
 
-
     return redirect()->back()->with('success', 'Saque de cancelamento solicitado com sucesso');
+});
+
+Route::get('admin/comprovantes', function () {
+    $buscas = Compra::whereNotNull('img')->get();
+
+    return view('admin.comprovantes', compact('buscas'));
 });
 
 require __DIR__ . '/auth.php';

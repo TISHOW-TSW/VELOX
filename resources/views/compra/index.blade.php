@@ -2,6 +2,8 @@
 
 @section('css')
     <style>
+
+
         body {
             color: white;
         }
@@ -138,9 +140,75 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 style="color: #0a0a0a" class="modal-title">PIX</h4>
                 </div>
-                <div class="modal-body">
-                    <iframe src="{{url('geraroix2',$compra->id)}}" width="100%" height="500" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
-                            allowtransparency="true"></iframe>
+                <div class="modal-body" style="background-color: #0a0a0a">
+                <!--    <iframe src="{{url('geraroix2',$compra->id)}}" width="100%" height="500" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
+                            allowtransparency="true"></iframe> -->
+
+
+                    <div id="pix-card"  >
+                        <div class="card-body">
+                            <form method="post" action="{{ url('api/file-upload/comprovante') }}">
+                                @csrf
+                                <h2>- Ativação via Pix</h2>
+
+
+                                <strong>
+                                    REGRA DOS CENTAVOS.
+                                    (Pagamentos via pix devem ser feitos com a regra dos centavos, dois últimos dígitos de
+                                    ID da fatura devem ser enviados convertidos em centavos. (Ex: ID:217, Pack.2.000 deve
+                                    ser enviado R$2.000,17).
+                                </strong>
+
+
+                                Para realizar o pagamento via pix basta acessar o menu do seu banco e clicar para fazer a
+                                transferência via Pix. Feito isso é só escanear o QR Code abaixo e pronto, ele já está com o
+                                valor definido do seu plano e o destinatário, basta confirmar a transação! Facilidade na
+                                palma de sua mão :)
+
+
+                                <div align="center">
+
+                                    <h2>
+                                        <strong>Chave Pix:</strong> 46875479000100
+
+                                    </h2>
+                                </div>
+
+                                <hr/>
+
+                                <h3 class="text-center">Envie seu comprovante</h3>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="hidden" name="compra_id" value="{{$compra->id}}">
+                                        <div class="input-group-prepend"><span class="input-group-text"><i
+                                                    data-feather="file"></i></span></div>
+                                        <input type="file" name="img" class="form-control" required/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0"
+                                             aria-valuemax="100" style="width: 0%">
+                                            0%
+                                        </div>
+                                    </div>
+                                    <small id="file-help" class="form-text text-muted" tabindex="0">
+                                        <strong>Imagem da foto</strong> <br>
+                                        Tamanho máximo de cada anexo: 5MB.
+                                    </small>
+                                </div>
+
+
+                                <button type="submit" class="btn btn-success btn-block">
+                                    Enviar Comprovante
+                                </button>
+
+
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -153,6 +221,39 @@
 
 
 @section('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('form').ajaxForm({
+                beforeSend: function () {
+                    $('#success').empty();
+                },
+                uploadProgress: function (event, position, total, percentComplete) {
+                    $('.progress-bar').text(percentComplete + '%');
+                    $('.progress-bar').css('width', percentComplete + '%');
+                },
+                success: function (data) {
+                    if (data.errors) {
+                        $('.progress-bar').text('0%');
+                        $('.progress-bar').css('width', '0%');
+                        $('#success').html('<span class="text-danger"><b>' + data.errors +
+                            '</b></span>');
+                    }
+                    if (data.success) {
+                        $('.progress-bar').text('Uploaded');
+                        $('.progress-bar').css('width', '100%');
+                        $('#success').html('<span class="text-success"><b>' + data.success +
+                            '</b></span><br /><br />');
+                        $('#success').append(data.image);
+
+                        location.reload();
+                    }
+                }
+            });
+
+        });
+    </script>
     <script>
         function fracao(ship) {
 

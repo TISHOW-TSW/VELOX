@@ -33,8 +33,6 @@
     <meta name="msapplication-TileColor" content="#ffffff">
 
 
-
-
     <meta name="msapplication-TileImage" content="{{ asset('/ms-icon-144x144.png') }}">
     <meta name="theme-color" content="#ffffff">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -51,8 +49,6 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-
 
 
     <style>
@@ -246,9 +242,11 @@
                                     <li style="background-color: transparent" class="dropdown text-center">
                                         <a style="background-color: transparent" href="#" class="dropdown-toggle"
                                            data-toggle="dropdown" role="button" aria-haspopup="true"
-                                           aria-expanded="false"><div style="color: white; font-size: 15px;font-weight: bolder">
+                                           aria-expanded="false">
+                                            <div style="color: white; font-size: 15px;font-weight: bolder">
                                                 {{Auth::user()->login}}
-                                            </div></a>
+                                            </div>
+                                        </a>
 
                                         <ul style="background-color: transparent;border-color: transparent"
                                             class="dropdown-menu text-center">
@@ -408,6 +406,7 @@
                                     <li><a href="{{ url('admin/faturas') }}"><i class="fa fa-plus"></i>
                                             Faturas</a>
                                     </li>
+
                                     <li class="dropdown">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
                                                 class="fa fa-dollar"></i>
@@ -499,6 +498,9 @@
                                 <li><a style="color: white" href="{{ url('admin/faturas') }}"><i
                                             class="fa fa-plus"></i>
                                         Faturas</a>
+                                </li>
+                                <li><a style="color: white" href="{{ url('admin/comprovantes') }}"><i class="fa fa-plus"></i>
+                                        Comprovantes</a>
                                 </li>
                                 <li class="dropdown">
                                     <a style="color: white" href="#" class="dropdown-toggle"
@@ -644,13 +646,13 @@
 z-index:1000;">
                 <center>
 
-                    <img style="margin-top: 6px" class="img-responsive"
-                         src="{{ asset('android-icon-48x48.png') }}" alt="">{{ count($abertomeus) }}
+                    <img style="margin-top: 6px" class="img-responsive img-rounded"
+                         src="{{ asset('iconcarro.jpeg') }}" alt="">{{ count($abertomeus) }}
                 </center>
             </a>
 
         @endif
-@include('flash-message')
+        @include('flash-message')
         @yield('content')
 
         <!-- /.container -->
@@ -674,7 +676,6 @@ z-index:1000;">
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('admin/dist/js/demo.js') }}"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 
 @yield('js')

@@ -282,3 +282,65 @@ Route::post('file-upload/produto/doc/upload', function (Request $request) {
 
     return $output;
 });
+
+
+Route::post('file-upload/comprovante', function (Request $request) {
+
+
+    $rules = array(
+        'img' => 'required|mimes:jpeg,jpg,png,pdf|max:32760'
+    );
+
+    $error = Validator::make($request->all(), $rules);
+
+    if ($error->fails()) {
+        return response()->json(['errors' => $error->errors()->all()]);
+    }
+
+
+    $file = $request->file('img');
+    // ou
+    $file = $request->img;
+    $nameFile = "";
+    if ($request->hasFile('img') && $request->file('img')->isValid()) {
+
+        // Define um aleatório para o arquivo baseado no timestamps atual
+        $name = uniqid(date('HisYmd'));
+        //    dd($name);
+
+        // Recupera a extensão do arquivo
+        $extension = $request->img->extension();
+
+        // dd($extension);
+
+        // Define finalmente o nome
+        $nameFile = "{$name}.{$extension}";
+
+        // Faz o upload:
+        //$upload = $request->img->storeAs('comprovantes', $nameFile, 'public');
+
+        //  $upload = Storage::disk('digitalocean')->putFile('comprovantes', $nameFile, 'public');
+        $upload = Storage::disk('digitalocean')->putFile('comprovantesvelox', request()->img, 'public');
+
+        // return $nameFile;
+        // Se tiver funcionado o arquivo foi armazenado em storage/app/public/categories/nomedinamicoarquivo.extensao
+        //$produto = \App\Models\Produto::find($request['produto_id']);
+        // $produto->fill(['img' => $nameFile]);
+        $compra = \App\Models\Compra::find($request->compra_id);
+        $compra->update(['img'=>$upload]);
+        //\App\Models\Comprovante::create(['img' => $upload, 'compra_id' => $request->compra_id]);
+        // $produto->save();
+        // Verifica se NÃO deu certo o upload (Redireciona de volta)
+        if (!$upload) {
+            return ('error' . ' Falha ao fazer upload');
+        }
+    };
+
+    $output = array(
+        'success' => 'Image uploaded successfully',
+        'image' => '<img src="/produtos/' . $nameFile . '" class="img-thumbnail" />'
+    );
+    return $output;
+
+    // $grava = ['custom' => $request['name'], 'name' => $new_name, 'protocolo_id' => $request['protocolo_id']];
+});

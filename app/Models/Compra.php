@@ -25,7 +25,8 @@ class Compra extends Model
         'status',
         'valor',
         'dia_pagamento',
-        'payment_id'
+        'payment_id',
+        'img'
     ];
 
     public function plano()
