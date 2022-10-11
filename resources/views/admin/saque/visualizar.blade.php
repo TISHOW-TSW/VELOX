@@ -64,7 +64,12 @@
 
                     </tbody>
                 </table>
+                @if($tipo == 0)
                 <a href="{{url('pagar/rendimento/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
+                @endif
+                @if($tipo == 1)
+                    <a href="{{url('pagar/indica/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
+                @endif
             </div>
         </div>
     </div>

@@ -838,9 +838,19 @@ Route::get('admin/saque', function () {
 
 Route::get('admin/rendimento/visualizar/saque/{id}', function ($id) {
     $saque = \App\Models\Saquerendimento::find($id);
+    $tipo = 0;
 
-    return view('admin.saque.visualizar', compact('saque'));
+    return view('admin.saque.visualizar', compact('saque', 'tipo'));
 })->middleware(['auth']);
+
+Route::get('admin/indica/visualizar/saque/{id}', function ($id) {
+    $saque = Saqueindica::find($id);
+    $tipo = 1;
+
+    return view('admin.saque.visualizar', compact('saque', 'tipo'));
+})->middleware(['auth']);
+
+
 Route::get('admin/rendimento/cancelar/saque/{id}', function ($id) {
     $saque = \App\Models\Saquerendimento::find($id);
 
@@ -933,6 +943,26 @@ Route::get('testecliente', function () {
 Route::get('pagar/rendimento/saque/{id}', function ($id) {
 
     $saque = Saquerendimento::find($id);
+
+    $saque->fill(['status' => 1]);
+    $saque->save();
+
+
+    $grava = [
+        'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
+        'valor' => $saque->valor,
+        'tipo' => 0,
+        'user_id' => $saque->user_id,
+    ];
+
+    Caixa::create($grava);
+
+    return redirect(url('admin/saque'));
+});
+
+Route::get('pagar/indica/saque/{id}', function ($id) {
+
+    $saque = Saqueindica::find($id);
 
     $saque->fill(['status' => 1]);
     $saque->save();
