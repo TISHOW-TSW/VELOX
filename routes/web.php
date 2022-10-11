@@ -1050,12 +1050,17 @@ Route::post('admin/user/edit', function (Request $request) {
     if ($user->email != $request->email) {
         $controle .= 'EMail Alterado de ' . $user->email . ' para ' . $request->email . '<br>';
     }
+    if (empty($request->password)) {
+        unset($request['password']);
+    } else {
+        $request['password'] = bcrypt($request->password);
+    }
     $user->fill($request->all());
     $user->save();
 
 
     HelpersLogActivity::addToLog('Dados Alterados ' . $controle);
-    return redirect()->back();
+    return redirect()->back()->with('success', 'Usuario atualizado com sucesso');
 });
 
 Route::get('produto', function () {
