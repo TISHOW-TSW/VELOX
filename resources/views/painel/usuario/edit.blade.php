@@ -106,8 +106,10 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="">Senha</label>
+                                <label class="col-sm-2" for="">Senha</label>
+                                <div class="col-sm-10">
                                 <input type="password" name="password" class="form-control">
+                                </div>
                             </div>
 
 
