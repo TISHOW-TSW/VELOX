@@ -956,16 +956,20 @@ Route::get('admin/saque/ativos', function () {
     //  $saques = \App\Models\Saque::where('status', 1)->get();
     $saques = \App\Models\Saquerendimento::where('status', 1)->get();
     $saqueindicaos = Saqueindica::where('status', 1)->get();
+    $saquesRaiz = \App\Models\Saqueraiz::where('status', 1)->get();
+    $saquesCancelamento = \App\Models\Saquecancelamento::where('status', 1)->get();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos'));
+    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
 });
 
 Route::get('admin/saque/pendentes', function () {
     $tipo = 'de Rendimentos';
     $saques = \App\Models\Saquerendimento::where('status', 0)->get();
     $saqueindicaos = Saqueindica::where('status', 0)->get();
+    $saquesRaiz = \App\Models\Saqueraiz::where('status', 0)->get();
+    $saquesCancelamento = \App\Models\Saquecancelamento::where('status', 0)->get();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos'));
+    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
 });
 Route::get('admin/saque/estornados', function () {
     $tipo = 'ESTORNADO';
