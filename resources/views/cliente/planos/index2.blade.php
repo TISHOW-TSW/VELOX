@@ -235,6 +235,8 @@
 
 
         function carreganave(ship) {
+            alert('Sua corrida começará no próximo dia útil');
+            return;
             $('#aparecer').show();
             $("#ship" + ship).attr("disabled", "disabled");
             var interval = setInterval(updateProgress, 1000); // run updateProgress() every second
