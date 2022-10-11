@@ -111,10 +111,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button id="ship{{ $plano->id }}" class="btn"
+                                            <!--<button id="ship{{ $plano->id }}" class="btn"
                                             onclick="carreganave({{ $busca->id }})">
                                             Play
-                                        </button>
+                                        </button>-->
+                                            <button id="ship{{ $plano->id }}" class="btn"
+                                                    data-toggle="modal" data-target="#myModal">
+                                                Play
+                                            </button>
                                     @endif
                                 @endif
 
@@ -186,7 +190,32 @@
         </div>
     </div>
 
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 style="color: #0a0a0a" class="modal-title">PLAY</h4>
+                </div>
+                <div class="modal-body" style="background-color: #0a0a0a">
+
+
+
+                    <div id="pix-card"  >
+                        <div class="card-body">
+                            <p>A sua próxima corrida estará disponível no próximo dia útil</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 @endsection
 
@@ -206,7 +235,8 @@
 
 
         function carreganave(ship) {
-
+            alert('Sua corrida começará no próximo dia útil');
+            return;
             $("#ship" + ship).attr("disabled", "disabled");
             var interval = setInterval(updateProgress, 1000); // run updateProgress() every second
 
