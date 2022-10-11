@@ -2266,6 +2266,7 @@ Route::get('cancelship/{id}', function ($id) {
 
 
 Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoService) {
+    return redirect()->back();
     $compra = Compra::find($id);
     //dd($compra->rendimentos);
 
