@@ -154,9 +154,9 @@
 
                                 <strong>
                                     REGRA DOS CENTAVOS.
-                                    (Pagamentos via pix devem ser feitos com a regra dos centavos, dois últimos dígitos de
-                                    ID da fatura devem ser enviados convertidos em centavos. (Ex: ID:217, Pack.2.000 deve
-                                    ser enviado R$2.000,17).
+                                    (Pagamentos via pix devem ser feitos utilizando a regra dos centavos, dois dígitos finais do
+                                    ID da fatura devem ser enviados convertidos em centavos. (Ex: ID:725, Pack.100 deve
+                                    ser enviado R$100,25).
                                 </strong>
 
 
