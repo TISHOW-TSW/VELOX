@@ -105,6 +105,10 @@
                                         value="{{ $user->nascimento }}">
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="">Senha</label>
+                                <input type="password" name="password" class="form-control">
+                            </div>
 
 
 
