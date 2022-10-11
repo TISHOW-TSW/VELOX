@@ -149,7 +149,7 @@
                                 @endif
                             @else
                                 <br><br>
-                                @if ($plano->id == 6 || $plano->id == 7 || $plano->id == 8 || $plano->id == 9 || $plano->id == 10)
+                                @if ($plano->id == 1 ||$plano->id == 2 ||$plano->id == 3 ||$plano->id == 4 ||$plano->id == 5 ||$plano->id == 6 || $plano->id == 7 || $plano->id == 8 || $plano->id == 9 || $plano->id == 10)
                                     @if (Auth::user()->ordem > 1 && $plano->id == 6)
                                         <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                             $ {{ number_format($plano->valor, 2, ',', '.') }}
