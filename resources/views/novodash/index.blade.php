@@ -352,11 +352,7 @@
         <br>
 
 
-        <div class="col-md-12 text-center">
-            @if ($reward >= 50)
-                <a class="btn" href="{{ url('carryout/withdrawal/squad') }}">Saque de Rede</a>
-            @endif
-        </div>
+
         <br>
         <br>
         <br>
