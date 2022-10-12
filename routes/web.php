@@ -68,12 +68,6 @@ Route::get('testevenda', function () {
     return view('vendas.index');
 });
 
-Route::get('admin/chat', function () {
-    $chats = Chat::orderByDesc('created_at')->orderBy('aberto', 'desc')->get();
-
-    // dd($aberto);
-    return view('chat.index', compact('chats'));
-})->middleware(['auth']);
 
 Route::get('chat/close/{id}', function ($id) {
     $chat = Chat::find($id);
@@ -136,9 +130,7 @@ Route::get('teste', function () {
     return view('painel.index', compact('planos'));
 });
 
-Route::get('admin/usuarios', [AdminController::class, 'users'])->middleware(['auth']);
-Route::get('admin/usuarios/ativos', [AdminController::class, 'ativos'])->middleware(['auth']);
-Route::get('admin/usuarios/pendentes', [AdminController::class, 'pendentes'])->middleware(['auth']);
+
 
 Route::resource('vantagem', VantagemController::class)->middleware(['auth']);
 Route::resource('plano', PlanoController::class)->middleware(['auth']);
@@ -397,7 +389,12 @@ Route::get('carryout/withdrawal', function () {
     return redirect()->back();
 })->middleware(['auth']);
 Route::post('carryout/withdrawal/squad', function (Request $request) {
+    $validated = $request->validate([
 
+        'meio_id' => 'required',
+
+
+    ]);
     // dd($request->all());
     //  $valor = Auth::user()->sobra;
 
@@ -459,70 +456,8 @@ Route::get('endereco', function () {
     dd('oi');
 });
 
-Route::get('admin/dashboard', function () {
-    if (Auth::user()->tipo == 0) {
-        return redirect(url('dashboard'));
-    }
-    if (Auth::user()->tipo == 3) {
-        return redirect(url('admin/usuarios'));
-    }
-    $agora = Carbon::now();
-
-    $entrada = Caixa::where("tipo", 1)->sum('valor');
-    $faturaspendentes = Compra::where("ativo", 0)->with('plano')->whereMonth('created_at', $agora)->count();
-    $faturaspagas = Compra::where("ativo", 1)->with('plano')->whereMonth('created_at', $agora)->count();
-    $valorespendentes = Compra::where("ativo", 0)->get();
 
 
-    $users = User::withCount('indicados')->orderByDesc('indicados_count')->limit(10)->get();
-    $estados = Estado::withCount('enderecos')->orderByDesc('enderecos_count')->get();
-
-    $totalpendente = 0;
-    foreach ($valorespendentes as $valorespendente) {
-        $totalpendente += $valorespendente->plano->valor;
-    }
-
-
-    $usuarios = User::whereHas('compras')->get();
-    ///dd($usuarios);
-    $nousers = User::doesnthave('compras')->get()->pluck('id')->toArray();
-
-    $controle = [];
-
-    $semassinatura = [];
-
-    foreach ($usuarios as $user) {
-        if ($user->compras[0]->ativo == 1) {
-
-            $controle[] = $user->id;
-        } else {
-            $semassinatura[] = $user->id;
-        }
-    }
-    foreach ($nousers as $nouser) {
-        $semassinatura[] = $nouser;
-    }
-
-    //dd($semassinatura);
-
-    $ativos = User::whereIn('id', $controle)->get();
-    $inativos = User::whereIn('id', $semassinatura)->get();
-
-    //dd($totalpendente);
-    $saida = Caixa::where("tipo", 0)->whereMonth('created_at', $agora)->sum('valor');
-    $saques = Saqueindica::where("status", 1)->whereMonth('created_at', $agora)->sum('valor') + Saquerendimento::where("status", 1)->whereMonth('created_at', $agora)->sum('valor');
-    // dd($faturaspendentes);
-
-
-    return view('admin.index', compact('entrada', 'saida', 'saques', 'faturaspendentes', 'faturaspagas', 'totalpendente', 'users', 'ativos', 'inativos', 'estados'));
-})->middleware(['auth']);
-
-Route::get('admin/faturas', function () {
-
-    $compras = Compra::all();
-    HelpersLogActivity::addToLog('Acessou aba Faturas');
-    return view('admin.faturas', compact('compras'));
-})->middleware(['auth']);
 
 Route::get('myaccount', function () {
     $docs = Doc::all();
@@ -756,130 +691,7 @@ Route::get('cliente/pagarplano/{id}', function ($id) {
 });
 
 
-Route::get('admin/user/edit/{id}', function ($id) {
-    $user = User::find($id);
-    $usuarios = User::all();
-    HelpersLogActivity::addToLog('Acessou aba de Edição do usuario ' . $user->name);
-    return view('painel.usuario.edit', compact('user', 'usuarios'));
-});
 
-Route::get('admin/user/visualizar/{id}', function ($id) {
-
-    $user = User::find($id);
-
-    return view('painel.usuario.show', compact('user'));
-})->middleware(['auth']);
-
-Route::post('admin/consulta/faturas', function (Request $request) {
-    //dd($request->all());
-
-    $datas = explode(" - ", $request->data);
-    //  dd($datas);
-
-    //$inicio =  $datas[0];
-
-    $inicio = Carbon::createFromFormat('d/m/Y', $datas[0])->format('Y-m-d');
-    $final = Carbon::createFromFormat('d/m/Y', $datas[1])->format('Y-m-d');
-    $inicio = Carbon::parse($inicio);
-    $final = Carbon::parse($final)->addDay(1);
-    //  $final =
-
-    //  dd($inicio);
-
-    if ($request->status == 1) {
-        $buscas = Compra::where('ativo', 1)->whereBetween('created_at', [$inicio, $final])->get();
-        // dd($buscas);
-        HelpersLogActivity::addToLog('Pequisou faturas Pagas Periodo de ' . $inicio . ' à ' . $final);
-        return view('admin.faturas', compact('buscas'));
-    }
-    if ($request->status == 0) {
-        $buscas = Compra::where('ativo', 0)->whereBetween('created_at', [$inicio, $final])->get();
-        //dd($buscas);
-        HelpersLogActivity::addToLog('Pequisou faturas Pendente Periodo de ' . $inicio . ' à ' . $final);
-        return view('admin.faturas', compact('buscas'));
-    }
-    if ($request->status == 2) {
-        $buscas = Compra::whereBetween('created_at', [$inicio, $final])->get();
-        // dd($buscas);
-        HelpersLogActivity::addToLog('Pequisou faturas Geral Periodo de ' . $inicio . ' à ' . $final);
-        return view('admin.faturas', compact('buscas'));
-    }
-});
-Route::post('admin/consulta/relatorio', function (Request $request) {
-    //dd($request->all());
-
-    $datas = explode(" - ", $request->data);
-    //  dd($datas);
-
-    //$inicio =  $datas[0];
-
-    $inicio = Carbon::createFromFormat('d/m/Y', $datas[0])->format('Y-m-d');
-    $final = Carbon::createFromFormat('d/m/Y', $datas[1])->format('Y-m-d');
-
-    //  dd($inicio);
-
-
-    $relatorios = Relatorio::whereBetween('data', [$inicio, $final])->get();
-    // dd($buscas);
-    HelpersLogActivity::addToLog('Pequisou faturas Pagas Periodo de ' . $inicio . ' à ' . $final);
-    return view('admin.relatoriogeral', compact('relatorios'));
-});
-
-Route::get('admin/saque', function () {
-    $tipo = 'de Rendimento';
-    $saques = Saquerendimento::all();
-    $saqueindicaos = Saqueindica::all();
-    $saquesRaiz = \App\Models\Saqueraiz::all();
-    $saquesCancelamento = \App\Models\Saquecancelamento::all();
-
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
-})->middleware(['auth']);
-
-
-Route::get('admin/rendimento/visualizar/saque/{id}', function ($id) {
-    $saque = \App\Models\Saquerendimento::find($id);
-    $tipo = 0;
-
-    return view('admin.saque.visualizar', compact('saque', 'tipo'));
-})->middleware(['auth']);
-
-Route::get('admin/indica/visualizar/saque/{id}', function ($id) {
-    $saque = Saqueindica::find($id);
-    $tipo = 1;
-
-    return view('admin.saque.visualizar', compact('saque', 'tipo'));
-})->middleware(['auth']);
-
-
-Route::get('admin/rendimento/cancelar/saque/{id}', function ($id) {
-    $saque = \App\Models\Saquerendimento::find($id);
-
-    $dados = [
-        'tipo' => 0,
-        'descricao' => "cancel withdraw",
-        'valor' => $saque->valor,
-        'user_id' => Auth::user()->id
-    ];
-
-
-    Valorredimento::create($dados);
-
-    Saquerendimento::destroy($id);
-
-    return redirect()->back();
-
-    // dd($dados);
-
-    return view('admin.saque.cancelar', compact('saque'));
-})->middleware(['auth']);
-Route::get('admin/caixa', function () {
-    HelpersLogActivity::addToLog('Acessou aba de Caixa');
-    $caixas = Caixa::orderBy("id", 'desc')->get();
-    $entrada = Caixa::where("tipo", 1)->sum('valor');
-    $saida = Caixa::where("tipo", 0)->sum('valor');
-    // dd($entrada);
-    return view('admin.caixa', compact('caixas', 'entrada', 'saida'));
-})->middleware(['auth']);
 
 Route::get('consultarfaturas/{id}', function ($id) {
 
@@ -981,33 +793,7 @@ Route::get('pagar/indica/saque/{id}', function ($id) {
 });
 
 
-Route::get('admin/saque/ativos', function () {
-    $tipo = 'de Rendimentos';
-    //  $saques = \App\Models\Saque::where('status', 1)->get();
-    $saques = \App\Models\Saquerendimento::where('status', 1)->get();
-    $saqueindicaos = Saqueindica::where('status', 1)->get();
-    $saquesRaiz = \App\Models\Saqueraiz::where('status', 1)->get();
-    $saquesCancelamento = \App\Models\Saquecancelamento::where('status', 1)->get();
 
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
-});
-
-Route::get('admin/saque/pendentes', function () {
-    $tipo = 'de Rendimentos';
-    $saques = \App\Models\Saquerendimento::where('status', 0)->get();
-    $saqueindicaos = Saqueindica::where('status', 0)->get();
-    $saquesRaiz = \App\Models\Saqueraiz::where('status', 0)->get();
-    $saquesCancelamento = \App\Models\Saquecancelamento::where('status', 0)->get();
-
-    return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
-});
-Route::get('admin/saque/estornados', function () {
-    $tipo = 'ESTORNADO';
-    $saques = \App\Models\Saque::where('status', 2)->get();
-
-
-    return view('admin.saque.todos', compact('saques', 'tipo'));
-});
 
 Route::get('novo/registro', function () {
     HelpersLogActivity::addToLog('Acessou Função para adicionar Registro ao Caixa');
@@ -1034,34 +820,8 @@ Route::post('registro/caixa', function (Request $request) {
 
     return redirect(url('admin/caixa'));
 });
-Route::post('admin/user/edit', function (Request $request) {
-    $request->validate([
-        'name' => 'required',
-        'email' => ['required'],
-    ]);
-
-    $user = User::find($request->id);
-    $controle = '';
-
-    //dd($request->all());
-    if ($user->name != $request->name) {
-        $controle .= 'Nome Alterado de ' . $user->name . ' para ' . $request->name . '<br>';
-    }
-    if ($user->email != $request->email) {
-        $controle .= 'EMail Alterado de ' . $user->email . ' para ' . $request->email . '<br>';
-    }
-    if (empty($request->password)) {
-        unset($request['password']);
-    } else {
-        $request['password'] = bcrypt($request->password);
-    }
-    $user->fill($request->all());
-    $user->save();
 
 
-    HelpersLogActivity::addToLog('Dados Alterados ' . $controle);
-    return redirect()->back()->with('success', 'Usuario atualizado com sucesso');
-});
 
 Route::get('produto', function () {
     return view('produtos.index');
@@ -1126,55 +886,8 @@ Route::get('arquivo', function () {
     return view('material.index');
 })->middleware(['auth']);
 
-Route::get('admin/delete/conta/{id}', function ($id) {
 
 
-    Conta::destroy($id);
-
-    return redirect()->back();
-})->middleware(['auth']);
-Route::get('admin/users', function () {
-
-    $users = User::where("tipo", 1)->get();
-
-    return view('admin.user.index', compact('users'));
-})->middleware(['auth']);
-Route::get('admin/usuarios/edit/{id}', function ($id) {
-    $user = User::find($id);
-
-    return view('admin.user.edit', compact('user'));
-})->middleware(['auth']);
-
-Route::post('admin/usuarios/edit', function (Request $request) {
-
-    //    dd($request->all());
-
-    $request->validate([
-        'name' => 'required',
-        'email' => ['required'],
-        'tipo' => ['required'],
-
-    ]);
-
-    $user = User::find($request->id);
-    $user->fill($request->all());
-    $user->save();
-});
-Route::post('admin/buscarcpf', function (Request $request) {
-    $request->validate([
-
-        'email' => ['required', 'email'],
-
-    ]);
-    //  $request['cpf'] = preg_replace("/[^0-9]/", "", $request->cpf);
-    $user = User::where('email', $request->email)->first();
-
-    if (empty($user)) {
-        return redirect()->back();
-    }
-
-    return redirect(url('admin/usuarios/edit', $user->id));
-})->middleware(['auth']);
 
 Route::get('buscafatura/{id}', function ($id) {
     $asaas = new \CodePhix\Asaas\Asaas('41891bad9d2d17a3ba2af9f77ec179751010bd79e9439e919194925827aba3d1', 'homologacao');
@@ -1183,36 +896,7 @@ Route::get('buscafatura/{id}', function ($id) {
     dd($cobranca);
 })->middleware(['auth']);
 
-Route::get('admin/relatorios', function () {
-    $logs = HelpersLogActivity::logActivityLists();
-    $agora = Carbon::now();
-    $planos = Plano::all();
-    $assinaturas = Assinatura::where("status", 1)->whereMonth('inicio', $agora)->get();
-    HelpersLogActivity::addToLog('Acessou Relatorio');
-    // dd($premium);
-    $relatorios = Relatorio::all();
-    return view('admin.relatoriogeral', compact('relatorios', 'assinaturas', 'planos', 'logs'));
-})->middleware(['auth']);
-Route::get('admin/relatorioplanos', function () {
-    $logs = HelpersLogActivity::logActivityLists();
-    $agora = Carbon::now();
-    $planos = Plano::all();
-    $assinaturas = Compra::where("ativo", 1)->whereMonth('created_at', $agora)->get();
-    HelpersLogActivity::addToLog('Acessou Relatorio');
-    // dd($premium);
-    $relatorios = Relatorio::all();
-    return view('admin.relatorioplano', compact('relatorios', 'assinaturas', 'planos', 'logs'));
-})->middleware(['auth']);
-Route::get('admin/logs', function () {
-    $logs = HelpersLogActivity::logActivityLists();
-    $agora = Carbon::now();
-    $planos = Plano::all();
-    $assinaturas = Assinatura::where("status", 1)->whereMonth('inicio', $agora)->get();
-    HelpersLogActivity::addToLog('Acessou Relatorio');
-    // dd($premium);
-    $relatorios = Relatorio::all();
-    return view('admin.relatorio', compact('relatorios', 'assinaturas', 'planos', 'logs'));
-})->middleware(['auth']);
+
 
 Route::get('gerarelatorio', function () {
 
@@ -2831,7 +2515,7 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
         $direto = $acaoController->calculorenda($compra, 1);
     }
 
-    return redirect()->back()->with('success','Ativado Com sucesso');
+    return redirect()->back()->with('success', 'Ativado Com sucesso');
 });
 
 
@@ -3021,15 +2705,22 @@ Route::post('cancelarraiz', function (Request $request, \App\Services\SaldoServi
     return redirect()->back()->with('success', 'Saque de cancelamento solicitado com sucesso');
 });
 
-Route::get('admin/comprovantes', function () {
-    $buscas = Compra::whereNotNull('img')->get();
 
-    return view('admin.comprovantes', compact('buscas'));
-});
 
-Route::post('user/pin/{user}', function(User $user, Request $request){
+Route::post('user/pin/{user}', function (User $user, Request $request) {
     $pin = bcrypt($request->pin);
     $user->update(['pin' => $pin]);
+});
+
+Route::get('novoadm', function () {
+    \App\Models\UserAdmin::create(
+        ['name' => 'gustavo',
+            'login' => 'gus17',
+            'email' => 'g@g.com',
+            'password' => bcrypt('36110312')
+        ]
+
+    );
 });
 
 require __DIR__ . '/auth.php';

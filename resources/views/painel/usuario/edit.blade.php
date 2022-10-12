@@ -1,4 +1,4 @@
-@extends('painel.padrao')
+@extends('admin.padrao')
 @section('css')
 
 @endsection

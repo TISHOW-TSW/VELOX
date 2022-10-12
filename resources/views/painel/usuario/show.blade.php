@@ -1,4 +1,4 @@
-@extends('painel.padrao')
+@extends('admin.padrao')
 @section('css')
     <link rel="stylesheet" href="{{ asset('bower_components/bootstrap-daterangepicker/daterangepicker.css') }}">
     <link rel="stylesheet"
