@@ -3027,4 +3027,9 @@ Route::get('admin/comprovantes', function () {
     return view('admin.comprovantes', compact('buscas'));
 });
 
+Route::post('user/pin/{user}', function(User $user, Request $request){
+    $pin = bcrypt($request->pin);
+    $user->update(['pin' => $pin]);
+});
+
 require __DIR__ . '/auth.php';
