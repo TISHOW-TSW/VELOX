@@ -74,7 +74,7 @@
     <br>
     <br>
     <div class="container">
-        <div class="panel caixa">
+        <!--<div class="panel caixa">
             <div class="panel-heading">
                 <h3 class="panel-title">Consultar Faturas</h3>
             </div>
@@ -102,7 +102,7 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div>-->
         <div class="panel">
             <div class="panel-heading">
                 <h3 class="panel-title">Faturas</h3>
@@ -116,7 +116,6 @@
                                 <th>Cliente</th>
                                 <th>Telefone</th>
                                 <th>Valor</th>
-                                <th>Status Nowpayments</th>
                                 <th>Status</th>
                                 <th>Ação</th>
                             </tr>
@@ -129,13 +128,6 @@
                                         <td>{{ $busca->user->name }}</td>
                                         <td>{{ $busca->user->telefone }}</td>
                                         <td>$ {{ $busca->plano->valor }}</td>
-                                        <td>
-                                            @if ($busca->pay_address != NULL)
-                                            {{$busca->consultahash()['payment_status']}}
-                                            @endif
-
-
-                                        </td>
                                         <td>{{ $busca->ativo_formated }}</td>
                                         <td>
                                             <button class="btn btn-danger btn-rounded">Excluir</button>
