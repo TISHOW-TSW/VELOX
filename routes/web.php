@@ -397,7 +397,12 @@ Route::get('carryout/withdrawal', function () {
     return redirect()->back();
 })->middleware(['auth']);
 Route::post('carryout/withdrawal/squad', function (Request $request) {
+    $validated = $request->validate([
 
+        'meio_id' => 'required',
+
+
+    ]);
     // dd($request->all());
     //  $valor = Auth::user()->sobra;
 
