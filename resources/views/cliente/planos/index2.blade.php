@@ -98,9 +98,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button id="ship{{ $plano->id }}" class="btn"
-                                            onclick="carreganave({{ $busca->id }})">
-                                            Play
+                                        <br>
+                                        <br>
+                                        <button id="ship{{ $plano->id }}" class="btn">
+
+
+
+                                            Abastecendo
                                         </button>
                                     @endif
 
@@ -117,24 +121,13 @@
 
                                     @if ($busca->campanha2() == 2)
 
-                                            <img style="display: none" id="aparecer" class="img img-responsive" src="{{url('acelera.gif')}}" alt="">
-                                        <div style="border-radius: 10px" class="progress">
-                                            <div class="progress">
-                                                <div style="background-color: purple" class="progress-bar"
-                                                    role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                                                    aria-valuemax="100" style="width: 0%;"
-                                                    id="current_progress{{ $busca->id }}" data-current="0">
-                                                    0%
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!--<button id="ship{{ $plano->id }}" class="btn"
-                                            onclick="carreganave({{ $busca->id }})">
-                                            Play
-                                        </button>-->
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    data-toggle="modal" data-target="#myModal">
-                                                Play
+                                            <br>
+                                            <br>
+                                            <button id="ship{{ $plano->id }}" class="btn">
+
+
+
+                                                Abastecendo
                                             </button>
                                     @endif
                                 @endif
