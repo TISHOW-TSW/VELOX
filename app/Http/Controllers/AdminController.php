@@ -6,6 +6,7 @@ use App\Models\Assinatura;
 use App\Models\Extrato;
 use App\Models\Plano;
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -91,5 +92,12 @@ class AdminController extends Controller
         //Assinatura::create($grava);
 
         return redirect(url('customer/invoices'));
+    }
+
+
+    public function backoffice(User $user)
+    {
+        Auth::guard('web')->login($user);
+        return redirect(RouteServiceProvider::HOME);
     }
 }

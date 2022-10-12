@@ -117,6 +117,8 @@ Route::name('admin.')->prefix('admin')->group(function () {
         Route::get('usuarios/ativos', [AdminController::class, 'ativos']);
         Route::get('usuarios/pendentes', [AdminController::class, 'pendentes']);
 
+        Route::get('user/backoffice/{user}', [\App\Http\Controllers\AdminController::class, 'backoffice']);
+
         Route::get('saque', function () {
             $tipo = 'de Rendimento';
             $saques = Saquerendimento::all();
@@ -295,7 +297,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 );
             }
 
-            return redirect(url('usuarios/edit', $user->id));
+            return redirect()->back();
         });
 
 

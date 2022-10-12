@@ -83,10 +83,9 @@
                                                     class="btn btn-success btn-block">Editar</a>
                                                 <a href="{{ url('admin/user/visualizar', $user->id) }}"
                                                     class="btn btn-primary btn-block">Visualizar</a>
-                                                <a href="{{ url('admin/user/docs', $user->id) }}"
-                                                    class="btn btn-default btn-block">Documentos</a>
-                                                <a target="_blank" href="{{ url('admin/contrato', $user->id) }}"
-                                                    class="btn btn-danger btn-block" href="">Contrato</a>
+
+                                                <a target="_blank" href="{{url('admin/user/backoffice',$user)}}"
+                                                   class="btn btn-warning btn-block">BackOffice</a>
 
 
                                             </td>
