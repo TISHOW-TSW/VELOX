@@ -122,8 +122,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (isset($buscas))
-                                @forelse($buscas as $busca)
+                            @if (isset($compras))
+                                @forelse($compras as $busca)
                                     <tr style="background-color: transparent">
                                         <td>{{ $busca->id }}</td>
                                         <td>{{ $busca->user->name }}</td>
