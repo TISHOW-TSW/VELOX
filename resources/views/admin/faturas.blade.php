@@ -132,7 +132,7 @@
                                         <td>
                                             <button class="btn btn-danger btn-rounded">Excluir</button>
                                             <a href="{{ url('admin/cortesia', $busca->id) }}"
-                                                class="btn btn-success">Cortesia</a>
+                                                class="btn btn-primary">Cortesia</a>
                                             @if($busca->status == 0 )
                                                 <a href="{{url('admin/ativamanual',$busca)}}" class="btn btn-success">Ativar</a>
 
