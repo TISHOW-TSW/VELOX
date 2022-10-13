@@ -133,6 +133,9 @@
                     "searchable": true
                 },
                 {
+                    "searchable": true
+                },
+                {
                     "searchable": false
                 },
                 {
