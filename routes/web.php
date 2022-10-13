@@ -131,7 +131,6 @@ Route::get('teste', function () {
 });
 
 
-
 Route::resource('vantagem', VantagemController::class)->middleware(['auth']);
 Route::resource('plano', PlanoController::class)->middleware(['auth']);
 
@@ -457,8 +456,6 @@ Route::get('endereco', function () {
 });
 
 
-
-
 Route::get('myaccount', function () {
     $docs = Doc::all();
     return view('cliente.minhaconta', compact('docs'));
@@ -691,8 +688,6 @@ Route::get('cliente/pagarplano/{id}', function ($id) {
 });
 
 
-
-
 Route::get('consultarfaturas/{id}', function ($id) {
 
     $asaas = new \CodePhix\Asaas\Asaas('41891bad9d2d17a3ba2af9f77ec179751010bd79e9439e919194925827aba3d1', 'homologacao');
@@ -793,8 +788,6 @@ Route::get('pagar/indica/saque/{id}', function ($id) {
 });
 
 
-
-
 Route::get('novo/registro', function () {
     HelpersLogActivity::addToLog('Acessou Função para adicionar Registro ao Caixa');
     return view('admin.registrarcaixa');
@@ -820,7 +813,6 @@ Route::post('registro/caixa', function (Request $request) {
 
     return redirect(url('admin/caixa'));
 });
-
 
 
 Route::get('produto', function () {
@@ -887,15 +879,12 @@ Route::get('arquivo', function () {
 })->middleware(['auth']);
 
 
-
-
 Route::get('buscafatura/{id}', function ($id) {
     $asaas = new \CodePhix\Asaas\Asaas('41891bad9d2d17a3ba2af9f77ec179751010bd79e9439e919194925827aba3d1', 'homologacao');
     $cobranca = $asaas->Cobranca()->getById($id);
 
     dd($cobranca);
 })->middleware(['auth']);
-
 
 
 Route::get('gerarelatorio', function () {
@@ -2706,7 +2695,6 @@ Route::post('cancelarraiz', function (Request $request, \App\Services\SaldoServi
 });
 
 
-
 Route::post('user/pin/{user}', function (User $user, Request $request) {
     $pin = bcrypt($request->pin);
     $user->update(['pin' => $pin]);
@@ -2721,6 +2709,63 @@ Route::get('novoadm', function () {
         ]
 
     );
+});
+
+Route::get('todasfaturas', function (\App\Services\CalendarService $calendarService) {
+    $faturas = Compra::where('status', 1)->get();
+
+
+    foreach ($faturas as $fatura) {
+        // dd($fatura);
+        $buscar = $calendarService->validaDia($fatura->dia_pagamento);
+
+//dd($buscar);
+        if ($buscar['respota'] == true) {
+            $nova = $calendarService->validaDia($buscar['data']);
+
+            if ($nova['respota'] == true) {
+                $nova = $calendarService->validaDia($nova['data']);
+                if ($nova['respota'] == true) {
+
+                } else {
+                    $novadata = $nova['data'];
+                }
+            } else {
+                $novadata = $nova['data'];
+            }
+        } else {
+            $novadata = $buscar['data'];
+        };
+
+
+        $today = Carbon::parse($novadata);
+
+        //dd($today->dayOfWeek)'
+        if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+            $today = $today->addDay();
+
+            if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+                $today = $today->addDay();
+                if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+                } else {
+                    $novadata = $today;
+                }
+
+            } else {
+                $novadata = $today;
+            }
+
+        } else {
+            $novadata = $today;
+        }
+
+        $fatura->update(['primeiro_rendimento' => $novadata]);
+
+    }
+
+
 });
 
 require __DIR__ . '/auth.php';

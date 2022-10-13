@@ -386,6 +386,13 @@ Route::name('admin.')->prefix('admin')->group(function () {
         });
 
 
+        Route::get('todasfaturas',function (){
+            $faturas = Compra::where('status',1)->get();
+
+            dd($faturas);
+        });
+
+
 
         Route::post('/logout', function (Request $request) {
             Auth::guard('admin')->logout();
