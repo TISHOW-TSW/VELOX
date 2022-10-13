@@ -431,7 +431,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
     Route::post('user/{user}/remove-saldo', [\App\Http\Controllers\AdminController::class, 'removeSaldo']);
 
     Route::get('apagarenderrado', function() {
-        $saldo = \App\Models\SaldoRaiz::where(user_id, 805)->first();
+        $saldo = \App\Models\SaldoRaiz::where('user_id', 805)->first();
         $saldo->saldoRendimento->update(['valor' => 0]);
         $batalha = \App\Models\Batalha::where('compra_id', 592)->first();
         $batalha->delete();
