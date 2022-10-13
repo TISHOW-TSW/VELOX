@@ -154,9 +154,12 @@
 
                                 <strong>
                                     REGRA DOS CENTAVOS.
-                                    (Pagamentos via pix devem ser feitos utilizando a regra dos centavos, dois dígitos finais do
+
+                                    (Pagamento via Pix, para podermos agilizar pedimos para usar a regra dos centavos,
+                                    por exemplo, dois dígitos finais do
                                     ID da fatura devem ser enviados convertidos em centavos. (Ex: ID:725, Pack.100 deve
                                     ser enviado R$100,25).
+
                                 </strong>
 
 
@@ -169,7 +172,7 @@
                                 <div align="center">
 
                                     <h2>
-                                        <strong>Chave Pix:</strong> suportevelox5@gmail.com
+                                        <strong>Chave Pix:</strong> veloxfive2023@gmail.com
 
                                     </h2>
                                 </div>
