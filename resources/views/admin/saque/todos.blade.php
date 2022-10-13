@@ -67,7 +67,7 @@
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped">
+                    <table id="myTable1" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -119,7 +119,7 @@
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped">
+                    <table id="myTable2" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -168,7 +168,7 @@
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table id="myTable" class="table table-striped">
+                    <table id="myTable3" class="table table-striped">
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -229,6 +229,24 @@
 
     <script>
         $('#myTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel', 'pdf'
+            ]
+        });
+        $('#myTable1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel', 'pdf'
+            ]
+        });
+        $('#myTable2').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel', 'pdf'
+            ]
+        });
+        $('#myTable3').DataTable({
             dom: 'Bfrtip',
             buttons: [
                 'copy', 'excel', 'pdf'
