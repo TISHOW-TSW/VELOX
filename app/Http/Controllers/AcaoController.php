@@ -63,7 +63,7 @@ class AcaoController extends Controller
             $somatotal = $buscamenor->somas->sum('valor');
 
 
-            $dobroplano = $buscamenor->plano->valor * 2;
+            //$dobroplano = $buscamenor->plano->valor * 2;
 
             switch ($nivel) {
 
@@ -82,31 +82,32 @@ class AcaoController extends Controller
 
             }
             // dd($acao);
-            $saldo = ($fatura->plano->valor - ($fatura->plano->valor * ((100 - $acao) / 100)));
-            $soma = $somatotal + $saldo;
+            $saldo = (($acao / 100) * $fatura->produto->valor);
+            //$saldo = ($fatura->plano->valor - ($fatura->plano->valor * ((100 - $acao) / 100)));
+            //$soma = $somatotal + $saldo;
 
-            if ($dobroplano < $soma) {
+            //if ($dobroplano < $soma) {
 
-                $diferenca = $dobroplano - $somatotal;
+                //$diferenca = $dobroplano - $somatotal;
                 //dd($diferenca);
 
 
 
-                $buscamenor->fill(['ativo' => 2]);
-                $buscamenor->save();
-                $ordem = $buscamenor->user->ordem + 1;
-                $buscamenor->user->fill(['ordem' => $ordem]);
-                $buscamenor->user->save();
-                $tem = Compra::where('user_id', $escolha->id)->where('ativo', 1)->count();
+                //$buscamenor->fill(['ativo' => 2]);
+                //$buscamenor->save();
+                //$ordem = $buscamenor->user->ordem + 1;
+                //$buscamenor->user->fill(['ordem' => $ordem]);
+                //$buscamenor->user->save();
+                //$tem = Compra::where('user_id', $escolha->id)->where('ativo', 1)->count();
 
-                if ($tem > 0) {
-                    $saldo = $saldo;
-                } else {
-                    $saldo = $diferenca;
-                }
-            } else {
-                $saldo = $saldo;
-            }
+                //if ($tem > 0) {
+                  //  $saldo = $saldo;
+                //} else {
+                  //  $saldo = $diferenca;
+                //}
+           // } else {
+                //$saldo = $saldo;
+            //}
             //
             //dd($saldo);
             Soma::create(['compra_id' => $buscamenor->id, 'valor' => $saldo]);
@@ -120,7 +121,7 @@ class AcaoController extends Controller
             // $pontuacao = $user->pontos + $plano->pontos;
             $dados = [
                 'tipo' => 0,
-                'descricao' => 'Bonus de '.$porc.' sobre o carro '. $fatura->plano->name.' no valor de'. ' R$'.$saldo. ' do login'. $fatura->user->login . ' do seu ' . $frase,
+                'descricao' => 'Bonus de '.$porc.'% sobre o carro '. $fatura->plano->name.' no valor de'. ' R$'.$saldo. ' do login'. $fatura->user->login . ' do seu ' . $frase,
                 'valor' => $saldo,
                 'user_id' => $escolha->id,
             ];

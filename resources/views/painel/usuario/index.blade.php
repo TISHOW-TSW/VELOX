@@ -44,6 +44,7 @@
 
                                     <tr>
                                         <th>Nome</th>
+                                        <th>Login</th>
                                         <th>Patrocinador</th>
                                         <th>Email</th>
                                         <th>CPF</th>
@@ -56,6 +57,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>Nome</th>
+                                        <th>Login</th>
                                         <th>Patrocinador</th>
                                         <th>Email</th>
                                         <th>CPF</th>
@@ -69,6 +71,7 @@
                                     @forelse ($users as $user)
                                         <tr style="background-color: transparent">
                                             <td>{{ $user->name }}</td>
+                                            <td>{{ $user->login }}</td>
                                             <td>
                                                 @if ($user->meindica)
                                                     {{ $user->meindica->name }}
@@ -127,6 +130,9 @@
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             "columns": [{
+                    "searchable": true
+                },
+                {
                     "searchable": true
                 },
                 {
