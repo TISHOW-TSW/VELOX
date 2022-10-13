@@ -2518,7 +2518,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
     }
 });
 
-Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService, AcaoController $acaoController) {
+Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService, AcaoController $acaoController, \App\Services\CalendarService $calendarService) {
     $compra->fill([
         'tipo' => '$cobranca->billingType',
         'status' => 1,
@@ -2528,6 +2528,58 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
 
     ]);
     $compra->save();
+
+
+
+    $fatura = $compra;
+
+
+    $buscar = $calendarService->validaDia($fatura->dia_pagamento);
+
+
+    if ($buscar['respota'] == true) {
+        $nova = $calendarService->validaDia($buscar['data']);
+
+        if ($nova['respota'] == true) {
+            $nova = $calendarService->validaDia($nova['data']);
+            if ($nova['respota'] == true) {
+
+            } else {
+                $novadata = $nova['data'];
+            }
+        } else {
+            $novadata = $nova['data'];
+        }
+    } else {
+        $novadata = $buscar['data'];
+    };
+
+
+    $today = Carbon::parse($novadata);
+
+    //dd($today->dayOfWeek)'
+    if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+        $today = $today->addDay();
+
+        if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+            $today = $today->addDay();
+            if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+            } else {
+                $novadata = $today;
+            }
+
+        } else {
+            $novadata = $today;
+        }
+
+    } else {
+        $novadata = $today;
+    }
+
+    $fatura->update(['primeiro_rendimento' => $novadata]);
+
 
 
     $saldoService->createSaldoRaiz($compra);
@@ -2769,7 +2821,7 @@ Route::get('todasfaturas', function (\App\Services\CalendarService $calendarServ
         // dd($fatura);
         $buscar = $calendarService->validaDia($fatura->dia_pagamento);
 
-//dd($buscar);
+
         if ($buscar['respota'] == true) {
             $nova = $calendarService->validaDia($buscar['data']);
 
