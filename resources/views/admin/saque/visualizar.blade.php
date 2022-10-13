@@ -58,14 +58,13 @@
                     </tr>
                     <tr>
                         <td>Meio saque</td>
-                        @if($saque->meio_saque == 2)
+                        @if($saque->meio_saque == 2 || $saque->meio == 2)
                             <td>Pix: {{ $saque->user->pix->chave }}</td>
-                        @elseif($saque->meio_saque == 1)
+                        @elseif($saque->meio_saque == 1 || $saque->meio == 1)
                             <td>Bankon: {{ $saque->user->bankon->cod_bankon }}</td>
                         @else
                             <td></td>
                         @endif
-                        @dd($saque)
                     </tr>
 
                     </tbody>
