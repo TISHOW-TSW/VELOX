@@ -1978,39 +1978,89 @@ Route::get('cancelship/{id}', function ($id) {
 
 
 Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoService) {
-    return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
+    //return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
+
+
+
     $compra = Compra::find($id);
+
+    if (count($compra->rendimentos) == 0){
+
+        if ($compra->primeiro_rendimento <= \Carbon\Carbon::now()){
+            $busca = [
+                'user_id' => Auth::user()->id,
+                'plano_id' => $compra->plano->id,
+                'compra_id' => $compra->id,
+            ];
+
+
+            if (count($compra->rendimentos) != 5) {
+
+                $rentabilidade = $compra->plano->valor * 0.10;
+
+                $dados = [
+                    'tipo' => 0,
+                    'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
+                    'valor' => $rentabilidade,
+                    'user_id' => Auth::user()->id
+                ];
+
+
+                \App\Models\Valorredimento::create($dados);
+                Batalha::create($busca);
+                $saldoService->rendimento($compra->saldoRaiz);
+
+
+            }
+            $compra2 = Compra::find($compra->id);
+            if (count($compra2->rendimentos) == 5) {
+                $compra->update(['status' => 2]);
+            }
+        }else{
+            return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
+        }
+
+    }else{
+        if($compra->rendimentos->last()->created_at->diffInHours() <= 24){
+            return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
+
+        } else{
+
+            $busca = [
+                'user_id' => Auth::user()->id,
+                'plano_id' => $compra->plano->id,
+                'compra_id' => $compra->id,
+            ];
+
+
+            if (count($compra->rendimentos) != 5) {
+
+                $rentabilidade = $compra->plano->valor * 0.10;
+
+                $dados = [
+                    'tipo' => 0,
+                    'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
+                    'valor' => $rentabilidade,
+                    'user_id' => Auth::user()->id
+                ];
+
+
+                \App\Models\Valorredimento::create($dados);
+                Batalha::create($busca);
+                $saldoService->rendimento($compra->saldoRaiz);
+
+
+            }
+            $compra2 = Compra::find($compra->id);
+            if (count($compra2->rendimentos) == 5) {
+                $compra->update(['status' => 2]);
+            }
+
+        }
+    }
     //dd($compra->rendimentos);
 
-    $busca = [
-        'user_id' => Auth::user()->id,
-        'plano_id' => $compra->plano->id,
-        'compra_id' => $compra->id,
-    ];
 
-
-    if (count($compra->rendimentos) != 5) {
-
-        $rentabilidade = $compra->plano->valor * 0.10;
-
-        $dados = [
-            'tipo' => 0,
-            'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
-            'valor' => $rentabilidade,
-            'user_id' => Auth::user()->id
-        ];
-
-
-        \App\Models\Valorredimento::create($dados);
-        Batalha::create($busca);
-        $saldoService->rendimento($compra->saldoRaiz);
-
-
-    }
-    $compra2 = Compra::find($compra->id);
-    if (count($compra2->rendimentos) == 5) {
-        $compra->update(['status' => 2]);
-    }
     return redirect()->back();
 })->middleware(['auth']);
 
@@ -2468,7 +2518,7 @@ Route::get('geratudo', function (AcaoController $acaoController) {
     }
 });
 
-Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService, AcaoController $acaoController) {
+Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService, AcaoController $acaoController, \App\Services\CalendarService $calendarService) {
     $compra->fill([
         'tipo' => '$cobranca->billingType',
         'status' => 1,
@@ -2478,6 +2528,58 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
 
     ]);
     $compra->save();
+
+
+
+    $fatura = $compra;
+
+
+    $buscar = $calendarService->validaDia($fatura->dia_pagamento);
+
+
+    if ($buscar['respota'] == true) {
+        $nova = $calendarService->validaDia($buscar['data']);
+
+        if ($nova['respota'] == true) {
+            $nova = $calendarService->validaDia($nova['data']);
+            if ($nova['respota'] == true) {
+
+            } else {
+                $novadata = $nova['data'];
+            }
+        } else {
+            $novadata = $nova['data'];
+        }
+    } else {
+        $novadata = $buscar['data'];
+    };
+
+
+    $today = Carbon::parse($novadata);
+
+    //dd($today->dayOfWeek)'
+    if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+        $today = $today->addDay();
+
+        if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+            $today = $today->addDay();
+            if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+            } else {
+                $novadata = $today;
+            }
+
+        } else {
+            $novadata = $today;
+        }
+
+    } else {
+        $novadata = $today;
+    }
+
+    $fatura->update(['primeiro_rendimento' => $novadata]);
+
 
 
     $saldoService->createSaldoRaiz($compra);
@@ -2719,7 +2821,7 @@ Route::get('todasfaturas', function (\App\Services\CalendarService $calendarServ
         // dd($fatura);
         $buscar = $calendarService->validaDia($fatura->dia_pagamento);
 
-//dd($buscar);
+
         if ($buscar['respota'] == true) {
             $nova = $calendarService->validaDia($buscar['data']);
 

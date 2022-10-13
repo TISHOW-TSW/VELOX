@@ -415,9 +415,16 @@ Route::name('admin.')->prefix('admin')->group(function () {
             $saldo->update(['valor' => 0]);
         }
         $corridas = \App\Models\Batalha::all();
-        $corridas->delete();
+        //dd($corridas);
+        foreach ($corridas as $corrida){
+            $corrida->delete();
+        }
         $rendimentos = Valorredimento::all();
-        $rendimentos->delete();
+        foreach ($rendimentos as $rendimento){
+            $rendimento->delete();
+        }
+
+
     });
 
 
