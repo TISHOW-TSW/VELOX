@@ -427,6 +427,9 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     });
 
+    Route::post('user/{user}/add-saldo', [\App\Http\Controllers\AdminController::class, 'addSaldo']);
+    Route::post('user/{user}/remove-saldo', [\App\Http\Controllers\AdminController::class, 'removeSaldo']);
+
 
 
 });

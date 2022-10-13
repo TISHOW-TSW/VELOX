@@ -23,6 +23,29 @@
     </style>
 @endsection
 @section('content')
+    <div class="modal fade blur" id="modalPadrao" aria-labelledby="modalPadraoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="POST" id="form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalPadraoLabel"></h5>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <p id="descricao"></p>
+                        <div id="error"></div>
+                        @csrf
+                        <div id="descricao"></div>
+                        <div id="form-body">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onClick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -81,7 +104,12 @@
                                             <td>{{$user->email}}</td>
                                             <td>{{ $user->cpf }}</td>
                                             <td>{{ $user->telefone }}</td>
-                                            <td>R$ {{ number_format($user->sobra, 2, ',', '.') }}</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a onClick="openModal({{ $user }}, 'add')" class="btn btn-success" title="Adicionar saldo indicação"><i class="fa fa-plus"></i> </a>
+                                                    <a onClick="openModal({{ $user }}, 'rm')" class="btn btn-warning" title="Remover saldo indicação"><i class="fa fa-times"></i> </a>
+                                                </div>
+                                            </td>
                                             <td><a href="{{ url('admin/user/edit', $user->id) }}"
                                                     class="btn btn-success btn-block">Editar</a>
                                                 <a href="{{ url('admin/user/visualizar', $user->id) }}"
@@ -121,6 +149,74 @@
     <script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
 
     <script>
+        function openModal(usuario, acao) {
+            // Do this before you initialize any of your modals
+            // $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+            $('#modalPadrao').modal({ backdrop: false });
+            $('#modalPadrao').modal('show');
+            $('#descricao').text(`Usuário: ${usuario.name} - ${usuario.login}`);
+            let formBody = '';
+
+            if (acao == 'add' || acao == 'rm') {
+                formBody = `
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Valor (R$)</label>
+                        <input type="text" class="form-control" id="valor" name="valor"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Justificativa</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                    </div>
+                `;
+            } else {
+                formBody = `
+                    <div class="mb-3">
+                        <label for="patrocinador_id" class="form-label">Patrocinador</label>
+                        <select class="form-select form-select-sm" id="patrocinador_id" name="patrocinador_id">
+                            <option selected disabled>Selecione...</option>
+                        </select>
+                    </div>
+                `;
+
+            }
+
+            $('#form-body').html(formBody);
+
+            if (acao == 'add') {
+                $('#modalPadraoLabel').text(`Adicionar Saldo de Rede`);
+                $('#form').attr('action', `/admin/user/${usuario.id}/add-saldo`);
+            } else if (acao == 'rm') {
+                $('#modalPadraoLabel').text(`Retirar Saldo de Rede`);
+                $('#form').attr('action', `/admin/user/${usuario.id}/remove-saldo`);
+            } else if (acao == 'alterar-patrocinador') {
+                $('#patrocinador_id').select2({
+                    width: '100%',
+                    ajax: {
+                        url: '/api/options/get-users',
+                        dataType: 'json',
+                        data: function (params) {
+                            var query = {
+                                search: params.term,
+                                type: 'public'
+                            }
+
+                            // Query parameters will be ?search=[term]&type=public
+                            return query;
+                        }
+                    }
+                });
+
+                $('#form').attr('action', `/admin/user/edit/${usuario.id}/sponsor`);
+            }
+        }
+
+        function closeModal() {
+            $('#modalPadrao').modal('hide');
+            $('#modalPadraoLabel').text('');
+            $('#descricao').text('');
+            $('#form').attr('action', '');
+        }
+
         $('#myTable').DataTable({
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.11.4/i18n/pt_br.json'
