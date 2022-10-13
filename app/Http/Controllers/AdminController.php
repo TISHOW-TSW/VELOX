@@ -6,6 +6,7 @@ use App\Models\Assinatura;
 use App\Models\Extrato;
 use App\Models\Plano;
 use App\Models\User;
+use App\Models\Valorindicacao;
 use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -58,7 +59,7 @@ class AdminController extends Controller
 
     public function faturas($id)
     {
-       // dd($id);
+        // dd($id);
 
         $busca = Compra::where('user_id', Auth::user()->id)->where('plano_id', $id)->where('ativo', 0)->first();
         if (isset($busca)) {
@@ -67,9 +68,6 @@ class AdminController extends Controller
         $plano = Plano::find($id);
 
         //dd(count(Auth::user()->assinaturas));
-
-
-
 
 
         //dd($plano);
@@ -99,5 +97,59 @@ class AdminController extends Controller
     {
         Auth::guard('web')->login($user);
         return redirect(RouteServiceProvider::HOME);
+    }
+
+
+    public function addSaldo($id, Request $request)
+    {
+        $request->validate([
+            'valor' => 'required',
+            'observacoes' => 'required'
+        ]);
+
+        $user = User::findOrFail($id);
+
+
+        //$valores =
+          //  [
+            //    'valor' => $request->valor,
+
+              //  'user_id' => $user->id
+           // ];
+
+
+        $dados = [
+            'tipo' => 1,
+            'descricao' => $request->observacoes,
+            'valor' => $request->valor,
+            'user_id' => $user->id
+        ];
+        Valorindicacao::create($dados);
+
+        return redirect()->back()->with('success', 'Saldo adicionado com sucesso.');
+    }
+
+    public function removeSaldo($id, Request $request)
+    {
+        $request->validate([
+            'valor' => 'required',
+            'observacoes' => 'required'
+        ]);
+
+        $user = User::findOrFail($id);
+
+
+        $dados = [
+            'tipo' => 1,
+            'descricao' => $request->observacoes,
+            'valor' => -$request->valor,
+            'user_id' => $user->id
+        ];
+        Valorindicacao::create($dados);
+
+       // $op = new OperationService();
+       // $op->removeSaldoIndicacao($user, $request->valor, $request->observacoes);
+
+        return redirect()->back()->with('success', 'Saldo removido com sucesso.');
     }
 }
