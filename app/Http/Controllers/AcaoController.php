@@ -82,7 +82,7 @@ class AcaoController extends Controller
 
             }
             // dd($acao);
-            $saldo = (($acao / 100) * $fatura->produto->valor);
+            $saldo = (($acao / 100) * $fatura->plano->valor);
             //$saldo = ($fatura->plano->valor - ($fatura->plano->valor * ((100 - $acao) / 100)));
             //$soma = $somatotal + $saldo;
 
