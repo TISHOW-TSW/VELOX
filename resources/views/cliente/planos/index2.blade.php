@@ -87,48 +87,50 @@
                             @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->where('status',1)->first())
                                 @if ($busca->status == 1)
 
-                                    @if ($busca->campanha2() == 1)
-                                        <div style="border-radius: 10px" class="progress">
-                                            <div class="progress">
-                                                <div style="background-color: red" class="progress-bar"
-                                                    role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                                                    aria-valuemax="100" style="width: 0%;"
-                                                    id="current_progress{{ $busca->id }}" data-current="0">
-                                                    0%
+                                    @if(count($busca->rendimentos)==0)
+                                        @if($busca->primeiro_rendimento <= \Carbon\Carbon::now())
+                                            <img style="display: none" id="aparecer" class="img img-responsive" src="{{url('acelera.gif')}}" alt="">
+                                            <div style="border-radius: 10px" class="progress">
+                                                <div class="progress">
+                                                    <div style="background-color: purple" class="progress-bar"
+                                                         role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                                         aria-valuemax="100" style="width: 0%;"
+                                                         id="current_progress{{ $busca->id }}" data-current="0">
+                                                        0%
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <br>
-                                        <button id="ship{{ $plano->id }}" class="btn">
-
-
-
-                                            Abastecendo
-                                        </button>
-                                    @endif
-
-                                    @if ($busca->campanha2() == 0)
-                                        <br>
-                                        <br>
-                                        <button id="ship{{ $plano->id }}" class="btn">
-
-
-
-                                            Abastecendo
-                                        </button>
-                                    @endif
-
-                                    @if ($busca->campanha2() == 2)
-
-                                            <br>
-                                            <br>
-                                            <button id="ship{{ $plano->id }}" class="btn">
-
-
-
+                                            <button id="ship{{ $plano->id }}" class="btn"
+                                                    onclick="carreganave({{ $busca->id }})">
+                                                Play
+                                            </button>
+                                        @else
+                                            <button  class="btn">
                                                 Abastecendo
                                             </button>
+                                        @endif
+                                    @else
+                                        @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
+                                            <button  class="btn">
+                                                Abastecendo
+                                            </button>
+                                        @else
+                                            <img style="display: none" id="aparecer" class="img img-responsive" src="{{url('acelera.gif')}}" alt="">
+                                            <div style="border-radius: 10px" class="progress">
+                                                <div class="progress">
+                                                    <div style="background-color: purple" class="progress-bar"
+                                                         role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                                         aria-valuemax="100" style="width: 0%;"
+                                                         id="current_progress{{ $busca->id }}" data-current="0">
+                                                        0%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button id="ship{{ $plano->id }}" class="btn"
+                                                    onclick="carreganave({{ $busca->id }})">
+                                                Play
+                                            </button>
+                                        @endif
                                     @endif
                                 @endif
 
