@@ -427,6 +427,16 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     });
 
+    Route::get('apagarenderrado', function() {
+        $saldo = \App\Models\SaldoRaiz::where(user_id, 805)->first();
+        $saldo->saldoRendimento->update(['valor' => 0]);
+        $batalha = \App\Models\Batalha::where('compra_id', 592)->first();
+        $batalha->delete();
+        $op = Valorredimento::where('user_id', 805)->first();
+        $op->delete();
+        echo 'foi';
+    });
+
 
 
 });
