@@ -65,7 +65,7 @@
                         @else
                             <td></td>
                         @endif
-                        {{ $saque->meio_saque }}
+                        aqui ó{{ $saque->meio_saque }}
                     </tr>
 
                     </tbody>
