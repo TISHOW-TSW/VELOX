@@ -409,6 +409,17 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     });
 
+    Route::get('zerarend', function(){
+        $saldos = \App\Models\SaldoRendimento::all();
+        foreach($saldos as $saldo){
+            $saldo->update(['valor' => 0]);
+        }
+        $corridas = \App\Models\Batalha::all();
+        $corridas->delete();
+        $rendimentos = Valorredimento::all();
+        $rendimentos->delete();
+    });
+
 
 
 });
