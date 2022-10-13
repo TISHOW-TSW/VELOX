@@ -199,27 +199,6 @@
                                             <br>
                                             Sua proxima Corrida sera em:
                                             <br>
-
-                                        <div class="row">
-
-                                            <div class="countdown-container">
-
-                                                    <p class="big-text" id="days{{$plano->id}}">0</p>
-:
-
-
-                                                    <p class="big-text" id="hours{{$plano->id}}">0</p>
-:
-
-                                                    <p class="big-text" id="mins{{$plano->id}}">0</p>
-:
-
-                                                    <p class="big-text" id="seconds{{$plano->id}}">0</p>
-
-
-                                            </div>
-
-                                        </div>
                                             <button id="ship{{ $plano->id }}" class="btn">
 
 
