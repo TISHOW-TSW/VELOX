@@ -26,6 +26,7 @@ class Compra extends Model
         'valor',
         'dia_pagamento',
         'payment_id',
+        'primeiro_rendimento',
         'img'
     ];
 

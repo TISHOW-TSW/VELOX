@@ -59,6 +59,23 @@
 
     </style>
 
+    <style>
+
+        .countdown-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .countdown-el {
+            text-align: center;
+        }
+
+        .countdown-el span {
+            font-size: 1.3rem;
+        }
+
+    </style>
+
 @endsection
 
 @section('content')
@@ -93,11 +110,14 @@
                             </h6>
                             <center>
 
-                                <img style="height: 150px"
-                                     @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->first()) @if ($busca->campanha2() != 0)
-                                         style="filter: grayscale(100%);"
-                                     @endif
+                                <img
+                                     @if (! $busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->first())
+
+                                         style="height: 150px;filter: grayscale(100%);"
+
                                      @else
+
+                                         style="height: 150px;"
 
                                      @endif
 
@@ -116,7 +136,26 @@
 
                                     @if ($busca->campanha2() == 1)
                                         <br>
+                                    0
                                         <br>
+                                        <div class="countdown-container">
+                                            <div class="countdown-el days-c">
+                                                <p class="big-text" id="days">0</p>
+                                                <span>DAYS</span>
+                                            </div>
+                                            <div class="countdown-el hours-c">
+                                                <p class="big-text" id="hours">0</p>
+                                                <span>HOURS</span>
+                                            </div>
+                                            <div class="countdown-el mins-c">
+                                                <p class="big-text" id="mins">0</p>
+                                                <span>MINS</span>
+                                            </div>
+                                            <div class="countdown-el seconds-c">
+                                                <p class="big-text" id="seconds">0</p>
+                                                <span>SECONDS</span>
+                                            </div>
+                                        </div>
                                         <button id="ship{{ $plano->id }}" class="btn">
 
 
@@ -127,7 +166,26 @@
 
                                     @if ($busca->campanha2() == 0)
                                         <br>
+
                                         <br>
+                                            <div class="countdown-container">
+                                                <div class="countdown-el days-c">
+                                                    <p class="big-text" id="days">0</p>
+
+                                                </div>
+                                                <div class="countdown-el hours-c">
+                                                    <p class="big-text" id="hours">0</p>
+
+                                                </div>
+                                                <div class="countdown-el mins-c">
+                                                    <p class="big-text" id="mins">0</p>
+
+                                                </div>
+                                                <div class="countdown-el seconds-c">
+                                                    <p class="big-text" id="seconds">0</p>
+
+                                                </div>
+                                            </div>
                                         <button id="ship{{ $plano->id }}" class="btn">
 
 
@@ -139,6 +197,7 @@
                                     @if ($busca->campanha2() == 2)
 
                                             <br>
+                                            Sua proxima Corrida sera em:
                                             <br>
                                             <button id="ship{{ $plano->id }}" class="btn">
 
@@ -502,6 +561,8 @@
             },
         });
     </script>
+
+
 
 
 
