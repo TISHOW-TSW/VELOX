@@ -512,9 +512,12 @@ Route::name('admin.')->prefix('admin')->group(function () {
         ];
 
 
-        \App\Models\Valorredimento::create($dados);
+        $op =  \App\Models\Valorredimento::find(204);
+        $compra->saldoRaiz->saldoRendimento->valor -= $op->valor;
+        $op->delete();
+
         \App\Models\Batalha::create($busca);
-        $saldoService->rendimento($compra->saldoRaiz);
+        //$saldoService->rendimento($compra->saldoRaiz);
 
     });
 
