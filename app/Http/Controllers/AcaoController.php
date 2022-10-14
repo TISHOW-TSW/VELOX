@@ -245,7 +245,7 @@ class AcaoController extends Controller
             'user_id' => $user,
         ];
 ///fazendo pra ve se vai
-
+//dd($dados);
         \App\Models\Valorindicacao::create($dados);
 
 

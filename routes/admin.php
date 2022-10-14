@@ -285,8 +285,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             if (empty($user)) {
                 return redirect()->back();
-            }else
-            {
+            } else {
                 \App\Models\UserAdmin::create(
                     ['name' => $user->name,
                         'login' => $user->login,
@@ -299,7 +298,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             return redirect()->back();
         });
-
 
 
         Route::get('rendimento/visualizar/saque/{id}', function ($id) {
@@ -338,7 +336,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             return view('admin.saque.cancelar', compact('saque'));
         });
-
 
 
         Route::get('delete/conta/{id}', function ($id) {
@@ -386,12 +383,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
         });
 
 
-        Route::get('todasfaturas',function (){
-            $faturas = Compra::where('status',1)->get();
+        Route::get('todasfaturas', function () {
+            $faturas = Compra::where('status', 1)->get();
 
             dd($faturas);
         });
-
 
 
         Route::post('/logout', function (Request $request) {
@@ -409,18 +405,18 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     });
 
-    Route::get('zerarend', function(){
+    Route::get('zerarend', function () {
         $saldos = \App\Models\SaldoRendimento::all();
-        foreach($saldos as $saldo){
+        foreach ($saldos as $saldo) {
             $saldo->update(['valor' => 0]);
         }
         $corridas = \App\Models\Batalha::all();
         //dd($corridas);
-        foreach ($corridas as $corrida){
+        foreach ($corridas as $corrida) {
             $corrida->delete();
         }
         $rendimentos = Valorredimento::all();
-        foreach ($rendimentos as $rendimento){
+        foreach ($rendimentos as $rendimento) {
             $rendimento->delete();
         }
 
@@ -431,5 +427,46 @@ Route::name('admin.')->prefix('admin')->group(function () {
     Route::post('user/{user}/remove-saldo', [\App\Http\Controllers\AdminController::class, 'removeSaldo']);
 
 
+    Route::get('buscacorrecao/{id}', function ($id, \App\Http\Controllers\AcaoController $acaoController) {
+
+        $users = User::all();
+
+        //$user = User::find($id);
+
+        foreach ($users as $user) {
+
+            foreach ($user->valorindicacos as $valorindicaco) {
+
+                if ($valorindicaco->valor > 0) {
+                    $valorindicaco->delete();
+                };
+            };
+
+            $buscas = User::where('quem', $user->link)->whereHas('compras', function ($query) {
+                $query->where('status', 1);
+            })->get();
+
+            foreach ($buscas as $busca) {
+                $novos = $busca->compras->where('status', 1);
+                //fdd($novo);
+
+                foreach ($novos as $novo) {
+                    for ($i = 1; $i <= 2; $i++) {
+
+                        $indicado = $acaoController->verifyNivel($i, $novo->user);
+                        if (!empty($indicado)) {
+                            echo $indicado->name . "<br>";
+
+                            $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($novo, $i);
+                        }
+                    }
+                }
+            }
+            // dd($buscas);
+
+        }
+
+        //   dd($user);
+    });
 
 });
