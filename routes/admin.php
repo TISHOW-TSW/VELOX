@@ -430,6 +430,49 @@ Route::name('admin.')->prefix('admin')->group(function () {
     Route::post('user/{user}/add-saldo', [\App\Http\Controllers\AdminController::class, 'addSaldo']);
     Route::post('user/{user}/remove-saldo', [\App\Http\Controllers\AdminController::class, 'removeSaldo']);
 
+    Route::get('buscacorrecao/{id}',function ($id, \App\Http\Controllers\AcaoController $acaoController){
+       // $users = User::all();
+
+        $user = User::find($id);
+
+   //     foreach ($users as $user) {
+
+            foreach ($user->valorindicacos as $valorindicaco) {
+                if ($valorindicaco->valor > 0) {
+                    $valorindicaco->delete();
+                }
+            };
+            $buscas = User::where('quem', $user->link)->whereHas('compras', function ($query) {
+
+                $query->where('status', 1);
+            })->get();
+
+            //dd($buscas);
+            foreach ($buscas as $busca) {
+
+                foreach ($busca->compras as $compra) {
+
+
+                    for ($i = 1; $i <= 3; $i++) {
+
+                        $indicado = $acaoController->verifyNivel($i, $compra->user);
+                        if (!empty($indicado)) {
+                            echo $indicado->name . "<br>";
+//dd($indicado);
+                            // dd($indicado->name);
+                             $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($compra, $i);
+                        }
+                    }
+
+                    //echo $compra->id."<br>";
+                }
+
+            }
+
+      //  }
+        //dd($busca);
+    });
+
 
 
 });

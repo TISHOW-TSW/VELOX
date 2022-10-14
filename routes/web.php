@@ -2870,4 +2870,15 @@ Route::get('todasfaturas', function (\App\Services\CalendarService $calendarServ
 
 });
 
+Route::get('buscauser/{id}',function ($id){
+    $user = User::find($id);
+    //dd($user);
+    dd($user->valorindicacos->toArray());
+
+    $valorindica = Valorindicacao::find(117);
+
+    //dd($valorindica->delete());
+
+});
+
 require __DIR__ . '/auth.php';
