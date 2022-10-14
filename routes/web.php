@@ -317,8 +317,6 @@ Route::get('terceiro', function () {
 Route::get('customer/invoices', function () {
     $busca = Compra::where('user_id', Auth::user()->id)->first();
 
-    dd($busca);
-
     return view('cliente.faturas.index', compact('busca'));
 })->middleware(['auth']);
 
