@@ -497,5 +497,25 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
 
+    Route::get('getupindiviual/{compra}', function (Compra $compra) {
+        //dd($compra);
+
+        $busca = [
+            'user_id' => $compra->user_id,
+            'plano_id' => $compra->plano->id,
+            'compra_id' => $compra->id,
+        ];
+
+
+        $op =  \App\Models\Valorredimento::find(204);
+        //dd($op);
+        $compra->saldoRaiz->saldoRendimento->update(['valor' => 2]);
+        $op->delete();
+
+        \App\Models\Batalha::create($busca);
+        //$saldoService->rendimento($compra->saldoRaiz);
+
+    });
+
 
 });
