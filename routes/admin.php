@@ -495,7 +495,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
         //   dd($user);
     });
 
-    Route::get('getupindiviual/{compra}', function (Compra $compra) {
+    Route::get('getupindiviual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService) {
         $rentabilidade = $compra->plano->valor * 0.10;
 
         $dados = [
@@ -503,6 +503,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
             'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
             'valor' => $rentabilidade,
             'user_id' => Auth::user()->id
+        ];
+        $busca = [
+            'user_id' => $compra->user_id,
+            'plano_id' => $compra->plano->id,
+            'compra_id' => $compra->id,
         ];
 
 
