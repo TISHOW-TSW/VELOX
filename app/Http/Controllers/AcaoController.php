@@ -194,11 +194,11 @@ class AcaoController extends Controller
         // dd($escolha);
 
         $planodireto = Compra::where('user_id', $escolha->id)->where('status', 1)->with(['plano' => function ($query) {
-            $query->orderBy('valor', 'ASC');
+            $query->orderByDesc('valor');
         }])->first();
 
         if (!empty($planodireto)) {
-
+//dd($planodireto->plano->primeiro);
 
             switch ($nivel) {
 
@@ -245,8 +245,7 @@ class AcaoController extends Controller
             'user_id' => $user,
             'created_at' => $fatura->created_at
         ];
-///fazendo pra ve se vai
-//dd($dados);
+
         \App\Models\Valorindicacao::create($dados);
 
 

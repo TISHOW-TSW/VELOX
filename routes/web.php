@@ -205,7 +205,10 @@ Route::get('player', function () {
 
 
     if (count($primeiros) > 0) {
-        $segundos = User::whereIn("quem", $primeiros->pluck('link')->toArray())->get();
+        $segundos = User::whereIn("quem", $primeiros->pluck('link')->toArray())->whereHas('compras')->get();
+
+        
+       // dd($segundos->whereHas('compras'));
     } else {
         $segundos = [];
     }
