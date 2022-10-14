@@ -496,6 +496,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
     Route::get('getupindiviual/{compra}', function (Compra $compra, \App\Services\SaldoService $saldoService) {
+        dd($compra);
         $rentabilidade = $compra->plano->valor * 0.10;
 
         $dados = [
