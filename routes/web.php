@@ -114,7 +114,7 @@ Route::get('/dashboard', function () {
     $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
 
 
-    $buscas = Valorindicacao::where('user_id', Auth::user()->id)->get();
+    $buscas = Valorindicacao::where('user_id', Auth::user()->id)->orderByDesc('created_at')->get();
     $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
 
 
