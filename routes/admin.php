@@ -442,27 +442,53 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 };
             };
 
-            $buscas = User::where('quem', $user->link)->whereHas('compras', function ($query) {
+    /*        $buscas = User::where('quem', $user->link)->whereHas('compras', function ($query) {
                 $query->where('status', 1);
             })->get();
 
             foreach ($buscas as $busca) {
-                $novos = $busca->compras->where('status', 1);
+               // $novos = $busca->compras->where('status', 1);
                 //fdd($novo);
 
-                foreach ($novos as $novo) {
-                    for ($i = 1; $i <= 3; $i++) {
+                foreach ($busca->compras as $novo) {
 
-                        $indicado = $acaoController->verifyNivel($i, $novo->user);
-                        if (!empty($indicado)) {
-                            echo $indicado->name . "<br>";
+                    if ($novo->status ==1) {
 
-                            $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($novo, $i);
+                        for ($i = 1; $i >= 3; $i++) {
+
+                            $indicado = $acaoController->verifyNivel($i, $novo->user);
+                            if (!empty($indicado)) {
+                                echo $indicado->name . "<br>";
+
+                                $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($novo, $i);
+                            }
                         }
                     }
                 }
             }
+
+           */
             // dd($buscas);
+
+        }
+
+
+        $compras =  Compra::where('status',1)->get();
+
+        //dd(count($compras));
+
+
+        foreach ($compras as $novo){
+
+            for ($i = 1; $i <= 3; $i++) {
+
+                $indicado = $acaoController->verifyNivel($i, $novo->user);
+                if (!empty($indicado)) {
+                    echo $indicado->name . "<br>";
+
+                    $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($novo, $i);
+                }
+            }
 
         }
 

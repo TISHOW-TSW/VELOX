@@ -144,7 +144,7 @@ class User extends Authenticatable
     public function primeiro()
     {
         if (isset($this->attributes['quem'])) {
-            $user = User::where('link', $this->attributes['quem'])->first();
+                $user = User::where('link', $this->attributes['quem'])->first();
 
             if (isset($user)) {
                 return $user;
