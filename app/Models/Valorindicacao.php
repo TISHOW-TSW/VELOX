@@ -13,5 +13,6 @@ class Valorindicacao extends Model
         'valor',
         'tipo',
         'user_id',
+        'created_at'
     ];
 }

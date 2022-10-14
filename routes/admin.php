@@ -451,7 +451,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 //fdd($novo);
 
                 foreach ($novos as $novo) {
-                    for ($i = 1; $i <= 2; $i++) {
+                    for ($i = 1; $i <= 3; $i++) {
 
                         $indicado = $acaoController->verifyNivel($i, $novo->user);
                         if (!empty($indicado)) {

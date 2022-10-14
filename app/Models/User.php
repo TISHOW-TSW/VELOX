@@ -243,15 +243,16 @@ class User extends Authenticatable
     {
 
 
-        $compras = $this->compras->where('ativo', 1)->count();
+        $compras = $this->compras->where('status', 1)->count();
 
 
+        //dd($compras);
 
 
         if ($compras > 0) {
-            return 'Active';
+            return 'Ativo';
         } else {
-            return 'Inactive';
+            return 'Inativo';
         }
     }
 
