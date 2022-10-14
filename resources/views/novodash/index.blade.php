@@ -153,12 +153,14 @@
                                             </button>
                                         @else
                                             <button  class="btn">
+
                                                 Abastecendo
                                             </button>
                                         @endif
                                     @else
                                        @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
                                             <button  class="btn">
+
                                                 Abastecendo
                                             </button>
                                         @else
