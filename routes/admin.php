@@ -54,6 +54,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
     Route::middleware('auth:admin')->group(function () {
+        Route::post('user/edit/{user}/sponsor', [\App\Http\Controllers\AdminController::class, 'editSponsor']);
         Route::get('log', function () {
             $logs = \App\Models\LogActivity::orderByDesc('id')->get();
 
@@ -495,6 +496,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
         //   dd($user);
     });
 
-    Route::post('user/edit/{user}/sponsor', [\App\Http\Controllers\AdminController::class, 'editSponsor']);
+
 
 });
