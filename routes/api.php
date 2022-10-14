@@ -21,6 +21,22 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('options/get-users', function (Request $request) {
+    // $options = \App\Models\User::select('id', 'name as text')->get();
+
+    $search = isset($request->search) ? $request->search : null;
+
+    if ($search) {
+        $options = \App\Models\User::select('id', 'login as text')->where('login', 'LIKE', '%' . $search . '%')->get();
+    } else {
+        $options = [];
+    }
+
+
+    return response([
+        'results' => $options
+    ], 201);
+});
 
 
 Route::get('dados/{id}', function ($id) {

@@ -114,6 +114,7 @@
                                                     class="btn btn-success btn-block">Editar</a>
                                                 <a href="{{ url('admin/user/visualizar', $user->id) }}"
                                                     class="btn btn-primary btn-block">Visualizar</a>
+                                                <a onClick="openModal({{ $user }}, 'alterar-patrocinador')" class="btn btn-light">Alterar patrocinador</a>
 
                                                 <a target="_blank" href="{{url('admin/user/backoffice',$user)}}"
                                                    class="btn btn-warning btn-block">BackOffice</a>

@@ -495,4 +495,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
         //   dd($user);
     });
 
+    Route::post('user/edit/{user}/sponsor', [\App\Http\Controllers\AdminController::class, 'editSponsor']);
+
 });

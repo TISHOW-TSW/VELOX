@@ -152,4 +152,21 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Saldo removido com sucesso.');
     }
+
+    public function editSponsor($user_id, Request $request)
+    {
+        $request->validate([
+            'patrocinador_id' => 'required|exists:users,id',
+        ]);
+
+        $user = User::findOrFail($user_id);
+        $patrocinador = User::findOrFail($request->patrocinador_id);
+
+        $user->quem = $patrocinador->link;
+      //  $user->busca = $patrocinador->name;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Patrocinador alterado com sucesso.');
+    }
+
 }

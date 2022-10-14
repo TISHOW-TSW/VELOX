@@ -207,7 +207,7 @@ Route::get('player', function () {
     if (count($primeiros) > 0) {
         $segundos = User::whereIn("quem", $primeiros->pluck('link')->toArray())->whereHas('compras')->get();
 
-        
+
        // dd($segundos->whereHas('compras'));
     } else {
         $segundos = [];
@@ -315,7 +315,9 @@ Route::get('terceiro', function () {
 
 
 Route::get('customer/invoices', function () {
-    $busca = Assinatura::where('user_id', Auth::user()->id)->first();
+    $busca = Compra::where('user_id', Auth::user()->id)->first();
+
+    dd($busca);
 
     return view('cliente.faturas.index', compact('busca'));
 })->middleware(['auth']);
