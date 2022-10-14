@@ -469,4 +469,21 @@ Route::name('admin.')->prefix('admin')->group(function () {
         //   dd($user);
     });
 
+    Route::get('getupindiviual/{compra}', function (Compra $compra) {
+        $rentabilidade = $compra->plano->valor * 0.10;
+
+        $dados = [
+            'tipo' => 0,
+            'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
+            'valor' => $rentabilidade,
+            'user_id' => Auth::user()->id
+        ];
+
+
+        \App\Models\Valorredimento::create($dados);
+        Batalha::create($busca);
+        $saldoService->rendimento($compra->saldoRaiz);
+
+    });
+
 });
