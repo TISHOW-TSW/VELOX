@@ -506,7 +506,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
 
         $op =  \App\Models\Valorredimento::find(204);
-        dd($op);
+        //dd($op);
         $compra->saldoRaiz->saldoRendimento->update(['valor' => 2]);
         $op->delete();
 
