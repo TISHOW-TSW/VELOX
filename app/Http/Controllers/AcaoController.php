@@ -240,9 +240,10 @@ class AcaoController extends Controller
 
         $dados = [
             'tipo' => 0,
-            'descricao' => 'Bonus de '.$porcentagem.'% sobre o carro '.$fatura->plano->name.' com valor de R$'.$fatura->plano->valor.' no valor de'. ' R$'.$credito. ' do login'. $fatura->user->login . ' do seu ' . $descricao,
+            'descricao' => 'Bonus de '.$porcentagem.'% sobre o carro '.$fatura->plano->name.' com valor de R$'.$fatura->plano->valor.' no valor de'. ' R$'.$credito. ' do login'. $fatura->user->login . ' do seu ' . $descricao.' nivel',
             'valor' => $credito,
             'user_id' => $user,
+            'created_at' => $fatura->created_at
         ];
 ///fazendo pra ve se vai
 //dd($dados);
