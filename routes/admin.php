@@ -506,8 +506,8 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
 
         $op =  \App\Models\Valorredimento::find(204);
-        dd($compra->saldoRaiz->saldoRendimento);
-        $compra->saldoRaiz->saldoRendimento->valor -= $op->valor;
+        dd($op);
+        $compra->saldoRaiz->saldoRendimento->update(['valor' => 2]);
         $op->delete();
 
         \App\Models\Batalha::create($busca);
