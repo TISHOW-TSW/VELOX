@@ -147,10 +147,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
+                                            <button  class="btn">
+
+                                                Abastecendo
                                             </button>
+
                                         @else
                                             <button  class="btn">
 
@@ -175,9 +176,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
+
+
+
+                                            <button  class="btn">
+
+                                                Abastecendo
                                             </button>
                                         @endif
                                     @endif
