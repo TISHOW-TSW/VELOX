@@ -221,7 +221,7 @@
                 </div>
                 <div class="modal-body" style="background-color: #0a0a0a">
 
-
+<!-- -->
 
                     <div id="pix-card"  >
                         <div class="card-body">
