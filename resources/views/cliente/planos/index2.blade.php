@@ -14,16 +14,14 @@
         .borda {
             border-radius: 15px;
             /*opacity: 55%*/
-            background-color:rgba(39, 34, 40, 0.9);
-            border: 3px solid rgba(233, 0, 0,0.4);
+            background-color: rgba(39, 34, 40, 0.9);
+            border: 3px solid rgba(233, 0, 0, 0.4);
             color: white;
             padding-bottom: 30px;
-            display:flex;
+            display: flex;
             flex-direction: column;
             justify-content: space-around;
             text-transform: uppercase;
-
-
 
 
         }
@@ -32,7 +30,6 @@
             font-family: 'Inter', sans-serif, bold;
             font-weight: bold;
         }
-
 
 
         .fundo {
@@ -61,22 +58,20 @@
                             <h2 style="color: #ffd700;" class=" text-center">{{ $plano->name }}</h2>
 
 
-
-
                             </h6>
                             <center>
 
                                 <img style="height: 150px"
-                                    @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->first()) @if ($busca->campanha2() != 0)
-                                style="filter: grayscale(100%);"
-                                    @endif
-                                @else
+                                     @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->first()) @if ($busca->campanha2() != 0)
+                                         style="filter: grayscale(100%);"
+                                     @endif
+                                     @else
 
-                                @endif
+                                     @endif
 
 
-                                 class="img img-responsive nave"
-                                src="{{ "https://nftcash.sfo3.digitaloceanspaces.com/" . $plano->img }}" alt="">
+                                     class="img img-responsive nave"
+                                     src="{{ "https://nftcash.sfo3.digitaloceanspaces.com/" . $plano->img }}" alt="">
 
                             </center>
                         </div>
@@ -85,54 +80,149 @@
                         <center>
 
                             @if ($busca = App\Models\Compra::where('user_id', Auth::user()->id)->where('plano_id', $plano->id)->where('status',1)->first())
-                                @if ($busca->status == 1)
 
-                                    @if(count($busca->rendimentos)==0)
-                                        @if($busca->primeiro_rendimento <= \Carbon\Carbon::now())
-                                            <img style="display: none" id="aparecer" class="img img-responsive" src="{{url('acelera.gif')}}" alt="">
-                                            <div style="border-radius: 10px" class="progress">
-                                                <div class="progress">
-                                                    <div style="background-color: purple" class="progress-bar"
-                                                         role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                                                         aria-valuemax="100" style="width: 0%;"
-                                                         id="current_progress{{ $busca->id }}" data-current="0">
-                                                        0%
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
-                                            </button>
-                                        @else
-                                            <button  class="btn">
-                                                Abastecendo
-                                            </button>
-                                        @endif
+                                @if(count($busca->rendimentos) == 0)
+
+                                    @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
+
+                                        Seu Primeiro Rendimento será em:
+                                        <p id="demo{{$busca->id}}"></p>
+
+                                        <script>
+                                            // Set the date we're counting down to
+
+
+                                            var countDownDate = new Date(" {{\Carbon\Carbon::parse($busca->primeiro_rendimento)->format('M d, Y H:i:s')}}").getTime();
+
+                                            // Update the count down every 1 second
+                                            var x = setInterval(function () {
+
+                                                // Get today's date and time
+                                                var now = new Date().getTime();
+
+                                                // Find the distance between now and the count down date
+                                                var distance = countDownDate - now;
+
+                                                // Time calculations for days, hours, minutes and seconds
+                                                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                                // Display the result in the element with id="demo"
+                                                document.getElementById("demo{{$busca->id}}").innerHTML = days + "d " + hours + "h "
+                                                    + minutes + "m " + seconds + "s ";
+
+                                                // If the count down is finished, write some text
+                                                if (distance < 0) {
+                                                    clearInterval(x);
+                                                    document.getElementById("demo").innerHTML = "EXPIRED";
+                                                }
+                                            }, 1000);
+                                        </script>
+
+
+                                        <button class="btn">
+
+                                            Abastecendo
+                                        </button>
+
                                     @else
-                                        @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
-                                            <button  class="btn">
-                                                Abastecendo
-                                            </button>
-                                        @else
-                                            <img style="display: none" id="aparecer" class="img img-responsive" src="{{url('acelera.gif')}}" alt="">
-                                            <div style="border-radius: 10px" class="progress">
-                                                <div class="progress">
-                                                    <div style="background-color: purple" class="progress-bar"
-                                                         role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                                                         aria-valuemax="100" style="width: 0%;"
-                                                         id="current_progress{{ $busca->id }}" data-current="0">
-                                                        0%
-                                                    </div>
+
+                                        <img style="display: none" id="aparecer{{$busca->id}}" class="img img-responsive"
+                                             src="{{url('acelera.gif')}}" alt="">
+                                        <div style="border-radius: 10px" class="progress">
+                                            <div class="progress">
+                                                <div style="background-color: purple" class="progress-bar"
+                                                     role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                                     aria-valuemax="100" style="width: 0%;"
+                                                     id="current_progress{{ $busca->id }}" data-current="0">
+                                                    0%
                                                 </div>
                                             </div>
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
-                                            </button>
-                                        @endif
+                                        </div>
+
+
+
+                                        <button id="ship{{ $plano->id }}" class="btn"
+                                                onclick="carreganave({{ $busca->id }})">
+                                            Play
+                                        </button>
+                                    @endif
+
+                                @else
+                                    @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
+
+                                        Seu Proximo Rendimento será em:
+                                        @php
+                                            $data =  $busca->rendimentos->last()->created_at->addDay()->format('M d, Y H:i:s');
+
+
+                                        @endphp
+                                        <p id="demo{{$busca->id}}"></p>
+
+                                        <script>
+                                            // Set the date we're counting down to
+
+
+                                            var countDownDate{{$busca->id}} = new Date("{{$data}}").getTime();
+
+                                            // Update the count down every 1 second
+                                            var x = setInterval(function () {
+
+                                                // Get today's date and time
+                                                var now = new Date().getTime();
+
+                                                // Find the distance between now and the count down date
+                                                var distance = countDownDate{{$busca->id}} - now;
+
+                                                // Time calculations for days, hours, minutes and seconds
+                                                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                                // Display the result in the element with id="demo"
+                                                document.getElementById("demo{{$busca->id}}").innerHTML = days + "d " + hours + "h "
+                                                    + minutes + "m " + seconds + "s ";
+
+                                                // If the count down is finished, write some text
+                                                if (distance < 0) {
+                                                    clearInterval(x);
+                                                    document.getElementById("demo{{$busca->id}}").innerHTML = "EXPIRED";
+                                                }
+                                            }, 1000);
+                                        </script>
+
+                                        <button class="btn">
+
+                                            Abastecendo
+                                        </button>
+                                    @else
+
+
+                                        <img style="display: none" id="aparecer{{$busca->id}}" class="img img-responsive"
+                                             src="{{url('acelera.gif')}}" alt="">
+                                        <div style="border-radius: 10px" class="progress">
+                                            <div class="progress">
+                                                <div style="background-color: purple" class="progress-bar"
+                                                     role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                                     aria-valuemax="100" style="width: 0%;"
+                                                     id="current_progress{{ $busca->id }}" data-current="0">
+                                                    0%
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                        <button id="ship{{ $plano->id }}" class="btn"
+                                                onclick="carreganave({{ $busca->id }})">
+                                            Play
+                                        </button>
                                     @endif
                                 @endif
+
 
                                 @if ($busca->status == 0)
                                     <br><br>
@@ -175,7 +265,8 @@
                                                         </a>
                                                     @endif
                                                 @endif
-                                                <p style="font-size: 35px;color: yellow"> R$ {{ number_format($plano->valor, 2, ',', '.') }}</p>
+                                                <p style="font-size: 35px;color: yellow">
+                                                    R$ {{ number_format($plano->valor, 2, ',', '.') }}</p>
                                                 <a class="btn" href="#">
                                                     BLOQUEADO
                                                 </a>
@@ -184,11 +275,11 @@
                                     @endif
                                 @else
 
-                                    <p style="font-size: 35px;color: yellow"> R$ {{ number_format($plano->valor, 2, ',', '.') }}</p>
+                                    <p style="font-size: 35px;color: yellow">
+                                        R$ {{ number_format($plano->valor, 2, ',', '.') }}</p>
                                     <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                         Comprar
                                     </a>
-
 
                                 @endif
                             @endif
@@ -199,7 +290,6 @@
 
                     </div>
                 </div>
-
 
             @empty
             @endforelse
@@ -224,8 +314,7 @@
                 <div class="modal-body" style="background-color: #0a0a0a">
 
 
-
-                    <div id="pix-card"  >
+                    <div id="pix-card">
                         <div class="card-body">
                             <p>A sua próxima corrida estará disponível no próximo dia útil</p>
                         </div>
@@ -239,16 +328,15 @@
         </div>
     </div>
 
-
 @endsection
 
 
 @section('js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             document.getElementsByClassName("nave").style.filter = "grayscale(100%)";
-            var heights = $(".intas").map(function() {
+            var heights = $(".intas").map(function () {
                     return $(this).height();
                 }).get(),
 
@@ -259,7 +347,7 @@
 
 
         function carreganave(ship) {
-            $('#aparecer').show();
+            $('#aparecer'+ ship).show();
             $("#ship" + ship).attr("disabled", "disabled");
             var interval = setInterval(updateProgress, 1000); // run updateProgress() every second
 
