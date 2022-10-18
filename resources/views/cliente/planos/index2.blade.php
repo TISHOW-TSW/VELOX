@@ -83,54 +83,52 @@
 
                                 @if(count($busca->rendimentos) == 0)
 
-                                    @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
+                                    @if($busca->updated_at->addDay() >= \Carbon\Carbon::now())
+                                        <p>Sua Primeira Corrida será</p>
+                                        <p id="demo{{$busca->id}}"></p>
+                                        <button class="btn">
 
-                                        Sua Primeira Corrida será em:
-                                        <p>{{\Carbon\Carbon::parse($busca->primeiro_rendimento)->addHours(3)->format('d/m/y H:i:s')}}</p>
+                                            Abastecendo
+                                        </button>
+
 
 
                                         <script>
                                             // Set the date we're counting down to
 
+                                            var countDownDate{{$busca->id}} = new Date("{{\Carbon\Carbon::parse($busca->updated_at->addDay())->format('M d, Y H:i:s')}}").getTime();
+                                            // var countDownDate = new Date("").getTime();
 
-                                            var countDownDate = new Date("{{\Carbon\Carbon::parse($busca->primeiro_rendimento)->format('M d, Y H:i:s')}}").getTime();
 
-                                            console.log(countDownDate);
+
                                             // Update the count down every 1 second
-                                            var x = setInterval(function () {
+                                            var x = setInterval(function() {
 
                                                 // Get today's date and time
                                                 var now = new Date().getTime();
-                                                console.log(now);
+
                                                 // Find the distance between now and the count down date
-                                                var distance = now - countDownDate;
+                                                var distance{{$busca->id}} =   countDownDate{{$busca->id}} - now;
 
                                                 // Time calculations for days, hours, minutes and seconds
-                                                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                                var days = Math.floor(distance{{$busca->id}} / (1000 * 60 * 60 * 24));
+                                                var hours = Math.floor((distance{{$busca->id}} % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                var minutes = Math.floor((distance{{$busca->id}} % (1000 * 60 * 60)) / (1000 * 60));
+                                                var seconds = Math.floor((distance{{$busca->id}} % (1000 * 60)) / 1000);
 
                                                 // Display the result in the element with id="demo"
                                                 document.getElementById("demo{{$busca->id}}").innerHTML = days + "d " + hours + "h "
                                                     + minutes + "m " + seconds + "s ";
 
                                                 // If the count down is finished, write some text
-                                                if (distance < 0) {
+                                                if (distance{{$busca->id}} < 0) {
                                                     clearInterval(x);
-                                                    document.getElementById("demo{{$busca->id}}").innerHTML = "EXPIRED";
+                                                    document.getElementById("demo").innerHTML = "EXPIRED";
                                                 }
                                             }, 1000);
                                         </script>
 
-
-                                        <button class="btn">
-
-                                            Abastecendo
-                                        </button>
-
                                     @else
-
                                         <img style="display: none" id="aparecer{{$busca->id}}" class="img img-responsive"
                                              src="{{url('acelera.gif')}}" alt="">
                                         <div style="border-radius: 10px" class="progress">
@@ -151,60 +149,56 @@
                                             Play
                                         </button>
                                     @endif
-
                                 @else
-                                    @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
-
-                                        Sua Proxima Corrida será em:
-                                        @php
-                                            $data =  $busca->rendimentos->last()->created_at->addDay()->format('M d, Y H:i:s');
-
-
-                                        @endphp
-
-
+                                    @if($busca->rendimentos->last()->created_at->addDay() >= \Carbon\Carbon::now())
+                                        <p>Sua Proxima Corrida será</p>
                                         <p id="demo{{$busca->id}}"></p>
+                                        <button class="btn">
+
+                                            Abastecendo
+                                        </button>
+
+
 
                                         <script>
                                             // Set the date we're counting down to
 
+                                            var countDownDate{{$busca->id}} = new Date("{{\Carbon\Carbon::parse($busca->rendimentos->last()->created_at->addDay())->format('M d, Y H:i:s')}}").getTime();
+                                            // var countDownDate = new Date("").getTime();
 
-                                            var countDownDate{{$busca->id}} = new Date("{{$data}}").getTime();
+
 
                                             // Update the count down every 1 second
-                                            var x = setInterval(function () {
+                                            var x = setInterval(function() {
 
                                                 // Get today's date and time
                                                 var now = new Date().getTime();
 
                                                 // Find the distance between now and the count down date
-                                                var distance = countDownDate{{$busca->id}} - now;
+                                                var distance{{$busca->id}} =   countDownDate{{$busca->id}} - now;
 
                                                 // Time calculations for days, hours, minutes and seconds
-                                                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                                var days = Math.floor(distance{{$busca->id}} / (1000 * 60 * 60 * 24));
+                                                var hours = Math.floor((distance{{$busca->id}} % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                var minutes = Math.floor((distance{{$busca->id}} % (1000 * 60 * 60)) / (1000 * 60));
+                                                var seconds = Math.floor((distance{{$busca->id}} % (1000 * 60)) / 1000);
 
                                                 // Display the result in the element with id="demo"
                                                 document.getElementById("demo{{$busca->id}}").innerHTML = days + "d " + hours + "h "
                                                     + minutes + "m " + seconds + "s ";
 
                                                 // If the count down is finished, write some text
-                                                if (distance < 0) {
+                                                if (distance{{$busca->id}} < 0) {
                                                     clearInterval(x);
-                                                    document.getElementById("demo{{$busca->id}}").innerHTML = "EXPIRED";
+                                                    document.getElementById("demo").innerHTML = "EXPIRED";
                                                 }
                                             }, 1000);
                                         </script>
 
-                                        <button class="btn">
 
-                                            Abastecendo
-                                        </button>
+
+
                                     @else
-
-
                                         <img style="display: none" id="aparecer{{$busca->id}}" class="img img-responsive"
                                              src="{{url('acelera.gif')}}" alt="">
                                         <div style="border-radius: 10px" class="progress">
@@ -224,6 +218,7 @@
                                                 onclick="carreganave({{ $busca->id }})">
                                             Play
                                         </button>
+
                                     @endif
                                 @endif
 
@@ -287,6 +282,7 @@
 
                                 @endif
                             @endif
+
 
                         </center>
 
