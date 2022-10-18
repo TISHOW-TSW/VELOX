@@ -135,16 +135,17 @@
 
                                 @if(count($busca->rendimentos) == 0)
 
-                                    @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
+                                    @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->addHours(22)->diffInHours() <= 24)
 
                                         Sua Primeira Corrida será em:
                                         <p id="demo{{$busca->id}}"></p>
+
 
                                         <script>
                                             // Set the date we're counting down to
 
 
-                                            var countDownDate = new Date(" {{\Carbon\Carbon::parse($busca->primeiro_rendimento)->format('M d, Y H:i:s')}}").getTime();
+                                            var countDownDate = new Date(" {{\Carbon\Carbon::parse($busca->primeiro_rendimento)->addHours(22)->format('M d, Y H:i:s')}}").getTime();
 
                                             // Update the count down every 1 second
                                             var x = setInterval(function () {
