@@ -86,7 +86,7 @@
                                     @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
 
                                         Sua Primeira Corrida será em:
-                                        <p id="demo{{$busca->id}}"></p>
+                                        <p>{{\Carbon\Carbon::parse($busca->primeiro_rendimento)->addHours(3)->format('d/m/y H:i:s')}}</p>
 
 
                                         <script>
@@ -287,7 +287,6 @@
 
                                 @endif
                             @endif
-
 
                         </center>
 
