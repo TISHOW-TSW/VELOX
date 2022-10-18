@@ -167,8 +167,15 @@ Route::name('admin.')->prefix('admin')->group(function () {
         Route::get('user/visualizar/{id}', function ($id) {
 
             $user = User::find($id);
+            $buscas = \App\Models\Valorindicacao::where('user_id', $user->id)->orderByDesc('created_at')->get();
+            return view('painel.usuario.show', compact('user','buscas'));
+        });
 
-            return view('painel.usuario.show', compact('user'));
+        Route::get('deleterede/{id}',function ($id){
+            $valorindica = \App\Models\Valorindicacao::find($id);
+            $valorindica->delete();
+
+            return redirect()->back()->with('success','Bonus Deletado com sucesso');
         });
 
         Route::post('consulta/faturas', function (Request $request) {

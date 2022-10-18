@@ -158,6 +158,61 @@
 
 
         </div>
+        <div class="row">
+
+
+            <div class="col-lg-12">
+                <div class="panel ">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Bonus de Rede</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table id="myTable" class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>VALUE</th>
+
+                                    <th>DATA</th>
+                                    <th>Açoes</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @forelse($buscas as $movimento)
+                                    <tr style="background-color: transparent">
+                                        <td>{{ $movimento->id }}</td>
+                                        <td>{{ $movimento->descricao }}</td>
+                                        <td>{{ number_format($movimento->valor, 2, ',', '.') }}</td>
+
+                                        <td>{{ $movimento->created_at->format('d-m-y') }}</td>
+                                        <td>
+                                            <a href="{{url('admin/deleterede',$movimento->id)}}" class="btn btn-danger">Deletar</a>
+
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr style="background-color: transparent">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+
+                                        <td></td>
+                                    </tr>
+                                @endforelse
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
 
     </div>
 @endsection
