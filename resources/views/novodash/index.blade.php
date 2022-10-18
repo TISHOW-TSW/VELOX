@@ -138,7 +138,7 @@
                                     @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
 
                                         Sua Primeira Corrida será em:
-                                        <p id="demo{{$busca->id}}"></p>
+                                        <p>{{\Carbon\Carbon::parse($busca->primeiro_rendimento)->addHours(3)->format('d/m/y H:i:s')}}</p>
 
 
                                         <script>
@@ -153,7 +153,7 @@
 
                                                 // Get today's date and time
                                                 var now = new Date().getTime();
-console.log(now);
+                                                console.log(now);
                                                 // Find the distance between now and the count down date
                                                 var distance = now - countDownDate;
 
@@ -207,12 +207,14 @@ console.log(now);
                                 @else
                                     @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
 
-                                            Sua Proxima Corrida será em:
+                                        Sua Proxima Corrida será em:
                                         @php
                                             $data =  $busca->rendimentos->last()->created_at->addDay()->format('M d, Y H:i:s');
 
 
                                         @endphp
+
+
                                         <p id="demo{{$busca->id}}"></p>
 
                                         <script>
@@ -337,6 +339,7 @@ console.log(now);
 
                                 @endif
                             @endif
+
                         </center>
 
 
