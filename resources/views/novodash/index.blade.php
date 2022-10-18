@@ -168,7 +168,7 @@
                                                 // If the count down is finished, write some text
                                                 if (distance < 0) {
                                                     clearInterval(x);
-                                                    document.getElementById("demo").innerHTML = "EXPIRED";
+                                                    document.getElementById("demo{{$busca->id}}").innerHTML = "EXPIRED";
                                                 }
                                             }, 1000);
                                         </script>
