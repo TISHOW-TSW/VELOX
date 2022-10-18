@@ -85,23 +85,25 @@
 
                                     @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
 
-                                        Seu Primeiro Rendimento será em:
+                                        Sua Primeira Corrida será em:
                                         <p id="demo{{$busca->id}}"></p>
+
 
                                         <script>
                                             // Set the date we're counting down to
 
 
-                                            var countDownDate = new Date(" {{\Carbon\Carbon::parse($busca->primeiro_rendimento)->format('M d, Y H:i:s')}}").getTime();
+                                            var countDownDate = new Date("{{\Carbon\Carbon::parse($busca->primeiro_rendimento)->format('M d, Y H:i:s')}}").getTime();
 
+                                            console.log(countDownDate);
                                             // Update the count down every 1 second
                                             var x = setInterval(function () {
 
                                                 // Get today's date and time
                                                 var now = new Date().getTime();
-
+                                                console.log(now);
                                                 // Find the distance between now and the count down date
-                                                var distance = countDownDate - now;
+                                                var distance = now - countDownDate;
 
                                                 // Time calculations for days, hours, minutes and seconds
                                                 var days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -116,7 +118,7 @@
                                                 // If the count down is finished, write some text
                                                 if (distance < 0) {
                                                     clearInterval(x);
-                                                    document.getElementById("demo").innerHTML = "EXPIRED";
+                                                    document.getElementById("demo{{$busca->id}}").innerHTML = "EXPIRED";
                                                 }
                                             }, 1000);
                                         </script>
@@ -153,7 +155,7 @@
                                 @else
                                     @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
 
-                                        Seu Proximo Rendimento será em:
+                                        Sua Proxima Corrida será em:
                                         @php
                                             $data =  $busca->rendimentos->last()->created_at->addDay()->format('M d, Y H:i:s');
 
@@ -239,27 +241,27 @@
                             @else
                                 <br><br>
                                 @if ($plano->id == 6 || $plano->id == 7 || $plano->id == 8 || $plano->id == 9 || $plano->id == 10)
-                                    @if (Auth::user()->ordem > 1 && $plano->id == 6)
+                                    @if (Auth::user()->ordem > 0 && $plano->id == 6)
                                         <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                             $ {{ number_format($plano->valor, 2, ',', '.') }}
                                         </a>
                                     @else
-                                        @if (Auth::user()->ordem > 2 && $plano->id == 7)
+                                        @if (Auth::user()->ordem > 1 && $plano->id == 7)
                                             <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                 $ {{ number_format($plano->valor, 2, ',', '.') }}
                                             </a>
                                         @else
-                                            @if (Auth::user()->ordem > 3 && $plano->id == 8)
+                                            @if (Auth::user()->ordem > 2 && $plano->id == 8)
                                                 <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                     $ {{ number_format($plano->valor, 2, ',', '.') }}
                                                 </a>
                                             @else
-                                                @if (Auth::user()->ordem > 4 && $plano->id == 9)
+                                                @if (Auth::user()->ordem > 3 && $plano->id == 9)
                                                     <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                         $ {{ number_format($plano->valor, 2, ',', '.') }}
                                                     </a>
                                                 @else
-                                                    @if (Auth::user()->ordem > 5 && $plano->id == 10)
+                                                    @if (Auth::user()->ordem > 4 && $plano->id == 10)
                                                         <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                             $ {{ number_format($plano->valor, 2, ',', '.') }}
                                                         </a>
