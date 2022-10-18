@@ -323,6 +323,26 @@ Route::name('admin.')->prefix('admin')->group(function () {
         });
 
 
+        Route::get('indica/cancelar/saque/{id}',function ($id){
+            $valor = Saqueindica::find($id);
+
+
+            $dados = [
+                'tipo' => 1,
+                'descricao' => 'Saque estornado do seu time',
+                'valor' => $valor->valor,
+                'user_id' => $valor->user_id
+            ];
+            \App\Models\Valorindicacao::create($dados);
+
+            $valor->fill(['status'=>2]);
+            $valor->save();
+
+            return redirect()->back();
+           // dd($valor->valor);
+        });
+
+
         Route::get('rendimento/cancelar/saque/{id}', function ($id) {
             $saque = \App\Models\Saquerendimento::find($id);
 

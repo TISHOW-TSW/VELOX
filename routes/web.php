@@ -418,7 +418,7 @@ Route::post('carryout/withdrawal/squad', function (Request $request) {
 
         $dados = [
             'tipo' => 1,
-            'descricao' => 'Saque Referentea ao meu time',
+            'descricao' => 'Saque Referente ao meu time',
             'valor' => -$buscas->sum('valor'),
             'user_id' => Auth::user()->id
         ];

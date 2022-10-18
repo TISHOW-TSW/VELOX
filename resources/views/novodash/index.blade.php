@@ -137,7 +137,7 @@
 
                                     @if(\Carbon\Carbon::parse($busca->primeiro_rendimento)->diffInHours() <= 24)
 
-                                        Seu Primeiro Rendimento será em:
+                                        Sua Primeira Corrida será em:
                                         <p id="demo{{$busca->id}}"></p>
 
                                         <script>
@@ -205,7 +205,7 @@
                                 @else
                                     @if($busca->rendimentos->last()->created_at->diffInHours() <= 24)
 
-                                        Seu Proximo Rendimento será em:
+                                            Sua Proxima Corrida será em:
                                         @php
                                             $data =  $busca->rendimentos->last()->created_at->addDay()->format('M d, Y H:i:s');
 
