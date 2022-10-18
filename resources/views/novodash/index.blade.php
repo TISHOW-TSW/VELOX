@@ -228,7 +228,7 @@ console.log(now);
                                                 var now = new Date().getTime();
 
                                                 // Find the distance between now and the count down date
-                                                var distance = countDownDate{{$busca->id}} - now;
+                                                var distance =  now - countDownDate{{$busca->id}};
 
                                                 // Time calculations for days, hours, minutes and seconds
                                                 var days = Math.floor(distance / (1000 * 60 * 60 * 24));
