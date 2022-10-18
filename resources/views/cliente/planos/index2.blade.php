@@ -161,6 +161,8 @@
 
 
                                         @endphp
+
+
                                         <p id="demo{{$busca->id}}"></p>
 
                                         <script>
@@ -176,7 +178,7 @@
                                                 var now = new Date().getTime();
 
                                                 // Find the distance between now and the count down date
-                                                var distance = now - countDownDate{{$busca->id}};
+                                                var distance = countDownDate{{$busca->id}} - now;
 
                                                 // Time calculations for days, hours, minutes and seconds
                                                 var days = Math.floor(distance / (1000 * 60 * 60 * 24));
