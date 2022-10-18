@@ -524,6 +524,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
 
+
+    Route::resource('vantagem', \App\Http\Controllers\VantagemController::class)->middleware(['auth']);
+    Route::resource('plano', \App\Http\Controllers\PlanoController::class)->middleware(['auth']);
+
+
     Route::get('getupindiviual/{compra}', function (Compra $compra) {
         //dd($compra);
 

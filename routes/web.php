@@ -109,6 +109,8 @@ Route::get('indicacao/v2/{id}', function ($id) {
     return view('vendas.index', compact('user', 'planos', 'produtos'));
 });
 Route::get('/dashboard', function () {
+
+    //dd(Auth::user());
     $planos = Plano::orderBy('valor', 'asc')->get();
     $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
     $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
@@ -131,8 +133,6 @@ Route::get('teste', function () {
 });
 
 
-Route::resource('vantagem', VantagemController::class)->middleware(['auth']);
-Route::resource('plano', PlanoController::class)->middleware(['auth']);
 
 Route::get('corrige', function () {
     $users = User::all();
@@ -2607,6 +2607,14 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
         //dd($fatura->user->primeiro());
 
         $direto = $acaoController->calculorenda($compra, 1);
+    }
+
+
+    if ($compra->plano->id == 5 ||$compra->plano->id == 6||$compra->plano->id == 7 || $compra->plano->id == 8||$compra->plano->id == 9  ){
+        $user = $compra->user;
+        $add = $user->ordem + 1;
+        $user->update(['ordem'=>$add]);
+        $user->update(['ordem'=>$add]);
     }
 
     return redirect()->back()->with('success', 'Ativado Com sucesso');

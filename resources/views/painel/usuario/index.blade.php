@@ -1,26 +1,6 @@
 @extends('admin.padrao')
 @section('css')
-    <style>
 
-
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            box-sizing: border-box;
-            display: inline-block;
-            min-width: 1.5em;
-            padding: 0.5em 1em;
-            margin-left: 2px;
-            text-align: center;
-            text-decoration: none !important;
-            cursor: pointer;
-            *cursor: hand;
-            color: white !important;
-            border: 1px solid transparent;
-            border-radius: 2px;
-        }
-
-
-    </style>
 @endsection
 @section('content')
     <div class="modal fade blur" id="modalPadrao" aria-labelledby="modalPadraoLabel" aria-hidden="true">

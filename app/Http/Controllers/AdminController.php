@@ -62,15 +62,14 @@ class AdminController extends Controller
         // dd($id);
 
         $busca = Compra::where('user_id', Auth::user()->id)->where('plano_id', $id)->where('ativo', 0)->first();
+
+        //dd($busca);
         if (isset($busca)) {
             return redirect(url('customer/invoices'));
         }
         $plano = Plano::find($id);
 
-        //dd(count(Auth::user()->assinaturas));
 
-
-        //dd($plano);
 
         $hoje = Carbon::now();
 

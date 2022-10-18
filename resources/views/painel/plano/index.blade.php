@@ -1,4 +1,4 @@
-@extends('painel.padrao')
+@extends('admin.padrao')
 
 @section('content')
 
@@ -7,7 +7,7 @@
         <br>
         <div class="row">
             <div class="col-md-12">
-                <a href="{{ route('plano.create') }}" class="btn btn-warning btn-circle btn-lg"><i
+                <a href="{{ route('admin.plano.create') }}" class="btn btn-warning btn-circle btn-lg"><i
                         class="fa fa-plus"></i></a>
 
             </div>
@@ -15,8 +15,8 @@
         <br>
         <div class="row">
             <div class="col-lg-8">
-                <div  class="panel ">
-                    <div class="panel-header">
+                <div  class="panel">
+                    <div class="panel-heading">
                         <h3 class="panel-title">Planos</h3>
                     </div>
                     <div class="panel-body">
@@ -36,9 +36,9 @@
                                 <tr >
                                     <td>{{ $plano->name }}</td>
                                     <td>$ {{number_format($plano->valor,2,',','.')}}</td>
-                                    <td><a href="{{ route('plano.edit', $plano) }}" class="btn"><i
+                                    <td><a href="{{ route('admin.plano.edit', $plano) }}" class="btn"><i
                                                 class="fa fa-pencil"></i></a>
-                                        <a href="{{ route('plano.show', $plano) }}" class="btn"><i
+                                        <a href="{{ route('admin.plano.show', $plano) }}" class="btn"><i
                                                 class="fa fa-eye"></i></a>
 
                                     </td>

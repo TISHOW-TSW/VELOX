@@ -27,7 +27,7 @@
                                 <th>Cliente</th>
                                 <th>Telefone</th>
                                 <th>Valor</th>
-
+<th>Data</th>
                                 <th>Status</th>
                                 <th>Ação</th>
                             </tr>
@@ -40,7 +40,8 @@
                                         <td>{{ $busca->user->name }}</td>
                                         <td>{{ $busca->user->telefone }}</td>
                                         <td>$ {{ $busca->plano->valor }}</td>
-
+<td>{{$busca->created_at->format('d/m/Y H:i:s ')}}
+</td>
                                         <td>{{ $busca->ativo_formated }}</td>
                                         <td>
                                             <button class="btn btn-danger btn-rounded">Excluir</button>

@@ -291,27 +291,27 @@
                             @else
                                 <br><br>
                                 @if ($plano->id == 6 || $plano->id == 7 || $plano->id == 8 || $plano->id == 9 || $plano->id == 10)
-                                    @if (Auth::user()->ordem > 1 && $plano->id == 6)
+                                    @if (Auth::user()->ordem > 0 && $plano->id == 6)
                                         <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                             $ {{ number_format($plano->valor, 2, ',', '.') }}
                                         </a>
                                     @else
-                                        @if (Auth::user()->ordem > 2 && $plano->id == 7)
+                                        @if (Auth::user()->ordem > 1 && $plano->id == 7)
                                             <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                 $ {{ number_format($plano->valor, 2, ',', '.') }}
                                             </a>
                                         @else
-                                            @if (Auth::user()->ordem > 3 && $plano->id == 8)
+                                            @if (Auth::user()->ordem > 2 && $plano->id == 8)
                                                 <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                     $ {{ number_format($plano->valor, 2, ',', '.') }}
                                                 </a>
                                             @else
-                                                @if (Auth::user()->ordem > 4 && $plano->id == 9)
+                                                @if (Auth::user()->ordem > 3 && $plano->id == 9)
                                                     <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                         $ {{ number_format($plano->valor, 2, ',', '.') }}
                                                     </a>
                                                 @else
-                                                    @if (Auth::user()->ordem > 5 && $plano->id == 10)
+                                                    @if (Auth::user()->ordem > 4 && $plano->id == 10)
                                                         <a class="btn" href="{{ url('purchase', $plano->id) }}">
                                                             $ {{ number_format($plano->valor, 2, ',', '.') }}
                                                         </a>
