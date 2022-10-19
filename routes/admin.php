@@ -549,5 +549,56 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     });
 
+    Route::get('funcionadesgraca',function (\App\Services\SaldoService $saldoService){
+
+        $batalhas = \App\Models\Batalha::all();
+
+        //  dd($batalhas->toArray());
+
+
+        // $compras = Compra::where('status',1)->get();
+
+        foreach ($batalhas as $batalha){
+            $rentabilidade = $batalha->compra->plano->valor * 0.10;
+
+            $dados = [
+                'tipo' => 0,
+                'descricao' => "Redimento de 10% do carro " . $batalha->compra->plano->name,
+                'valor' => $rentabilidade,
+                'user_id' => $batalha->compra->user_id,
+                'compra_id'=> $batalha->compra->id
+            ];
+
+
+
+
+            \App\Models\Valorredimento::create($dados);
+            //Batalha::create($busca);
+
+
+            if (!$batalha->compra->saldoRaiz->saldoRendimento){
+                SaldoRendimento::create([
+                    'valor' => 0.00,
+                    'saque_rendimento' => 0.00,
+                    'saldo_raiz_id' => $batalha->compra->saldoRaiz->id,
+                ]);
+            }
+
+            $valor = ($batalha->compra->saldoRaiz->valor * 10)/100;
+
+
+            $saldoRaiz = \App\Models\SaldoRaiz::find($batalha->compra->saldoRaiz->id);
+
+            // dd($saldoRaiz);
+
+
+            // $batalha->compra->saldoRaiz->saldoRendimento->valor += $valor;
+            //  $batalha->compra->saldoRaiz->saldoRendimento->update();
+
+            $saldoService->rendimento($saldoRaiz);
+
+        }
+    });
+
 
 });
