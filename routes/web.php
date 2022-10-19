@@ -1985,11 +1985,14 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
 
 
 
+
     $compra = Compra::find($id);
 
-    if (count($compra->rendimentos) == 0){
+    //dd($compra);
 
-        if ($compra->primeiro_rendimento <= \Carbon\Carbon::now()){
+    if (count($compra->rendimentos) == 0){
+//dd('oi');
+        if ($compra->updated_at->addDay() <= \Carbon\Carbon::now()){
             $busca = [
                 'user_id' => Auth::user()->id,
                 'plano_id' => $compra->plano->id,
@@ -2024,7 +2027,10 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
         }
 
     }else{
-        if($compra->rendimentos->last()->created_at->diffInHours() <= 24){
+
+
+        if($compra->rendimentos->last()->created_at->diffInHours() < 24){
+            //dd($compra->rendimentos->last()->created_at->diffInHours());
             return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
 
         } else{
