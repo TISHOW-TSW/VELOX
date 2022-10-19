@@ -2086,6 +2086,7 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
             ];
 
 
+
             if (count($compra->rendimentos) != 5) {
 
                 $rentabilidade = $compra->plano->valor * 0.10;
@@ -2094,7 +2095,8 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
                     'tipo' => 0,
                     'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
                     'valor' => $rentabilidade,
-                    'user_id' => Auth::user()->id
+                    'user_id' => Auth::user()->id,
+                    'compra_id'=>$compra->id
                 ];
 
 
@@ -2136,7 +2138,8 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
                     'tipo' => 0,
                     'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
                     'valor' => $rentabilidade,
-                    'user_id' => Auth::user()->id
+                    'user_id' => Auth::user()->id,
+                    'compra_id'=>$compra->id
                 ];
 
 

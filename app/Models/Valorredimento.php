@@ -13,5 +13,6 @@ class Valorredimento extends Model
         'valor',
         'tipo',
         'user_id',
+        'compra_id'
     ];
 }
