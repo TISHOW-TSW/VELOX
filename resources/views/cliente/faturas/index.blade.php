@@ -82,7 +82,12 @@
                                                         class="btn">Excluir</a>
                                                 @endif
                                                 @if($assinatura->status == 2)
+                                                    @if($assinatura->saldoRaiz->valor > 0)
                                                     <a href="{{url('sacarraiz',$assinatura->id)}}" class="btn">Sacar Raiz</a>
+                                                        @endif
+                                                    @if($assinatura->saldoRaiz->valor == $assinatura->plano->valor)
+                                                            <a href="{{url('renovar',$assinatura->id)}}" class="btn">Renovar</a>
+                                                        @endif
                                                     <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn">Sacar Rendimento</a>
                                                 @endif
 

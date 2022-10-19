@@ -145,6 +145,92 @@ Route::resource('metas', MetaController::class);
 
 Route::get('purchase/{id}', [AdminController::class, 'faturas'])->middleware(['auth']);
 
+Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendarService, \App\Services\SaldoService $saldoService) {
+    $antiga = Compra::find($id);
+    $dados = [
+
+        'plano_id' => $antiga->plano_id,
+        'user_id' => Auth::user()->id,
+
+    ];
+    $compra = Compra::create($dados);
+    $compra->fill([
+        'tipo' => '$cobranca->billingType',
+        'status' => 1,
+        'ativo' => 1,
+        'dia_pagamento' => Carbon::now(),
+        'valor' => $compra->plano->valor
+
+    ]);
+    $compra->save();
+
+    $antiga->saldoRaiz->update(['valor' => 0]);
+
+
+
+    $fatura = $compra;
+
+
+    $buscar = $calendarService->validaDia($fatura->dia_pagamento);
+
+
+    if ($buscar['respota'] == true) {
+        $nova = $calendarService->validaDia($buscar['data']);
+
+        if ($nova['respota'] == true) {
+            $nova = $calendarService->validaDia($nova['data']);
+            if ($nova['respota'] == true) {
+
+            } else {
+                $novadata = $nova['data'];
+            }
+        } else {
+            $novadata = $nova['data'];
+        }
+    } else {
+        $novadata = $buscar['data'];
+    };
+
+
+    $today = Carbon::parse($novadata);
+
+    //dd($today->dayOfWeek)'
+    if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+        $today = $today->addDay();
+
+        if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+            $today = $today->addDay();
+            if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY) {
+
+            } else {
+                $novadata = $today;
+            }
+
+        } else {
+            $novadata = $today;
+        }
+
+    } else {
+        $novadata = $today;
+    }
+
+    $fatura->update(['primeiro_rendimento' => $novadata]);
+
+
+
+    $saldoService->createSaldoRaiz($compra);
+
+
+    $grava = [
+        'descricao' => 'Renovação de plano do ' . $compra->user->name,
+        'valor' => $compra->plano->valor,
+        'tipo' => 1,
+        'user_id' => $compra->user->id,
+    ];
+    Caixa::create($grava);
+});
+
 Route::get('recruit/{id}', function ($id) {
     $user = User::where('link', $id)->first();
     //dd($user);
