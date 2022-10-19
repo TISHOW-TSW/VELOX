@@ -53,7 +53,7 @@
         <div class="panel caixa">
 
             <div class="panel-body table-border-style">
-
+                <h3>SELECIONE:</h3>
                 <form action="{{url('cancelarraiz')}}" method="post">
                     @csrf
                     <input type="hidden" value="{{$fatura->id}}" name="compra_id">
@@ -66,7 +66,7 @@
 
 
                                 @if(isset(Auth::user()->bankon))
-                                    <li><a class="nav-link text-left select_account" id="v-pills-bankon-tab"
+                                    <li><a class="nav-link text-left select_account" style="color:white" id="v-pills-bankon-tab"
                                            data-toggle="pill" href="#v-pills-bankon" role="tab"
                                            aria-controls="v-pills-bankon" aria-selected="true"
                                            data-account="1">Bankon</a></li>
@@ -74,7 +74,7 @@
                                 @endif
 
                                 @if(isset(Auth::user()->pix))
-                                    <li><a class="nav-link text-left select_account" id="v-pills-pix-tab"
+                                    <li><a class="nav-link text-left select_account" style="color:white" id="v-pills-pix-tab"
                                            data-toggle="pill"
                                            href="#v-pills-pix" role="tab" aria-controls="v-pills-pix"
                                            aria-selected="false"

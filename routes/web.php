@@ -2789,11 +2789,11 @@ Route::get('sacarrendimento/{id}', function ($id) {
 
 Route::post('saquerendimento', function (Request $request, \App\Services\SaldoService $saldoService) {
     if ($request->valor < 10) {
-        return redirect()->back()->with('Error', 'O valor mínimo necessário é de R$10,00');
+        return redirect()->back()->with('error', 'O valor mínimo necessário é de R$10,00');
     }
 
     if ($request->meio_saque == null) {
-        return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
+        return redirect()->back()->with('error', 'É preciso informar um meio de saque');
     }
 
     $compra = Compra::find($request->compra_id);
@@ -2828,11 +2828,11 @@ Route::get('sacarraiz/{compra}', function (Compra $compra) {
 
 Route::post('saqueraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
     if ($request->valor == 0) {
-        return redirect()->back()->with('Error', 'Saldo indisponível para saque');
+        return redirect()->back()->with('error', 'Saldo indisponível para saque');
     }
 
     if ($request->meio_saque == null) {
-        return redirect()->back()->with('Error', 'É preciso informar um meio de saque');
+        return redirect()->back()->with('error', 'É preciso informar um meio de saque');
     }
 
     $compra = Compra::find($request->compra_id);
