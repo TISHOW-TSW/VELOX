@@ -43,10 +43,10 @@
                                 <td>
                                     @if ($saque->status == 0)
                                         <a class="btn btn-primary"
-                                           href="{{ url('admin/rendimento/visualizar/saque', $saque->id) }}">Visualizar</a>
+                                           href="{{ url('admin/raiz/visualizar/saque', $saque->id) }}">Visualizar</a>
 
                                         <a class="btn btn-danger"
-                                           href="{{ url('admin/rendimento/cancelar/saque', $saque->id) }}">Cancelar</a>
+                                           href="{{ url('admin/raiz/cancelar/saque', $saque->id) }}">Cancelar</a>
                                     @else
                                     @endif
                                 </td>
