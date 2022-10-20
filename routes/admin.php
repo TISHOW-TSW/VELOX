@@ -600,5 +600,21 @@ Route::name('admin.')->prefix('admin')->group(function () {
         }
     });
 
+    Route::get('pacotes',function (){
+        $compras = Compra::where('status','!=',0)->whereHas('plano',function ($query){
+            $query->where('valor',500);
+        })->get();
+       foreach ($compras as $compra){
+           $user = $compra->user;
+
+           $user->fill(['ordem'=>1]);
+           $user->save();
+
+           //dd($user);
+
+
+       }
+    });
+
 
 });
