@@ -1,4 +1,4 @@
-@extends('painel.padrao')
+@extends('admin.padrao')
 
 @section('content')
     <br>
@@ -19,7 +19,7 @@
 
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">VISUALIZAR SAQUE</h3>
+                <h3 class="panel-title">VISUALIZAR SAQUE {{$tiposaque}}</h3>
             </div>
         </div>
 
@@ -70,10 +70,13 @@
                     </tbody>
                 </table>
                 @if($tipo == 0)
-                    <a href="{{url('pagar/rendimento/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
+                    <a href="{{url('admin/pagar/rendimento/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
                 @endif
                 @if($tipo == 1)
-                    <a href="{{url('pagar/indica/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
+                    <a href="{{url('admin/pagar/indica/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
+                @endif
+                @if($tipo == 2)
+                    <a href="{{url('admin/pagar/raiz/saque',$saque->id)}}" class="btn btn-success btn-rounded btn-block">Pagar</a>
                 @endif
             </div>
         </div>

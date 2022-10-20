@@ -836,45 +836,7 @@ Route::get('testecliente', function () {
 });
 
 
-Route::get('pagar/rendimento/saque/{id}', function ($id) {
 
-    $saque = Saquerendimento::find($id);
-
-    $saque->fill(['status' => 1]);
-    $saque->save();
-
-
-    $grava = [
-        'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
-        'valor' => $saque->valor,
-        'tipo' => 0,
-        'user_id' => $saque->user_id,
-    ];
-
-    Caixa::create($grava);
-
-    return redirect(url('admin/saque'));
-});
-
-Route::get('pagar/indica/saque/{id}', function ($id) {
-
-    $saque = Saqueindica::find($id);
-
-    $saque->fill(['status' => 1]);
-    $saque->save();
-
-
-    $grava = [
-        'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
-        'valor' => $saque->valor,
-        'tipo' => 0,
-        'user_id' => $saque->user_id,
-    ];
-
-    Caixa::create($grava);
-
-    return redirect(url('admin/saque'));
-});
 
 
 Route::get('novo/registro', function () {

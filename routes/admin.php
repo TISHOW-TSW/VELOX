@@ -311,15 +311,26 @@ Route::name('admin.')->prefix('admin')->group(function () {
         Route::get('rendimento/visualizar/saque/{id}', function ($id) {
             $saque = \App\Models\Saquerendimento::find($id);
             $tipo = 0;
+            $tiposaque = "RENDIMENTO";
 
-            return view('admin.saque.visualizar', compact('saque', 'tipo'));
+            return view('admin.saque.visualizar', compact('saque', 'tipo','tiposaque'));
+        });
+        Route::get('raiz/visualizar/saque/{id}', function ($id) {
+            $saque = \App\Models\Saqueraiz::find($id);
+            $tipo = 2;
+            $tiposaque = "RAIZ";
+
+           //        dd($saque);
+
+            return view('admin.saque.visualizar', compact('saque', 'tipo','tiposaque'));
         });
 
         Route::get('indica/visualizar/saque/{id}', function ($id) {
             $saque = Saqueindica::find($id);
             $tipo = 1;
+            $tiposaque = "REDE";
 
-            return view('admin.saque.visualizar', compact('saque', 'tipo'));
+            return view('admin.saque.visualizar', compact('saque', 'tipo','tiposaque'));
         });
 
 
@@ -614,6 +625,65 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
 
        }
+    });
+
+    Route::get('pagar/rendimento/saque/{id}', function ($id) {
+
+        $saque = Saquerendimento::find($id);
+
+        $saque->fill(['status' => 1]);
+        $saque->save();
+
+
+        $grava = [
+            'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
+            'valor' => $saque->valor,
+            'tipo' => 0,
+            'user_id' => $saque->user_id,
+        ];
+
+        Caixa::create($grava);
+
+        return redirect(url('admin/saque'));
+    });
+
+    Route::get('pagar/indica/saque/{id}', function ($id) {
+
+        $saque = Saqueindica::find($id);
+
+        $saque->fill(['status' => 1]);
+        $saque->save();
+
+
+        $grava = [
+            'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
+            'valor' => $saque->valor,
+            'tipo' => 0,
+            'user_id' => $saque->user_id,
+        ];
+
+        Caixa::create($grava);
+
+        return redirect(url('admin/saque'));
+    });
+    Route::get('pagar/raiz/saque/{id}', function ($id) {
+
+        $saque = \App\Models\Saqueraiz::find($id);
+//dd($saque);
+        $saque->fill(['status' => 1]);
+        $saque->save();
+
+
+        $grava = [
+            'descricao' => 'Pagamento de Saque para ' . $saque->user->name,
+            'valor' => $saque->valor,
+            'tipo' => 0,
+            'user_id' => $saque->user_id,
+        ];
+
+        Caixa::create($grava);
+
+        return redirect(url('admin/saque'))->with('Success', 'Saque pago com sucesso');;
     });
 
 
