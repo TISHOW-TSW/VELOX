@@ -687,7 +687,24 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
     Route::get('faturaexcluir/{id}',function ($id){
-        $compra = Compra::destroy($id);
+
+        $compra = Compra::find($id);
+$saldoraiza = \App\Models\SaldoRaiz::where('compra_id',$compra->id)->get();
+
+//dd($saldoraiza);
+
+        //dd($compra->saldoRaiz);
+        if ($compra->saldoRaiz) {
+            $compra->saldoRaiz->delete();
+        }
+
+
+
+       // $compra->saldoRaiz->delete();
+        //dd($compra->id);
+$compra->delete();
+       // $saldo = \App\Models\SaldoRaiz::find(686);
+       // dd($saldo);
         return redirect()->back()->with('success','Fatura Deletada com sucesso');
     });
 
