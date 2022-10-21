@@ -229,6 +229,8 @@ Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendar
         'user_id' => $compra->user->id,
     ];
     Caixa::create($grava);
+
+    return redirect()->back();
 });
 
 Route::get('recruit/{id}', function ($id) {
