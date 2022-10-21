@@ -686,5 +686,10 @@ Route::name('admin.')->prefix('admin')->group(function () {
         return redirect(url('admin/saque'))->with('Success', 'Saque pago com sucesso');;
     });
 
+    Route::get('faturaexcluir/{id}',function ($id){
+        $compra = Compra::destroy($id);
+        return redirect()->back()->with('success','Fatura Deletada com sucesso');
+    });
+
 
 });

@@ -78,26 +78,26 @@
                                             @if ($assinatura->status == 1)
 
                                                 <a href="{{ url('cancelar', $assinatura->id) }}"
-                                                   class="btn">Cancelar Contrato</a>
+                                                   class="btn submitBtn">Cancelar Contrato</a>
 
                                             @endif
                                             @if($assinatura->status == 0)
                                                 <a href="{{ url('player/payment', $assinatura->id) }}"
                                                    class="btn">Efetuar Pagamento</a>
                                                 <a href="{{ url('cancelship', $assinatura->id) }}"
-                                                   class="btn">Excluir</a>
+                                                   class="btn submitBtn">Excluir</a>
                                             @endif
                                             @if($assinatura->status == 2)
                                                 @if($assinatura->saldoRaiz->valor > 0)
-                                                    <a href="{{url('sacarraiz',$assinatura->id)}}" class="btn">Sacar
+                                                    <a href="{{url('sacarraiz',$assinatura->id)}}" class="btn submitBtn">Sacar
                                                         Raiz</a>
                                                 @endif
                                                 @if($assinatura->saldoRaiz->valor == $assinatura->plano->valor)
-                                                    <a href="{{url('renovar',$assinatura->id)}}" class="btn">Renovar</a>
+                                                    <a href="{{url('renovar',$assinatura->id)}}" class="btn submitBtn">Renovar</a>
                                                 @endif
 
                                                 @if($assinatura->saldoRaiz->saldoRendimento->valor > 0)
-                                                    <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn">Sacar
+                                                    <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn submitBtn">Sacar
                                                         Rendimento</a>
                                                 @endif
                                             @endif
@@ -118,6 +118,16 @@
             </div>
         </div>
     </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="panel">
+                <div class="panel-body">
+
+                </div>
+            </div>
+        </div>
     </div>
 @endsection()
 
@@ -133,5 +143,15 @@
         function reload() {
             document.location.reload();
         }
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $(".submitBtn").click(function () {
+                $('.submitBtn').attr('disabled', 'disabled');
+                // Submit the form
+            });
+        });
     </script>
 @endsection

@@ -146,7 +146,10 @@ Route::resource('metas', MetaController::class);
 Route::get('purchase/{id}', [AdminController::class, 'faturas'])->middleware(['auth']);
 
 Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendarService, \App\Services\SaldoService $saldoService) {
+
+
     $antiga = Compra::find($id);
+    //dd($antiga);
     $dados = [
 
         'plano_id' => $antiga->plano_id,
@@ -155,7 +158,7 @@ Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendar
     ];
     $compra = Compra::create($dados);
     $compra->fill([
-        'tipo' => '$cobranca->billingType',
+
         'status' => 1,
         'ativo' => 1,
         'dia_pagamento' => Carbon::now(),

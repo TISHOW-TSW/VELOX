@@ -69,7 +69,7 @@
                                         <td>$ {{ $busca->plano->valor }}</td>
                                         <td>{{ $busca->ativo_formated }}</td>
                                         <td>
-                                            <button class="btn btn-danger btn-rounded">Excluir</button>
+                                            <a href="{{url('admin/faturaexcluir',$busca->id)}}" class="btn btn-danger btn-rounded">Excluir</a>
                                             <a href="{{ url('admin/cortesia', $busca->id) }}"
                                                 class="btn btn-primary">Cortesia</a>
                                             @if($busca->status == 0 )
