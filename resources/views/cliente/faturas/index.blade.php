@@ -89,7 +89,8 @@
                                             @endif
                                             @if($assinatura->status == 2)
                                                 @if($assinatura->saldoRaiz->valor > 0)
-                                                    <a href="{{url('sacarraiz',$assinatura->id)}}" class="btn submitBtn">Sacar
+                                                    <a href="{{url('sacarraiz',$assinatura->id)}}"
+                                                       class="btn submitBtn">Sacar
                                                         Raiz</a>
                                                 @endif
                                                 @if($assinatura->saldoRaiz->valor == $assinatura->plano->valor)
@@ -97,7 +98,8 @@
                                                 @endif
 
                                                 @if($assinatura->saldoRaiz->saldoRendimento->valor > 0)
-                                                    <a href="{{url('sacarrendimento',$assinatura->id)}}" class="btn submitBtn">Sacar
+                                                    <a href="{{url('sacarrendimento',$assinatura->id)}}"
+                                                       class="btn submitBtn">Sacar
                                                         Rendimento</a>
                                                 @endif
                                             @endif
@@ -119,13 +121,93 @@
         </div>
     </div>
 
-
+    <br><br>
     <div class="container">
         <div class="row">
-            <div class="panel">
-                <div class="panel-body">
 
+            <div class="col-md-12">
+                <div class="panel caixa">
+
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Saques de Rendimento</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Saque</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            @forelse(\Illuminate\Support\Facades\Auth::user()->saqueRendimentos as $extrado)
+                                <tr>
+                                    <td>{{$extrado->id}}</td>
+                                    <td>Saque de rendimento no valor de R$ {{$extrado->valor}}</td>
+                                    <td>{{$extrado->status_formated}}</td>
+                                </tr>
+
+                            @empty
+
+
+
+                            @endforelse
+
+
+                            </tbody>
+                        </table>
+
+                    </div>
                 </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <br><br>
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="panel caixa">
+
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Saques de Raizes</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Saque</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            @forelse(\Illuminate\Support\Facades\Auth::user()->saqueRaizes as $extrado)
+                                <tr>
+                                    <td>{{$extrado->id}}</td>
+                                    <td>Saque de Raiz no valor de R$ {{$extrado->valor}}</td>
+                                    <td>{{$extrado->status_formated}}</td>
+                                </tr>
+
+                            @empty
+
+
+
+                            @endforelse
+
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

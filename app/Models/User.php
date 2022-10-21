@@ -489,4 +489,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Pix::class);
     }
+
+    public function saqueRendimentos()
+    {
+        return $this->hasMany(Saquerendimento::class);
+    }
+
+    public function saqueRaizes()
+    {
+        return $this->hasMany(Saqueraiz::class);
+    }
 }
