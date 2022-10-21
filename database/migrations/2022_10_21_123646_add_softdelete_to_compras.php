@@ -15,6 +15,7 @@ class AddSoftdeleteToCompras extends Migration
     {
         Schema::table('compras', function (Blueprint $table) {
             $table->softDeletes();
+            ///
         });
     }
 
