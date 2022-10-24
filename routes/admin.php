@@ -719,7 +719,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             $soma = ($fatura->plano->valor * 10 / 100);
             $total = $fatura->saldoRaiz->saldoRendimento->valor += $soma;
-            //dd($fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]));
+            $fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]);
         }
 
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
