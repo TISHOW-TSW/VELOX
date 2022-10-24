@@ -718,8 +718,8 @@ Route::name('admin.')->prefix('admin')->group(function () {
         foreach ($fatura->rendimentos as $rendimento) {
 
             $soma = ($fatura->plano->valor * 10 / 100);
-            $total = $fatura->saldoRaiz->saldoRendimento->valor + $soma;
-            dd($fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]));
+            $total = $fatura->saldoRaiz->saldoRendimento->valor += $soma;
+            //dd($fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]));
         }
 
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
