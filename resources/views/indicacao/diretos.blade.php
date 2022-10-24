@@ -85,7 +85,7 @@
                         @endphp
 
 
-                    @if($agora>= '09:00:00'||$agora<='18:00:00')
+                    @if($agora>= '09:00:00'&&$agora<='18:00:00')
                         <form action="{{ url('carryout/withdrawal/squad') }}" method="post">
                             @csrf
                             <div class="form-group">
