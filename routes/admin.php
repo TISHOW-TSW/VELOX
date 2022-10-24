@@ -168,14 +168,14 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             $user = User::find($id);
             $buscas = \App\Models\Valorindicacao::where('user_id', $user->id)->orderByDesc('created_at')->get();
-            return view('painel.usuario.show', compact('user','buscas'));
+            return view('painel.usuario.show', compact('user', 'buscas'));
         });
 
-        Route::get('deleterede/{id}',function ($id){
+        Route::get('deleterede/{id}', function ($id) {
             $valorindica = \App\Models\Valorindicacao::find($id);
             $valorindica->delete();
 
-            return redirect()->back()->with('success','Bonus Deletado com sucesso');
+            return redirect()->back()->with('success', 'Bonus Deletado com sucesso');
         });
 
         Route::post('consulta/faturas', function (Request $request) {
@@ -313,16 +313,16 @@ Route::name('admin.')->prefix('admin')->group(function () {
             $tipo = 0;
             $tiposaque = "RENDIMENTO";
 
-            return view('admin.saque.visualizar', compact('saque', 'tipo','tiposaque'));
+            return view('admin.saque.visualizar', compact('saque', 'tipo', 'tiposaque'));
         });
         Route::get('raiz/visualizar/saque/{id}', function ($id) {
             $saque = \App\Models\Saqueraiz::find($id);
             $tipo = 2;
             $tiposaque = "RAIZ";
 
-           //        dd($saque);
+            //        dd($saque);
 
-            return view('admin.saque.visualizar', compact('saque', 'tipo','tiposaque'));
+            return view('admin.saque.visualizar', compact('saque', 'tipo', 'tiposaque'));
         });
 
         Route::get('indica/visualizar/saque/{id}', function ($id) {
@@ -330,11 +330,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
             $tipo = 1;
             $tiposaque = "REDE";
 
-            return view('admin.saque.visualizar', compact('saque', 'tipo','tiposaque'));
+            return view('admin.saque.visualizar', compact('saque', 'tipo', 'tiposaque'));
         });
 
 
-        Route::get('indica/cancelar/saque/{id}',function ($id){
+        Route::get('indica/cancelar/saque/{id}', function ($id) {
             $valor = Saqueindica::find($id);
 
 
@@ -346,11 +346,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
             ];
             \App\Models\Valorindicacao::create($dados);
 
-            $valor->fill(['status'=>2]);
+            $valor->fill(['status' => 2]);
             $valor->save();
 
             return redirect()->back();
-           // dd($valor->valor);
+            // dd($valor->valor);
         });
 
 
@@ -481,43 +481,43 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 };
             };
 
-    /*        $buscas = User::where('quem', $user->link)->whereHas('compras', function ($query) {
-                $query->where('status', 1);
-            })->get();
+            /*        $buscas = User::where('quem', $user->link)->whereHas('compras', function ($query) {
+                        $query->where('status', 1);
+                    })->get();
 
-            foreach ($buscas as $busca) {
-               // $novos = $busca->compras->where('status', 1);
-                //fdd($novo);
+                    foreach ($buscas as $busca) {
+                       // $novos = $busca->compras->where('status', 1);
+                        //fdd($novo);
 
-                foreach ($busca->compras as $novo) {
+                        foreach ($busca->compras as $novo) {
 
-                    if ($novo->status ==1) {
+                            if ($novo->status ==1) {
 
-                        for ($i = 1; $i >= 3; $i++) {
+                                for ($i = 1; $i >= 3; $i++) {
 
-                            $indicado = $acaoController->verifyNivel($i, $novo->user);
-                            if (!empty($indicado)) {
-                                echo $indicado->name . "<br>";
+                                    $indicado = $acaoController->verifyNivel($i, $novo->user);
+                                    if (!empty($indicado)) {
+                                        echo $indicado->name . "<br>";
 
-                                $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($novo, $i);
+                                        $atualiza = $acaoController->attSaldoIndicaNovaAssinatura($novo, $i);
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
 
-           */
+                   */
             // dd($buscas);
 
         }
 
 
-        $compras =  Compra::where('status',1)->get();
+        $compras = Compra::where('status', 1)->get();
 
         //dd(count($compras));
 
 
-        foreach ($compras as $novo){
+        foreach ($compras as $novo) {
 
             for ($i = 1; $i <= 3; $i++) {
 
@@ -535,7 +535,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
 
-
     Route::resource('vantagem', \App\Http\Controllers\VantagemController::class)->middleware(['auth']);
     Route::resource('plano', \App\Http\Controllers\PlanoController::class)->middleware(['auth']);
 
@@ -550,7 +549,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
         ];
 
 
-        $op =  \App\Models\Valorredimento::find(204);
+        $op = \App\Models\Valorredimento::find(204);
         //dd($op);
         $compra->saldoRaiz->saldoRendimento->update(['valor' => 2]);
         $op->delete();
@@ -560,7 +559,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     });
 
-    Route::get('funcionadesgraca',function (\App\Services\SaldoService $saldoService){
+    Route::get('funcionadesgraca', function (\App\Services\SaldoService $saldoService) {
 
         $batalhas = \App\Models\Batalha::all();
 
@@ -569,7 +568,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
         // $compras = Compra::where('status',1)->get();
 
-        foreach ($batalhas as $batalha){
+        foreach ($batalhas as $batalha) {
             $rentabilidade = $batalha->compra->plano->valor * 0.10;
 
             $dados = [
@@ -577,17 +576,15 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 'descricao' => "Redimento de 10% do carro " . $batalha->compra->plano->name,
                 'valor' => $rentabilidade,
                 'user_id' => $batalha->compra->user_id,
-                'compra_id'=> $batalha->compra->id
+                'compra_id' => $batalha->compra->id
             ];
-
-
 
 
             \App\Models\Valorredimento::create($dados);
             //Batalha::create($busca);
 
 
-            if (!$batalha->compra->saldoRaiz->saldoRendimento){
+            if (!$batalha->compra->saldoRaiz->saldoRendimento) {
                 SaldoRendimento::create([
                     'valor' => 0.00,
                     'saque_rendimento' => 0.00,
@@ -595,7 +592,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 ]);
             }
 
-            $valor = ($batalha->compra->saldoRaiz->valor * 10)/100;
+            $valor = ($batalha->compra->saldoRaiz->valor * 10) / 100;
 
 
             $saldoRaiz = \App\Models\SaldoRaiz::find($batalha->compra->saldoRaiz->id);
@@ -611,20 +608,20 @@ Route::name('admin.')->prefix('admin')->group(function () {
         }
     });
 
-    Route::get('pacotes',function (){
-        $compras = Compra::where('status','!=',0)->whereHas('plano',function ($query){
-            $query->where('valor',500);
+    Route::get('pacotes', function () {
+        $compras = Compra::where('status', '!=', 0)->whereHas('plano', function ($query) {
+            $query->where('valor', 500);
         })->get();
-       foreach ($compras as $compra){
-           $user = $compra->user;
+        foreach ($compras as $compra) {
+            $user = $compra->user;
 
-           $user->fill(['ordem'=>1]);
-           $user->save();
+            $user->fill(['ordem' => 1]);
+            $user->save();
 
-           //dd($user);
+            //dd($user);
 
 
-       }
+        }
     });
 
     Route::get('pagar/rendimento/saque/{id}', function ($id) {
@@ -686,10 +683,10 @@ Route::name('admin.')->prefix('admin')->group(function () {
         return redirect(url('admin/saque'))->with('Success', 'Saque pago com sucesso');;
     });
 
-    Route::get('faturaexcluir/{id}',function ($id){
+    Route::get('faturaexcluir/{id}', function ($id) {
 
         $compra = Compra::find($id);
-$saldoraiza = \App\Models\SaldoRaiz::where('compra_id',$compra->id)->get();
+//$saldoraiza = \App\Models\SaldoRaiz::where('compra_id',$compra->id)->get();
 
 //dd($saldoraiza);
 
@@ -699,13 +696,33 @@ $saldoraiza = \App\Models\SaldoRaiz::where('compra_id',$compra->id)->get();
         }
 
 
-
-       // $compra->saldoRaiz->delete();
+        // $compra->saldoRaiz->delete();
         //dd($compra->id);
-$compra->delete();
-       // $saldo = \App\Models\SaldoRaiz::find(686);
-       // dd($saldo);
-        return redirect()->back()->with('success','Fatura Deletada com sucesso');
+        $compra->delete();
+        // $saldo = \App\Models\SaldoRaiz::find(686);
+        // dd($saldo);
+        return redirect()->back()->with('success', 'Fatura Deletada com sucesso');
+    });
+
+
+    Route::get('restaura/{id}', function ($id) {
+        $fatura = Compra::find($id);
+
+        $novo = $fatura->saldoRaiz;
+
+        $novo->update(['valor' => $fatura->plano->valor]);
+        // $fatura->saldoRaiz->saldoRendimento->valor
+        // dd($fatura->saldoRaiz);
+
+
+        foreach ($fatura->rendimentos as $rendimento) {
+
+            $soma = ($fatura->plano->valor * 10 / 100);
+            $total = $fatura->saldoRaiz->saldoRendimento->valor + $soma;
+            dd($fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]));
+        }
+
+        //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
     });
 
 
