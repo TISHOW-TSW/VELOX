@@ -153,8 +153,30 @@
                             @if(!isset(Auth::user()->pix) && !isset(Auth::user()->bankon))
                                 <a href="{{ url('/myaccount') }}" class="btn btn-success btn-block text-uppercase">Cadastrar Meio saque</a>
                             @else
-                             <button type="submit" name="submit"
-                                    class="btn btn-success btn-block text-uppercase">Solicitar saque</button>
+
+                                @php
+
+                                    $agora = \Carbon\Carbon::now()->format('H:i:s');
+                                  //  dd($agora);
+
+                                @endphp
+
+                                @if(!isset(Auth::user()->pix) && !isset(Auth::user()->bankon))
+                                    <a href="{{ url('/myaccount') }}" class="btn btn-success btn-block text-uppercase">Cadastrar Meio saque</a>
+                                @else
+
+                                    @if($agora>= '09:00:00'&&$agora<='18:00:00')
+                                        <button type="submit" name="submit"
+                                                class="btn btn-success btn-block text-uppercase">Solicitar saque</button>
+                                    @else
+
+                                        <label for="">Saques pertidos nos horarios entre 9H as 18H</label>
+
+
+                                    @endif
+
+                                @endif
+
                             @endif
 
 

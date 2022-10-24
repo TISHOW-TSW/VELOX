@@ -2794,10 +2794,13 @@ Route::post('saquerendimento', function (Request $request, \App\Services\SaldoSe
     return redirect()->back()->with('success', 'Saque de rendimento solicitado com sucesso');
 });
 
-Route::get('sacarraiz/{compra}', function (Compra $compra) {
+Route::get('sacarraiz/{compra}', function (Compra $compra, \App\Services\CalendarService $calendarService) {
     $fatura = $compra;
+    $agora = Carbon::now();
 
-    return view('cliente.saque.raiz', compact('fatura'));
+    $resposta = ($calendarService->validaDia($agora)['respota']);
+
+    return view('cliente.saque.raiz', compact('fatura','resposta'));
 });
 
 Route::post('saqueraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
