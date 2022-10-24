@@ -151,11 +151,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 text-center">
-                @if ($reward >= 25 && $totalDuration >= 14400)
-                    <a class="btn" href="{{ url('carryout/withdrawal') }}">Withdrawal</a>
-                @endif
-            </div>
+
             <br>
             <br>
         </div>

@@ -7,8 +7,8 @@
 
         .caixa {
             border-radius: 15px;
-            background-color:rgba(39, 34, 40, 0.7);
-            border: 3px solid rgba(233, 0, 0,0.4);
+            background-color: rgba(39, 34, 40, 0.7);
+            border: 3px solid rgba(233, 0, 0, 0.4);
             color: white
         }
 
@@ -76,33 +76,50 @@
                     <h4 style="color: #0a0a0a" class="modal-title">PIX</h4>
                 </div>
                 <div style="background-color: #0a0a0a" class="modal-body">
-                    <form action="{{ url('carryout/withdrawal/squad') }}" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="">Selecione Metodo para receber</label>
 
-                            <select class="form-control" name="meio_id" id="">
+                    @php
 
-                                @if(isset(Auth::user()->bankon))
+                    $agora = \Carbon\Carbon::now()->format('H:i:s');
+                  //  dd($agora);
 
-                                    <option value="1">BanKon : {{Auth::user()->bankon->cod_bankon}}</option>
-                                @endif
+                        @endphp
 
-                                @if(isset(Auth::user()->pix))
+
+                    @if($agora>= '09:00:00'||$agora<='18:00:00')
+                        <form action="{{ url('carryout/withdrawal/squad') }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="">Selecione Metodo para receber</label>
+
+                                <select class="form-control" name="meio_id" id="">
+
+                                    @if(isset(Auth::user()->bankon))
+
+                                        <option value="1">BanKon : {{Auth::user()->bankon->cod_bankon}}</option>
+                                    @endif
+
+                                    @if(isset(Auth::user()->pix))
                                         <option value="2">Pix: {{Auth::user()->pix->chave}}</option>
 
-                                @endif
+                                    @endif
 
 
-                            </select>
+                                </select>
 
 
-                        </div>
+                            </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-default" >Sacar</button>
-                        </div>
-                    </form>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default">Sacar</button>
+                            </div>
+                        </form>
+                    @else
+
+                        <label for="">Saques pertidos nos horarios entre 9H as 18H</label>
+
+
+                    @endif
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -119,12 +136,18 @@
                     <div class="inner">
                         <h3>
 
-                          R$  {{ number_format($reward, 2, ',', '.') }}</h3>
+                            R$ {{ number_format($reward, 2, ',', '.') }}</h3>
 
                         <p>Saldo De TIME</p>
 
-                            <button class="btn" data-toggle="modal" data-target="#myModal" >Saque de Rede</button>
+                        @if($resposta == false)
+                        <button class="btn" data-toggle="modal" data-target="#myModal">Saque de Rede</button>
+                        @else
 
+                            Operações de saques permitidos apenas em dias Uteis
+
+
+                        @endif
                     </div>
                     <div class="icon">
 
@@ -145,35 +168,35 @@
                         <div class="table-responsive">
                             <table id="myTable" class="cell-border compact stripe">
                                 <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Email</th>
-                                        <th>Whatsapp</th>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Whatsapp</th>
 
 
-                                        <th>Status</th>
-                                    </tr>
+                                    <th>Status</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse (Auth::user()->indicados as $indicado)
-                                        <tr style="background-color: transparent">
-                                            <td>{{ $indicado->name }}</td>
-                                            <td>{{ $indicado->email }}</td>
-                                            <td>{{ $indicado->telefone }}</td>
+                                @forelse (Auth::user()->indicados as $indicado)
+                                    <tr style="background-color: transparent">
+                                        <td>{{ $indicado->name }}</td>
+                                        <td>{{ $indicado->email }}</td>
+                                        <td>{{ $indicado->telefone }}</td>
 
 
-                                            <td>{{ $indicado->status }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr style="background-color: transparent">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                        <td>{{ $indicado->status }}</td>
+                                    </tr>
+                                @empty
+                                    <tr style="background-color: transparent">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
 
 
-                                            <td></td>
-                                        </tr>
-                                    @endforelse
+                                        <td></td>
+                                    </tr>
+                                @endforelse
 
 
                                 </tbody>
@@ -193,35 +216,35 @@
                         <div class="table-responsive">
                             <table id="myTable1" class="cell-border compact stripe">
                                 <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Lider</th>
-                                        <th>Email</th>
-                                        <th>Whatsapp</th>
-                                        <th>Status</th>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Lider</th>
+                                    <th>Email</th>
+                                    <th>Whatsapp</th>
+                                    <th>Status</th>
 
-                                    </tr>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse (Auth::user()->primeiroindicados() as $indicado)
-                                        <tr style="background-color: transparent">
-                                            <td>{{ $indicado->name }}</td>
-                                            <td>{{ $indicado->meindica->name }}</td>
-                                            <td>{{ $indicado->email }}</td>
-                                            <td>{{ $indicado->telefone }}</td>
-                                            <td>{{ $indicado->status }}</td>
+                                @forelse (Auth::user()->primeiroindicados() as $indicado)
+                                    <tr style="background-color: transparent">
+                                        <td>{{ $indicado->name }}</td>
+                                        <td>{{ $indicado->meindica->name }}</td>
+                                        <td>{{ $indicado->email }}</td>
+                                        <td>{{ $indicado->telefone }}</td>
+                                        <td>{{ $indicado->status }}</td>
 
-                                        </tr>
-                                    @empty
-                                        <tr style="background-color: transparent">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                    </tr>
+                                @empty
+                                    <tr style="background-color: transparent">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
 
-                                        </tr>
-                                    @endforelse
+                                    </tr>
+                                @endforelse
 
 
                                 </tbody>
@@ -233,7 +256,7 @@
             <div class="col-md-12">
                 <div class="panel caixa">
                     <div class="panel-heading">
-                        <h5 class="panel-title">   <p> MEU TERCEIRO NIVEL </p>
+                        <h5 class="panel-title"><p> MEU TERCEIRO NIVEL </p>
                         </h5>
 
                     </div>
@@ -242,35 +265,35 @@
                         <div class="table-responsive">
                             <table id="myTable2" class="cell-border compact stripe">
                                 <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Lider</th>
-                                        <th>Email</th>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Lider</th>
+                                    <th>Email</th>
 
-                                        <th>Whatsapp</th>
-                                        <th>Status</th>
-                                    </tr>
+                                    <th>Whatsapp</th>
+                                    <th>Status</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse (Auth::user()->segundoindicados() as $segundo)
-                                        <tr style="background-color: transparent">
-                                            <td>{{ $segundo->name }}</td>
-                                            <td>{{ $segundo->meindica->name }}</td>
-                                            <td>{{ $segundo->email }}</td>
+                                @forelse (Auth::user()->segundoindicados() as $segundo)
+                                    <tr style="background-color: transparent">
+                                        <td>{{ $segundo->name }}</td>
+                                        <td>{{ $segundo->meindica->name }}</td>
+                                        <td>{{ $segundo->email }}</td>
 
-                                            <td>{{ $segundo->telefone }}</td>
-                                            <td>{{ $segundo->status }}</td>
+                                        <td>{{ $segundo->telefone }}</td>
+                                        <td>{{ $segundo->status }}</td>
 
-                                        </tr>
-                                    @empty
-                                        <tr style="background-color: transparent">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    @endforelse
+                                    </tr>
+                                @empty
+                                    <tr style="background-color: transparent">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                @endforelse
 
 
                                 </tbody>

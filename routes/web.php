@@ -285,10 +285,13 @@ Route::post('registerindicado', function (Request $request) {
 });
 
 
-Route::get('player', function () {
+Route::get('player', function (\App\Services\CalendarService $calendarService) {
     //$direto = Auth::user()->indicados->pluck('link')->toArray();
 
     //dd($direto);
+    $agora = Carbon::now();
+
+    $resposta = ($calendarService->validaDia($agora)['respota']);
 
     $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
 
@@ -313,7 +316,7 @@ Route::get('player', function () {
     // dd($terceiros);
 
 
-    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros', 'reward'));
+    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros', 'reward','resposta'));
 })->middleware(['auth']);
 
 Route::get('primeiro', function () {
@@ -413,7 +416,11 @@ Route::get('customer/invoices', function () {
 
 Route::get('rewards', function () {
     $buscas = Valorredimento::where('user_id', Auth::user()->id)->get();
-    $reward = Valorredimento::where('user_id', Auth::user()->id)->sum('valor');
+
+    //$reward = Valorredimento::where('user_id', Auth::user()->id)->sum('valor');
+    $reward = Auth::user()->totalTodosRendimentos();
+
+   // dd($reward);
     $tempo = Compra::where("user_id", Auth::user()->id)->where("ativo", 1)->first();
     if (isset($tempo)) {
         $finishTime = Carbon::parse($tempo['created_at']);
@@ -2041,7 +2048,7 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
 
     $compra = Compra::find($id);
 
-    //dd($compra);
+   // dd($compra);
 
     if (count($compra->rendimentos) == 0){
 //dd('oi');
@@ -2952,6 +2959,20 @@ Route::get('buscauser/{id}',function ($id){
 
     //dd($valorindica->delete());
 
+});
+
+
+Route::post('cadatrapin',function (Request $request){
+    $request->validate([
+        'pin' => 'required|max:6',
+
+
+    ]);
+
+
+    Auth::user()->update(['pin'=>bcrypt($request->pin)]);
+
+    return redirect()->back()->with('success','PIN cadastrado com sucesso');
 });
 
 require __DIR__ . '/auth.php';
