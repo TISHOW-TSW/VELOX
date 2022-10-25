@@ -741,4 +741,16 @@ Route::name('admin.')->prefix('admin')->group(function () {
         echo 'pronto';
     });
 
+    Route::get('corrigerendimento',function (\App\Services\SaldoService $saldoService){
+        $compras = \App\Models\SaldoRaiz::doesntHave('saldoRendimento')->get();
+
+
+        foreach ($compras as $compra){
+            $saldoService->createSaldoRendimento($compra);
+
+        }
+
+
+    });
+
 });
