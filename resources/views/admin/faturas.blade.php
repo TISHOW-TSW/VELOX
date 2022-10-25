@@ -76,6 +76,7 @@
                                                 <a href="{{url('admin/ativamanual',$busca)}}" class="btn btn-success">Ativar</a>
 
                                             @endif
+                                            <a class="btn btn-warning" href="{{url('admin/restaura',$busca->id)}}">Corrigir</a>
                                         </td>
 
                                     </tr>

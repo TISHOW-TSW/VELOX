@@ -711,10 +711,27 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
         $novo = $fatura->saldoRaiz;
 
+
+        if (count($fatura->rendimentos) == 5) {
+            $fatura->update(['status'=>2]);
+        }
+
         $novo->update(['valor' => $fatura->plano->valor]);
         // $fatura->saldoRaiz->saldoRendimento->valor
         // dd($fatura->saldoRaiz);
-
+        $sRend = \App\Models\SaldoRendimento::where('saldo_raiz_id', $novo->id)->first();
+        if (!isset($sRend)) {
+            \App\Models\SaldoRendimento::create([
+                'valor' => 0.00,
+                'saque_rendimento' => 0.00,
+                'saldo_raiz_id' => $novo->id,
+            ]);
+        } else {
+            $sRend->update([
+                'valor' => 0.00,
+                'saque_rendimento' => 0.00,
+            ]);
+        }
 
         foreach ($fatura->rendimentos as $rendimento) {
 
