@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SaldoRendimento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -725,5 +726,19 @@ Route::name('admin.')->prefix('admin')->group(function () {
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
     });
 
+    Route::get('gerarsaldorend', function(){
+        $saldosRaiz = \App\Models\SaldoRaiz::all();
+        foreach ($saldosRaiz as $saldoRaiz) {
+            $saldoRend = \App\Models\SaldoRendimento::where('saldo_raiz_id', $saldoRaiz->id)->first();
+            if(!isset($saldoRend)){
+                \App\Models\SaldoRendimento::create([
+                    'valor' => 0.00,
+                    'saque_rendimento' => 0.00,
+                    'saldo_raiz_id' => $saldoRaiz->id,
+                ]);
+            }
+        }
+        echo 'pronto';
+    });
 
 });

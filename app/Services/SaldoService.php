@@ -43,8 +43,17 @@ class SaldoService
     public function rendimento(SaldoRaiz $saldoRaiz)
     {
         $valor = ($saldoRaiz->valor * 10)/100;
-        $saldoRaiz->saldoRendimento->valor += $valor;
-        $saldoRaiz->saldoRendimento->update();
+        $saldorend = SaldoRendimento::where('saldo_raiz_id', $saldoRaiz->id)->first();
+        if(!isset($saldorend)){
+            $novo = SaldoRendimento::create([
+                'valor' => 0.00,
+                'saque_rendimento' => 0.00,
+                'saldo_raiz_id' => $saldoRaiz->id,
+            ]);
+            $saldorend = $novo;
+        }
+        $saldorend->valor += $valor;
+        $saldorend->update();
     }
 
     public function valorCancelamento(SaldoRaiz $saldoRaiz)
