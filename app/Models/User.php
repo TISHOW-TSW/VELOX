@@ -499,4 +499,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Saqueraiz::class);
     }
+
+    public function totalTodosRendimentos()
+    {
+
+        $compras = $this->compras->where('status',1);
+
+
+        $total = 0;
+
+
+        foreach ($compras as $compra) {
+            //dd($compra->saldoRaiz->saldoRendimento->valor);
+
+
+            $total += $compra->saldoRaiz->saldoRendimento->valor;
+        }
+        return $total;
+    }
 }
