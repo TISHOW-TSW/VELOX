@@ -503,7 +503,7 @@ Route::post('carryout/withdrawal/squad', function (Request $request) {
 
     //dd($total);
 
-    if ($total > 20) {
+    if ($total >= 20) {
         $valores =
             [
                 'valor' => -$buscas->sum('valor'),
