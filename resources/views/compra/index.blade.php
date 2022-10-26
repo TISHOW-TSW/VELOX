@@ -103,7 +103,7 @@
 
                         <center>
                             <h2 class="mb-0">
-                                $ {{ number_format($compra->plano->valor, 2, ',', '.') }}
+                                R$ {{ number_format($compra->plano->valor, 2, ',', '.') }}
                             </h2>
                         </center>
                         <h2>Selecionar Metodo de Pagamento</h2>
