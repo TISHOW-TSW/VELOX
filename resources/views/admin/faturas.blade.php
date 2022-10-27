@@ -77,6 +77,7 @@
 
                                             @endif
                                             <a class="btn btn-warning" href="{{url('admin/restaura',$busca->id)}}">Corrigir</a>
+                                            <a class="btn btn-warning" href="{{url('admin/restaura2',$busca->id)}}">Corrigir Sem Ativar</a>
                                         </td>
 
                                     </tr>

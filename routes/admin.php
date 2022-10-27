@@ -742,6 +742,24 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
     });
+    Route::get('restaura2/{id}', function ($id) {
+        $fatura = Compra::find($id);
+
+        $novo = $fatura->saldoRaiz;
+
+
+        if (count($fatura->rendimentos) == 5) {
+            $fatura->update(['status'=>2]);
+        }
+
+        $novo->update(['valor' => 0]);
+        // $fatura->saldoRaiz->saldoRendimento->valor
+        // dd($fatura->saldoRaiz);
+
+
+        return redirect()->back();
+        //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
+    });
 
     Route::get('gerarsaldorend', function(){
         $saldosRaiz = \App\Models\SaldoRaiz::all();
