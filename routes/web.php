@@ -489,6 +489,7 @@ Route::get('carryout/withdrawal', function () {
     return redirect()->back();
 })->middleware(['auth']);
 Route::post('carryout/withdrawal/squad', function (Request $request) {
+    return redirect()->back()->with('Error', 'Saque disponível somente em dias úteis');
     $validated = $request->validate([
 
         'meio_id' => 'required',
@@ -2041,7 +2042,7 @@ Route::get('cancelship/{id}', function ($id) {
 
 
 Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoService) {
-   // return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
+    return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
 
 
 
@@ -2762,6 +2763,7 @@ Route::get('sacarrendimento/{id}', function ($id) {
 });
 
 Route::post('saquerendimento', function (Request $request, \App\Services\SaldoService $saldoService) {
+    return redirect()->back()->with('Error', 'Saque disponível somente em dias úteis');
     if ($request->valor < 10) {
         return redirect()->back()->with('error', 'O valor mínimo necessário é de R$10,00');
     }
@@ -2804,6 +2806,7 @@ Route::get('sacarraiz/{compra}', function (Compra $compra, \App\Services\Calenda
 });
 
 Route::post('saqueraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
+    return redirect()->back()->with('Error', 'Saque disponível somente em dias úteis');
     if ($request->valor == 0) {
         return redirect()->back()->with('error', 'Saldo indisponível para saque');
     }
@@ -2846,6 +2849,7 @@ Route::get('cancelar/{compra}', function (Compra $compra, \App\Services\SaldoSer
 });
 
 Route::post('cancelarraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
+    return redirect()->back()->with('Error', 'Saque disponível somente em dias úteis');
     if ($request->valor == 0) {
         return redirect()->back()->with('Error', 'Saldo indisponível para saque');
     }
