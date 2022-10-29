@@ -192,10 +192,11 @@
 
 
 
-                                            <button id="ship{{ $plano->id }}" class="btn"
+                                            <p>Sua Proxima Corrida será segunda-feira</p>
+                                            <!--button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
-                                            </button>
+                                            </button-->
                                         @endif
                                     @else
                                         @if($busca->rendimentos->last()->created_at->addDay() >= \Carbon\Carbon::now())
@@ -261,11 +262,11 @@
                                             </div>
 
 
-
-                                            <button id="ship{{ $plano->id }}" class="btn"
+                                            <p>Sua Proxima Corrida será segunda-feira</p>
+                                            <!--button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
-                                            </button>
+                                            </button-->
 
                                         @endif
                                     @endif
