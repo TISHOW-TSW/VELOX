@@ -136,11 +136,11 @@
 
 
 
-                                        <p>Sua Proxima Corrida será segunda-feira</p>
-                                        <!--button id="ship{{ $plano->id }}" class="btn"
+                                        <!--p>Sua Proxima Corrida será segunda-feira</p-->
+                                        <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
-                                            </button-->
+                                            </button>
                                     @endif
 
                                 @else
@@ -209,11 +209,11 @@
 
 
 
-                                        <p>Sua Proxima Corrida será segunda-feira</p>
-                                        <!--button id="ship{{ $plano->id }}" class="btn"
+                                        <!--p>Sua Proxima Corrida será segunda-feira</p-->
+                                        <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
-                                            </button-->
+                                            </button>
                                     @endif
                                 @endif
 
