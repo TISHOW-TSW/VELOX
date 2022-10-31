@@ -2042,7 +2042,7 @@ Route::get('cancelship/{id}', function ($id) {
 
 
 Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoService) {
-    return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
+    //return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
 
 
 
