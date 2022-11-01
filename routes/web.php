@@ -291,7 +291,7 @@ Route::get('player', function (\App\Services\CalendarService $calendarService) {
     //dd($direto);
     $agora = Carbon::now();
 
-    $resposta = ($calendarService->validaDia($agora)['respota']);
+    $resposta = ($calendarService->validarDiaPagamento($agora)['respota']);
 
     $reward = Valorindicacao::where('user_id', Auth::user()->id)->sum('valor');
 
