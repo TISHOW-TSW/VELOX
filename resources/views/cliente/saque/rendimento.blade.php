@@ -165,7 +165,7 @@
                                     <a href="{{ url('/myaccount') }}" class="btn btn-success btn-block text-uppercase">Cadastrar Meio saque</a>
                                 @else
 
-                                    <label for="">Saque de Rendimento sera a partir de manhã</label>
+                                    <label for="">Saque de Rendimento sera a partir de Quinta-feira</label>
 
                                 @endif
 
