@@ -140,7 +140,7 @@
 
                         <p>Saldo De TIME</p>
 
-                        @if($resposta == false)
+                        @if($resposta == true)
                         <button class="btn" data-toggle="modal" data-target="#myModal">Saque de Rede</button>
                         @else
 
