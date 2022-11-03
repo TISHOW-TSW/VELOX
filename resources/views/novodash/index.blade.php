@@ -192,7 +192,11 @@
 
 
 
-                                            <p>Sua Proxima Corrida será Quinta-feira</p>
+                                            <button id="ship{{ $plano->id }}" class="btn"
+                                                    onclick="carreganave({{ $busca->id }})">
+                                                Play
+                                            </button>
+
 
                                         @endif
                                     @else
@@ -259,7 +263,11 @@
                                             </div>
 
 
-                                            <p>Sua Proxima Corrida será Quinta-feira</p>
+                                            <button id="ship{{ $plano->id }}" class="btn"
+                                                    onclick="carreganave({{ $busca->id }})">
+                                                Play
+                                            </button>
+
 
 
                                         @endif
