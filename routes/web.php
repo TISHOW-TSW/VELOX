@@ -2133,8 +2133,8 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
     }
     //dd($compra->rendimentos);
 
-
-    return redirect()->back();
+    return redirect(url('restaura',$compra->id));
+   // return redirect()->back();
 })->middleware(['auth']);
 
 
@@ -2980,6 +2980,45 @@ Route::post('cadatrapin',function (Request $request){
     Auth::user()->update(['pin'=>bcrypt($request->pin)]);
 
     return redirect()->back()->with('success','PIN cadastrado com sucesso');
+});
+
+Route::get('restaura/{id}', function ($id) {
+    $fatura = Compra::find($id);
+
+    $novo = $fatura->saldoRaiz;
+
+
+    if (count($fatura->rendimentos) == 5) {
+        $fatura->update(['status'=>2]);
+    }
+
+    $novo->update(['valor' => $fatura->plano->valor]);
+    // $fatura->saldoRaiz->saldoRendimento->valor
+    // dd($fatura->saldoRaiz);
+    $sRend = \App\Models\SaldoRendimento::where('saldo_raiz_id', $novo->id)->first();
+    if (!isset($sRend)) {
+        \App\Models\SaldoRendimento::create([
+            'valor' => 0.00,
+            'saque_rendimento' => 0.00,
+            'saldo_raiz_id' => $novo->id,
+        ]);
+    } else {
+        $sRend->update([
+            'valor' => 0.00,
+            'saque_rendimento' => 0.00,
+        ]);
+    }
+
+    foreach ($fatura->rendimentos as $rendimento) {
+
+        $soma = ($fatura->plano->valor * 10 / 100);
+        $total = $fatura->saldoRaiz->saldoRendimento->valor += $soma;
+        $fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]);
+    }
+
+
+    return redirect(url('customer/invoices'));
+    //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
 });
 
 require __DIR__ . '/auth.php';
