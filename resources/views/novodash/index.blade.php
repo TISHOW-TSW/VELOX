@@ -192,10 +192,7 @@
 
 
 
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
-                                            </button>
+                                            <button class="btn">Proxima Corrida Segunda-Feira</button>
 
 
                                         @endif
@@ -263,10 +260,7 @@
                                             </div>
 
 
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
-                                            </button>
+                                            <button class="btn">Proxima Corrida Segunda-Feira</button>
 
 
 
