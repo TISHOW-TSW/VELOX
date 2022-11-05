@@ -87,7 +87,7 @@
 
                     @if($agora>= '09:00:00'&&$agora<='18:00:00')
 
-                        <button>Saque disponivel no proximo dia util</button>
+                        <button>Saque disponivel no proximo dia util!</button>
 
                     @else
 
