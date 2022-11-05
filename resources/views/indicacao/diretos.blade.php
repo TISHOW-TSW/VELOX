@@ -86,33 +86,9 @@
 
 
                     @if($agora>= '09:00:00'&&$agora<='18:00:00')
-                        <form action="{{ url('carryout/withdrawal/squad') }}" method="post">
-                            @csrf
-                            <div class="form-group">
-                                <label for="">Selecione Metodo para receber</label>
 
-                                <select class="form-control" name="meio_id" id="">
+                        <button>Saque disponivel no proximo dia util</button>
 
-                                    @if(isset(Auth::user()->bankon))
-
-                                        <option value="1">BanKon : {{Auth::user()->bankon->cod_bankon}}</option>
-                                    @endif
-
-                                    @if(isset(Auth::user()->pix))
-                                        <option value="2">Pix: {{Auth::user()->pix->chave}}</option>
-
-                                    @endif
-
-
-                                </select>
-
-
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-default">Sacar</button>
-                            </div>
-                        </form>
                     @else
 
                         <label for="">Saques pertidos nos horarios entre 9H as 18H</label>
