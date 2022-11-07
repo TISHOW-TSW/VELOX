@@ -553,7 +553,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
         $op = \App\Models\Valorredimento::find(204);
         //dd($op);
         $compra->saldoRaiz->saldoRendimento->update(['valor' => 2]);
-        $op->delete();
+        ///  $op->delete();
 
         \App\Models\Batalha::create($busca);
         //$saldoService->rendimento($compra->saldoRaiz);
@@ -706,16 +706,20 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
 
-    Route::get('restaura/{id}', function ($id) {
+    Route::get('restaura/{id}', function ($id, \App\Services\SaldoService $saldoService) {
         $fatura = Compra::find($id);
 
         $novo = $fatura->saldoRaiz;
 
 
         if (count($fatura->rendimentos) == 5) {
-            $fatura->update(['status'=>2]);
+            $fatura->update(['status' => 2]);
+        }
+        if (! $fatura->saldoRaiz){
+            $saldoService->createSaldoRaiz($fatura);
         }
 
+        $fatura = Compra::find($fatura->id);
         $novo->update(['valor' => $fatura->plano->valor]);
         // $fatura->saldoRaiz->saldoRendimento->valor
         // dd($fatura->saldoRaiz);
@@ -737,8 +741,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             $soma = ($fatura->plano->valor * 10 / 100);
             $total = $fatura->saldoRaiz->saldoRendimento->valor += $soma;
+
             $fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]);
         }
+
+
 
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
     });
@@ -749,7 +756,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
 
         if (count($fatura->rendimentos) == 5) {
-            $fatura->update(['status'=>2]);
+            $fatura->update(['status' => 2]);
         }
 
         $novo->update(['valor' => 0]);
@@ -761,11 +768,11 @@ Route::name('admin.')->prefix('admin')->group(function () {
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
     });
 
-    Route::get('gerarsaldorend', function(){
+    Route::get('gerarsaldorend', function () {
         $saldosRaiz = \App\Models\SaldoRaiz::all();
         foreach ($saldosRaiz as $saldoRaiz) {
             $saldoRend = \App\Models\SaldoRendimento::where('saldo_raiz_id', $saldoRaiz->id)->first();
-            if(!isset($saldoRend)){
+            if (!isset($saldoRend)) {
                 \App\Models\SaldoRendimento::create([
                     'valor' => 0.00,
                     'saque_rendimento' => 0.00,
@@ -776,16 +783,64 @@ Route::name('admin.')->prefix('admin')->group(function () {
         echo 'pronto';
     });
 
-    Route::get('corrigerendimento',function (\App\Services\SaldoService $saldoService){
+    Route::get('corrigerendimento', function (\App\Services\SaldoService $saldoService) {
         $compras = \App\Models\SaldoRaiz::doesntHave('saldoRendimento')->get();
 
 
-        foreach ($compras as $compra){
+        foreach ($compras as $compra) {
             $saldoService->createSaldoRendimento($compra);
 
         }
 
 
+    });
+
+    Route::get('corrigirbanco', function () {
+
+        $compras = Compra::where('status', 1)->get();
+
+        dd($compras->toArray());
+        $novos = User::whereHas('compras', function ($query) {
+            $query->where('status', 1);
+        })->get();
+
+        foreach ($novos as $novo) {
+            $dados = ($novo->compras->where('status', 1));
+            //dd($dados);
+            foreach ($dados as $dado) {
+                $novabusca = $novo->compras->whereIn('valor', $dado->valor);
+
+                if (count($novabusca) > 1) {
+                    $retorno = ['id'=>0, 'valor'=>0];
+                    foreach ($novabusca as $item) {
+//dd($retorno['valor']);
+                       if ($retorno['valor'] <= count($item->rendimentos)){
+                           $retorno = ['id'=>$item->id , 'valor'=> (count($item->rendimentos))];
+                       }else{
+                           $item->delete();
+                       }
+                        //    echo $item->id . " " . (count($item->rendimentos)) . "<p>";
+                    }
+
+                   // dd($retorno['id']);
+
+                }
+            }
+
+
+          //  $dados = ($novo->compras->where('status', 1));
+
+            //dd($dados);
+        }
+
+    });
+
+
+    Route::get('conflito',function (){
+        $compras = Compra::doesnthave('saldoRaiz')->where('status',2)->get();
+        foreach ($compras as $compra){
+            dd($compra);
+        }
     });
 
 });
