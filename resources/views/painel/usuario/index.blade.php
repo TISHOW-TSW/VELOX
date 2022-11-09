@@ -35,14 +35,14 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-lg-12">
+
                 <div class="panel caixa">
                     <div class="panel-heading">
                         <h3 class="panel-title">Usuarios</h3>
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            <table style="background-color: transparent" id="myTable" class="table table-striped">
+                            <table id="myTable" class="table ">
                                 <thead>
 
                                     <tr>
@@ -53,6 +53,7 @@
                                         <th>CPF</th>
                                         <th>Telefone</th>
                                         <th>Saldo</th>
+                                        <th>Grupo</th>
                                         <th>Ações</th>
 
                                     </tr>
@@ -66,13 +67,14 @@
                                         <th>CPF</th>
                                         <th>Telefone</th>
                                         <th>Saldo</th>
+<th>Grupo</th>
                                         <th>Ações</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
 
                                     @forelse ($users as $user)
-                                        <tr style="background-color: transparent">
+                                        <tr @if($user->grupo ==1) style="background-color: #00d6b2" @endif>
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->login }}</td>
                                             <td>
@@ -90,6 +92,7 @@
                                                     <a onClick="openModal({{ $user }}, 'rm')" class="btn btn-warning" title="Remover saldo indicação"><i class="fa fa-times"></i> </a>
                                                 </div>
                                             </td>
+                                            <td>{{$user->grupo}}</td>
                                             <td><a href="{{ url('admin/user/edit', $user->id) }}"
                                                     class="btn btn-success btn-block">Editar</a>
                                                 <a href="{{ url('admin/user/visualizar', $user->id) }}"
@@ -114,7 +117,7 @@
 
                     </div>
                 </div>
-            </div>
+
 
         </div>
 
@@ -223,6 +226,9 @@
                 },
                 {
                     "searchable": true
+                },
+                {
+                    "searchable": false
                 },
                 {
                     "searchable": false

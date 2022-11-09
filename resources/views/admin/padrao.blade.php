@@ -88,6 +88,12 @@
                                             href="{{ url('admin/usuarios/pendentes') }}">Pendentes</a>
                                     </li>
 
+                                    <li><a
+                                            href="{{ url('admin/addcontato') }}">Add Grupo</a>
+                                    </li>
+
+
+
 
                                 </ul>
                             </li>
@@ -113,6 +119,11 @@
                                     <li><a
                                             href="{{ url('admin/saque/pendentes') }}">Saques
                                             Pendentes</a>
+                                    </li>
+
+                                    <li><a
+                                            href="{{ url('admin/saque/pendentesgrupo') }}">Saques
+                                            Pendentes Grupo</a>
                                     </li>
                                     <li><a href="{{ url('admin/saque/ativos') }}">Saques
                                             Pagos</a></li>

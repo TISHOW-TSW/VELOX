@@ -149,6 +149,23 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
         });
+        Route::get('saque/pendentesgrupo', function () {
+            $tipo = 'de Rendimentos';
+            $saques = \App\Models\Saquerendimento::where('status', 0)->whereHas('user', function ($query) {
+                $query->where('grupo', 1);
+            })->get();
+            $saqueindicaos = Saqueindica::where('status', 0)->whereHas('user', function ($query) {
+                $query->where('grupo', 1);
+            })->get();
+            $saquesRaiz = \App\Models\Saqueraiz::where('status', 0)->whereHas('user', function ($query) {
+                $query->where('grupo', 1);
+            })->get();
+            $saquesCancelamento = \App\Models\Saquecancelamento::where('status', 0)->whereHas('user', function ($query) {
+                $query->where('grupo', 1);
+            })->get();
+
+            return view('admin.saque.todos', compact('saques', 'tipo', 'saqueindicaos', 'saquesRaiz', 'saquesCancelamento'));
+        });
         Route::get('saque/estornados', function () {
             $tipo = 'ESTORNADO';
             $saques = \App\Models\Saque::where('status', 2)->get();
@@ -709,16 +726,14 @@ Route::name('admin.')->prefix('admin')->group(function () {
     Route::get('restaura/{id}', function ($id, \App\Services\SaldoService $saldoService) {
         $fatura = Compra::find($id);
 
-        $novo = $fatura->saldoRaiz;
-
 
         if (count($fatura->rendimentos) == 5) {
             $fatura->update(['status' => 2]);
         }
-        if (! $fatura->saldoRaiz){
+        if (!$fatura->saldoRaiz) {
             $saldoService->createSaldoRaiz($fatura);
         }
-
+        $novo = $fatura->saldoRaiz;
         $fatura = Compra::find($fatura->id);
         $novo->update(['valor' => $fatura->plano->valor]);
         // $fatura->saldoRaiz->saldoRendimento->valor
@@ -744,7 +759,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
             $fatura->saldoRaiz->saldoRendimento->update(['valor' => $total]);
         }
-
 
 
         //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
@@ -811,24 +825,24 @@ Route::name('admin.')->prefix('admin')->group(function () {
                 $novabusca = $novo->compras->whereIn('valor', $dado->valor);
 
                 if (count($novabusca) > 1) {
-                    $retorno = ['id'=>0, 'valor'=>0];
+                    $retorno = ['id' => 0, 'valor' => 0];
                     foreach ($novabusca as $item) {
 //dd($retorno['valor']);
-                       if ($retorno['valor'] <= count($item->rendimentos)){
-                           $retorno = ['id'=>$item->id , 'valor'=> (count($item->rendimentos))];
-                       }else{
-                           $item->delete();
-                       }
+                        if ($retorno['valor'] <= count($item->rendimentos)) {
+                            $retorno = ['id' => $item->id, 'valor' => (count($item->rendimentos))];
+                        } else {
+                            $item->delete();
+                        }
                         //    echo $item->id . " " . (count($item->rendimentos)) . "<p>";
                     }
 
-                   // dd($retorno['id']);
+                    // dd($retorno['id']);
 
                 }
             }
 
 
-          //  $dados = ($novo->compras->where('status', 1));
+            //  $dados = ($novo->compras->where('status', 1));
 
             //dd($dados);
         }
@@ -836,11 +850,87 @@ Route::name('admin.')->prefix('admin')->group(function () {
     });
 
 
-    Route::get('conflito',function (){
-        $compras = Compra::doesnthave('saldoRaiz')->where('status',2)->get();
-        foreach ($compras as $compra){
+    Route::get('conflito', function () {
+        $compras = Compra::doesnthave('saldoRaiz')->where('status', 2)->get();
+        foreach ($compras as $compra) {
             dd($compra);
         }
+    });
+
+
+    Route::get('buscarcontato', function () {
+        $users = User::all();
+        $i = 0;
+        foreach ($users as $user) {
+            $newtelefone = (preg_replace("/[^0-9]/", "", $user->telefone));
+            // $comeco = '55';
+            $user->update(['telefone' => $newtelefone]);
+
+            $i++;
+        }
+
+        dd($i);
+    });
+    Route::get('buscarcontato1', function () {
+        $users = User::all();
+        $i = 0;
+        foreach ($users as $user) {
+
+            if (substr($user->telefone, 0, 2) === "55") {
+                echo $user->telefone . "<br>";
+                $i++;
+            } else {
+                $user->update(['telefone' => '55' . $user->telefone]);
+            }
+
+        }
+
+        dd($i);
+    });
+
+    Route::get('addcontato', function () {
+        return view('admin.contato');
+    });
+    Route::post('consultarcontato', function (Request $request) {
+        //dd($request->all());
+        $i = 0;
+        $contatos = explode(",", $request->contatos);
+
+        //dd($contatos);
+        foreach ($contatos as $contato) {
+            $newtelefone = (preg_replace("/[^0-9]/", "", $contato));
+            // dd($newtelefone);
+
+            $busca = User::where('telefone', $newtelefone)->first();
+            if (isset($busca)) {
+                $i++;
+                $busca->update(['grupo' => 1]);
+            }
+
+        }
+        return redirect()->back()->with('success', 'Foram Adicionados ' . $i . ' contatos');
+    });
+
+    Route::get('testeutil', function (\App\Services\CalendarService $calendarService) {
+
+        $today = Carbon::now();
+
+        // dd($today);
+
+
+        $controle = true;
+        while ($controle <= 1) {
+
+            $validadata = ($calendarService->validaDia($today));
+            if ($today->dayOfWeek == \Carbon\Carbon::SUNDAY || $today->dayOfWeek == \Carbon\Carbon::SATURDAY || $validadata == true) {
+                $today->addDay();
+            } else {
+                $controle++;
+            }
+
+        }
+
+        dd($today);
     });
 
 });

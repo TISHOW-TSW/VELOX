@@ -33,7 +33,8 @@ class User extends Authenticatable
         'contador',
         'quem',
         'tipo',
-        'ordem'
+        'ordem',
+        'grupo'
     ];
 
     /**
