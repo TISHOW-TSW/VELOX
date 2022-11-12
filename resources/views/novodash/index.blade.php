@@ -192,11 +192,15 @@
 
 
 
+                                            @if($resposta==false)
+                                                <button id="ship{{ $plano->id }}" class="btn"
+                                                        onclick="carreganave({{ $busca->id }})">
+                                                    Play
+                                                </button>
+                                            @else
 
-                                            <button id="ship{{ $plano->id }}" class="btn"
-                                                    onclick="carreganave({{ $busca->id }})">
-                                                Play
-                                            </button>
+                                                Operações de saques permitidos apenas em dias Uteis
+                                            @endif
 
 
                                         @endif
@@ -264,12 +268,14 @@
                                             </div>
 
 
-
+                                            @if($resposta==false)
                                             <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
                                             </button>
-
+                                            @else
+                                                Operações de saques permitidos apenas em dias Uteis
+                                            @endif
 
 
                                         @endif

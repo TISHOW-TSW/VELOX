@@ -12,8 +12,8 @@ class CalendarService
     {
 
 
-$data = Carbon::parse($data)->addDay();
-$data = $data->toDateString();
+        $data = Carbon::parse($data)->addDay();
+        $data = $data->toDateString();
 
 //dd($data);
         $ano = Carbon::now()->year;
@@ -25,9 +25,10 @@ $data = $data->toDateString();
         $busca = (array_column($busca, 'date'));
 
         //dd($busca);
-        return (['respota'=>in_array($data, $busca),'data'=>$data]);
+        return (['respota' => in_array($data, $busca), 'data' => $data]);
 
     }
+
     public function validarDiaPagamento($data)
     {
 
@@ -45,7 +46,7 @@ $data = $data->toDateString();
         $busca = (array_column($busca, 'date'));
 
         //dd($busca);
-        return (['respota'=>in_array($data, $busca),'data'=>$data]);
+        return (['respota' => in_array($data, $busca), 'data' => $data]);
 
     }
 }

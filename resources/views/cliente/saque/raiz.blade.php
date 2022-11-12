@@ -8,11 +8,11 @@
         .caixa {
             border-radius: 15px;
             /*opacity: 55%*/
-            background-color:rgba(39, 34, 40, 0.9);
-            border: 3px solid rgba(233, 0, 0,0.4);
+            background-color: rgba(39, 34, 40, 0.9);
+            border: 3px solid rgba(233, 0, 0, 0.4);
             color: white;
             padding-bottom: 30px;
-            display:flex;
+            display: flex;
             flex-direction: column;
             justify-content: space-around;
             text-transform: uppercase;
@@ -34,15 +34,15 @@
                     </div>
                     <div class="panel-body">
 
-                            <div class="col">
+                        <div class="col">
 
 
-                                <h3 class="m-b-0 text-white">
-                                    R${{ number_format($fatura->saldoRaiz->valor, 2, ',', '.')}}</h3>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-dollar-sign text-white"></i>
-                            </div>
+                            <h3 class="m-b-0 text-white">
+                                R${{ number_format($fatura->saldoRaiz->valor, 2, ',', '.')}}</h3>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign text-white"></i>
+                        </div>
 
                         <p class="m-b-0 text-white">Valor disponível</p>
                     </div>
@@ -66,7 +66,8 @@
 
 
                                 @if(isset(Auth::user()->bankon))
-                                    <li><a class="nav-link text-left select_account" style="color:white" id="v-pills-bankon-tab"
+                                    <li><a class="nav-link text-left select_account" style="color:white"
+                                           id="v-pills-bankon-tab"
                                            data-toggle="pill" href="#v-pills-bankon" role="tab"
                                            aria-controls="v-pills-bankon" aria-selected="true"
                                            data-account="1">Bankon</a></li>
@@ -74,7 +75,8 @@
                                 @endif
 
                                 @if(isset(Auth::user()->pix))
-                                    <li><a class="nav-link text-left select_account" style="color:white" id="v-pills-pix-tab"
+                                    <li><a class="nav-link text-left select_account" style="color:white"
+                                           id="v-pills-pix-tab"
                                            data-toggle="pill"
                                            href="#v-pills-pix" role="tab" aria-controls="v-pills-pix"
                                            aria-selected="false"
@@ -108,78 +110,78 @@
                                         <br/>
 
 
-                                        </div>
                                     </div>
-
-                                @endif
-
-
-
-
-
-                                @if(isset(Auth::user()->pix))
-                                    <div class="tab-panel fade" id="v-pills-pix" role="tabpanel"
-                                         aria-labelledby="v-pills-pix-tab">
-
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr>
-                                                    <td><strong>chave pix</strong></td>
-                                                    <td>
-                                                        {{Auth::user()->pix->chave}}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Banco</strong></td>
-                                                    <td>
-                                                        {!! Auth::user()->pix->banco !!}
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-
-                                        <br/>
-
-
-                                    </div>
-
-                                @endif
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            @php
-
-                                $agora = \Carbon\Carbon::now()->format('H:i:s');
-                              //  dd($agora);
-
-                            @endphp
-
-                            @if(!isset(Auth::user()->pix) && !isset(Auth::user()->bankon))
-                                <a href="{{ url('/myaccount') }}" class="btn btn-success btn-block text-uppercase">Cadastrar Meio saque</a>
-                            @else
-
-                                @if($agora>= '09:00:00'&&$agora<='18:00:00')
-                                    <button type="submit" name="submit"
-                                            class="btn btn-success btn-block text-uppercase">Solicitar saque</button>
-                                @else
-
-                                    <label for="">Saques pertidos nos horarios entre 9H as 18H</label>
-
-
-                                @endif
-
 
                             @endif
 
 
+
+
+
+                            @if(isset(Auth::user()->pix))
+                                <div class="tab-panel fade" id="v-pills-pix" role="tabpanel"
+                                     aria-labelledby="v-pills-pix-tab">
+
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tr>
+                                                <td><strong>chave pix</strong></td>
+                                                <td>
+                                                    {{Auth::user()->pix->chave}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Banco</strong></td>
+                                                <td>
+                                                    {!! Auth::user()->pix->banco !!}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <br/>
+
+
+                                </div>
+
+                            @endif
                         </div>
                     </div>
-                </form>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    @php
+
+                        $agora = \Carbon\Carbon::now()->format('H:i:s');
+                      //  dd($agora);
+
+                    @endphp
+
+                    @if(!isset(Auth::user()->pix) && !isset(Auth::user()->bankon))
+                        <a href="{{ url('/myaccount') }}" class="btn btn-success btn-block text-uppercase">Cadastrar
+                            Meio saque</a>
+                    @else
+
+                        @if($agora>= '09:00:00'&&$agora<='18:00:00'&&$resposta == false)
+                            <button type="submit" name="submit"
+                                    class="btn btn-success btn-block text-uppercase">Solicitar saque
+                            </button>
+                        @else
+
+                            <label for="">Saques pertidos nos dias uteis nos horarios entre 9H as 18H</label>
+
+                        @endif
+
+                    @endif
+
+
+                </div>
+            </div>
+            </form>
         </div>
+    </div>
 
     </div>
 

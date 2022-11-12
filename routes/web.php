@@ -108,8 +108,17 @@ Route::get('indicacao/v2/{id}', function ($id) {
     // $planos = Plano::orderBy('valor', 'asc')->get();
     return view('vendas.index', compact('user', 'planos', 'produtos'));
 });
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function (\App\Services\CalendarService $calendarService) {
 
+
+    $agora = Carbon::now();
+
+    $resposta = ($calendarService->validaDia($agora)['respota']);
+
+    if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
+        $resposta = true;
+    } else {
+    }
     //dd(Auth::user());
     $planos = Plano::orderBy('valor', 'asc')->get();
     $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
@@ -124,14 +133,13 @@ Route::get('/dashboard', function () {
         return redirect(url('admin/dashboard'));
     }
 
-    return view('novodash.index', compact('planos', 'indicados', 'users', 'reward', 'buscas'));
+    return view('novodash.index', compact('planos', 'indicados', 'users', 'reward', 'buscas','resposta'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('teste', function () {
     $planos = Plano::all();
     return view('painel.index', compact('planos'));
 });
-
 
 
 Route::get('corrige', function () {
@@ -145,7 +153,7 @@ Route::resource('metas', MetaController::class);
 
 Route::get('purchase/{id}', [AdminController::class, 'faturas'])->middleware(['auth']);
 
-Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendarService, \App\Services\SaldoService $saldoService) {
+Route::get('renovar/{id}', function ($id, \App\Services\CalendarService $calendarService, \App\Services\SaldoService $saldoService) {
 
 
     $antiga = Compra::find($id);
@@ -168,7 +176,6 @@ Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendar
     $compra->save();
 
     $antiga->saldoRaiz->update(['valor' => 0]);
-
 
 
     $fatura = $compra;
@@ -219,7 +226,6 @@ Route::get('renovar/{id}', function($id, \App\Services\CalendarService $calendar
     }
 
     $fatura->update(['primeiro_rendimento' => $novadata]);
-
 
 
     $saldoService->createSaldoRaiz($compra);
@@ -302,7 +308,7 @@ Route::get('player', function (\App\Services\CalendarService $calendarService) {
         $segundos = User::whereIn("quem", $primeiros->pluck('link')->toArray())->whereHas('compras')->get();
 
 
-       // dd($segundos->whereHas('compras'));
+        // dd($segundos->whereHas('compras'));
     } else {
         $segundos = [];
     }
@@ -316,7 +322,7 @@ Route::get('player', function (\App\Services\CalendarService $calendarService) {
     // dd($terceiros);
 
 
-    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros', 'reward','resposta'));
+    return view('indicacao.diretos', compact('primeiros', 'segundos', 'terceiros', 'reward', 'resposta'));
 })->middleware(['auth']);
 
 Route::get('primeiro', function () {
@@ -420,7 +426,7 @@ Route::get('rewards', function () {
     //$reward = Valorredimento::where('user_id', Auth::user()->id)->sum('valor');
     $reward = Auth::user()->totalTodosRendimentos();
 
-   // dd($reward);
+    // dd($reward);
     $tempo = Compra::where("user_id", Auth::user()->id)->where("ativo", 1)->first();
     if (isset($tempo)) {
         $finishTime = Carbon::parse($tempo['created_at']);
@@ -545,12 +551,21 @@ Route::get('/ships2', function () {
     // dd($planos);
     return view('cliente.planos.index', compact('planos'));
 })->middleware(['auth']);
-Route::get('/ships', function () {
+Route::get('/ships', function (\App\Services\CalendarService $calendarService) {
+
+    $agora = Carbon::now();
+
+    $resposta = ($calendarService->validaDia($agora)['respota']);
+
+    if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
+        $resposta = true;
+    } else {
+    }
     $planos = Plano::orderBy('valor', 'asc')->get();
     // $users = User::all()->with('rated')->get()->sortByDesc('rated.rating');
     //    $planos = Plano::all()->with('vantagems')->get()->sortByDesc('vantagems.created_at');
     // dd($planos);
-    return view('cliente.planos.index2', compact('planos'));
+    return view('cliente.planos.index2', compact('planos','resposta'));
 })->middleware(['auth']);
 
 Route::get('endereco', function () {
@@ -847,9 +862,6 @@ Route::get('testecliente', function () {
 
     dd($cobranca);
 });
-
-
-
 
 
 Route::get('novo/registro', function () {
@@ -2045,21 +2057,18 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
     //return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
 
 
-
-
     $compra = Compra::find($id);
 
-   // dd($compra);
+    // dd($compra);
 
-    if (count($compra->rendimentos) == 0){
+    if (count($compra->rendimentos) == 0) {
 //dd('oi');
-        if ($compra->updated_at->addDay() <= \Carbon\Carbon::now()){
+        if ($compra->updated_at->addDay() <= \Carbon\Carbon::now()) {
             $busca = [
                 'user_id' => Auth::user()->id,
                 'plano_id' => $compra->plano->id,
                 'compra_id' => $compra->id,
             ];
-
 
 
             if (count($compra->rendimentos) != 5) {
@@ -2071,7 +2080,7 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
                     'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
                     'valor' => $rentabilidade,
                     'user_id' => Auth::user()->id,
-                    'compra_id'=>$compra->id
+                    'compra_id' => $compra->id
                 ];
 
 
@@ -2085,18 +2094,18 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
             if (count($compra2->rendimentos) == 5) {
                 $compra->update(['status' => 2]);
             }
-        }else{
+        } else {
             return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
         }
 
-    }else{
+    } else {
 
 
-        if($compra->rendimentos->last()->created_at->diffInHours() < 24){
+        if ($compra->rendimentos->last()->created_at->diffInHours() < 24) {
             //dd($compra->rendimentos->last()->created_at->diffInHours());
             return redirect()->back()->with('Error', 'Sua corrida começará no próximo dia útil');
 
-        } else{
+        } else {
 
             $busca = [
                 'user_id' => Auth::user()->id,
@@ -2114,7 +2123,7 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
                     'descricao' => "Redimento de 10% do carro " . $compra->plano->name,
                     'valor' => $rentabilidade,
                     'user_id' => Auth::user()->id,
-                    'compra_id'=>$compra->id
+                    'compra_id' => $compra->id
                 ];
 
 
@@ -2133,8 +2142,8 @@ Route::get('getupship/{id}', function ($id, \App\Services\SaldoService $saldoSer
     }
     //dd($compra->rendimentos);
 
-    return redirect(url('restaura',$compra->id));
-   // return redirect()->back();
+    return redirect(url('restaura', $compra->id));
+    // return redirect()->back();
 })->middleware(['auth']);
 
 
@@ -2603,7 +2612,6 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
     $compra->save();
 
 
-
     $fatura = $compra;
 
 
@@ -2654,7 +2662,6 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
     $fatura->update(['primeiro_rendimento' => $novadata]);
 
 
-
     $saldoService->createSaldoRaiz($compra);
 
 
@@ -2680,11 +2687,11 @@ Route::get('admin/ativamanual/{compra}', function (Compra $compra, \App\Services
     }
 
 
-    if ($compra->plano->id == 5 ||$compra->plano->id == 6||$compra->plano->id == 7 || $compra->plano->id == 8||$compra->plano->id == 9  ){
+    if ($compra->plano->id == 5 || $compra->plano->id == 6 || $compra->plano->id == 7 || $compra->plano->id == 8 || $compra->plano->id == 9) {
         $user = $compra->user;
         $add = $user->ordem + 1;
-        $user->update(['ordem'=>$add]);
-        $user->update(['ordem'=>$add]);
+        $user->update(['ordem' => $add]);
+        $user->update(['ordem' => $add]);
     }
 
     return redirect()->back()->with('success', 'Ativado Com sucesso');
@@ -2756,10 +2763,20 @@ Route::get('atualizarfaturas', function (AcaoController $acaoController, \App\Se
 });
 
 
-Route::get('sacarrendimento/{id}', function ($id) {
+Route::get('sacarrendimento/{id}', function ($id, \App\Services\CalendarService $calendarService) {
     $fatura = Compra::find($id);
 
-    return view('cliente.saque.rendimento', compact('fatura'));
+
+    $agora = Carbon::now();
+
+    $resposta = ($calendarService->validaDia($agora)['respota']);
+
+    if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
+        $resposta = true;
+    } else {
+    }
+
+    return view('cliente.saque.rendimento', compact('fatura','resposta'));
 });
 
 Route::post('saquerendimento', function (Request $request, \App\Services\SaldoService $saldoService) {
@@ -2802,7 +2819,15 @@ Route::get('sacarraiz/{compra}', function (Compra $compra, \App\Services\Calenda
 
     $resposta = ($calendarService->validaDia($agora)['respota']);
 
-    return view('cliente.saque.raiz', compact('fatura','resposta'));
+    if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
+        $resposta = true;
+    } else {
+    }
+//dd($resposta);
+
+    //dd($resposta);
+
+    return view('cliente.saque.raiz', compact('fatura', 'resposta'));
 });
 
 Route::post('saqueraiz', function (Request $request, \App\Services\SaldoService $saldoService) {
@@ -2957,7 +2982,7 @@ Route::get('todasfaturas', function (\App\Services\CalendarService $calendarServ
 
 });
 
-Route::get('buscauser/{id}',function ($id){
+Route::get('buscauser/{id}', function ($id) {
     $user = User::find($id);
     //dd($user);
     dd($user->valorindicacos->toArray());
@@ -2969,7 +2994,7 @@ Route::get('buscauser/{id}',function ($id){
 });
 
 
-Route::post('cadatrapin',function (Request $request){
+Route::post('cadatrapin', function (Request $request) {
     $request->validate([
         'pin' => 'required|max:6',
 
@@ -2977,9 +3002,9 @@ Route::post('cadatrapin',function (Request $request){
     ]);
 
 
-    Auth::user()->update(['pin'=>bcrypt($request->pin)]);
+    Auth::user()->update(['pin' => bcrypt($request->pin)]);
 
-    return redirect()->back()->with('success','PIN cadastrado com sucesso');
+    return redirect()->back()->with('success', 'PIN cadastrado com sucesso');
 });
 
 Route::get('restaura/{id}', function ($id) {
@@ -2989,7 +3014,7 @@ Route::get('restaura/{id}', function ($id) {
 
 
     if (count($fatura->rendimentos) == 5) {
-        $fatura->update(['status'=>2]);
+        $fatura->update(['status' => 2]);
     }
 
     $novo->update(['valor' => $fatura->plano->valor]);

@@ -85,7 +85,7 @@
                         @endphp
 
 
-                    @if($agora>= '09:00:00'&&$agora<='18:00:00')
+                    @if($agora>= '09:00:00'&&$agora<='18:00:00'&&$resposta==false)
 
                         <form action="{{ url('carryout/withdrawal/squad') }}" method="post">
                             @csrf
@@ -143,7 +143,7 @@
 
                         <p>Saldo De TIME</p>
 
-                        @if($resposta == false)
+                        @if($agora>= '09:00:00'&&$agora<='18:00:00'&&$resposta==false)
                         <button class="btn" data-toggle="modal" data-target="#myModal">Saque de Rede</button>
                         @else
 
