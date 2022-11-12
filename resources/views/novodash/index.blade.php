@@ -199,7 +199,7 @@
                                                 </button>
                                             @else
 
-                                                Operações de saques permitidos apenas em dias Uteis
+                                                Corridas permitidas apenas em dias Uteis
                                             @endif
 
 
@@ -274,7 +274,7 @@
                                                 Play
                                             </button>
                                             @else
-                                                Operações de saques permitidos apenas em dias Uteis
+                                                Corridas permitidas apenas em dias Uteis
                                             @endif
 
 
