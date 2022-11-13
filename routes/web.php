@@ -313,6 +313,11 @@ Route::get('player', function (\App\Services\CalendarService $calendarService) {
         $segundos = [];
     }
 
+    if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
+        $resposta = true;
+    } else {
+    }
+
     // dd($segundos);
     if (count($segundos) > 0) {
         $terceiros = User::whereIn("quem", $segundos->pluck('link')->toArray())->get();
