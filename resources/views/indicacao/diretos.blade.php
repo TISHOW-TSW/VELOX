@@ -94,10 +94,7 @@
 
                                 <select class="form-control" name="meio_id" id="">
 
-                                    @if(isset(Auth::user()->bankon))
 
-                                        <option value="1">BanKon : {{Auth::user()->bankon->cod_bankon}}</option>
-                                    @endif
 
                                     @if(isset(Auth::user()->pix))
                                         <option value="2">Pix: {{Auth::user()->pix->chave}}</option>

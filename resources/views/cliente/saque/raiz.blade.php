@@ -65,14 +65,7 @@
                                 aria-orientation="vertical">
 
 
-                                @if(isset(Auth::user()->bankon))
-                                    <li><a class="nav-link text-left select_account" style="color:white"
-                                           id="v-pills-bankon-tab"
-                                           data-toggle="pill" href="#v-pills-bankon" role="tab"
-                                           aria-controls="v-pills-bankon" aria-selected="true"
-                                           data-account="1">Bankon</a></li>
 
-                                @endif
 
                                 @if(isset(Auth::user()->pix))
                                     <li><a class="nav-link text-left select_account" style="color:white"
@@ -91,29 +84,7 @@
                             <div class="tab-content" id="v-pills-tabContent">
 
 
-                                @if(isset(Auth::user()->bankon))
-                                    <div class="tab-pane fade" id="v-pills-bankon" role="tabpanel"
-                                         aria-labelledby="v-pills-bankon-tab">
 
-
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr>
-                                                    <td><strong>cod_bankon</strong></td>
-                                                    <td>
-                                                        {{\Illuminate\Support\Facades\Auth::user()->bankon->cod_bankon}}
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-
-                                        <br/>
-
-
-                                    </div>
-                            </div>
-
-                            @endif
 
 
 
