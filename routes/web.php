@@ -316,6 +316,7 @@ Route::get('player', function (\App\Services\CalendarService $calendarService) {
     if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
         $resposta = true;
     } else {
+        $resposta = false;
     }
 
     // dd($segundos);
@@ -2777,8 +2778,9 @@ Route::get('sacarrendimento/{id}', function ($id, \App\Services\CalendarService 
     $resposta = ($calendarService->validaDia($agora)['respota']);
 
     if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
-        $resposta = true;
+
     } else {
+        $resposta = false;
     }
 
     return view('cliente.saque.rendimento', compact('fatura','resposta'));
@@ -2827,6 +2829,7 @@ Route::get('sacarraiz/{compra}', function (Compra $compra, \App\Services\Calenda
     if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
         $resposta = true;
     } else {
+        $resposta = false;
     }
 //dd($resposta);
 
