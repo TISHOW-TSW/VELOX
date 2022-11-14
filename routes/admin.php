@@ -72,7 +72,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
             $valorespendentes = \App\Models\Compra::where("ativo", 0)->get();
 
 
-            $users = \App\Models\User::withCount('indicados')->orderByDesc('indicados_count')->limit(10)->get();
+            $users = \App\Models\User::withCount('indicados')->orderByDesc('indicados_count')->limit(30)->get();
             $estados = \App\Models\Estado::withCount('enderecos')->orderByDesc('enderecos_count')->get();
 
             $totalpendente = 0;
