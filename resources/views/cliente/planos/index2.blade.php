@@ -145,15 +145,12 @@
 
 
 
-                                        @if($resposta==false)
+                                       
                                             <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
                                             </button>
-                                        @else
-
-                                            Corridas permitidas apenas em dias Uteis
-                                        @endif
+                                    
 
 
 
@@ -225,16 +222,12 @@
 
 
 
-                                        @if($resposta==false)
+                                     
                                             <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
                                             </button>
-                                        @else
-
-                                            Corridas permitidas apenas em dias Uteis
-                                        @endif
-
+                                    
 
 
 
