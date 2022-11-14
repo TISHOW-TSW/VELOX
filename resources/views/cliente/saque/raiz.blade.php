@@ -164,7 +164,7 @@
                             Meio saque</a>
                     @else
 
-                        @if($agora>= '09:00:00'&&$agora<='18:00:00'&&$resposta == false)
+                        @if($agora>= '09:00:00'&&$agora<='18:00:00')
                             <button type="submit" name="submit"
                                     class="btn btn-success btn-block text-uppercase">Solicitar saque
                             </button>
