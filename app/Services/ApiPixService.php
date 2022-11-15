@@ -15,7 +15,7 @@ class ApiPixService
     {
         $compra = Compra::find(234);
         //dd($compra->plano->valor);
-        $post = ['token_secreto' => 'velox',
+        $post = ['token_secreto' => 'EA8gnGEHKil8o6MQl2ov42spWqlPL2JKF',
             'id_ordem' => $compra->id, //Código da Ordem
             'descricao' => 'Compra' . $compra->plano->name, //Exemplo: Pedido 51
             //'valor' => floatval($compra->plano->valor), //Exemplo: 1.00];
