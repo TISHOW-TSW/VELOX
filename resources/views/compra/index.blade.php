@@ -71,6 +71,34 @@
 
     </div>
 
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">PIX</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <div id="qrcode"></div>
+                    </center>
+                    <input type="text" class="form-control" id="codigo">
+
+                    <center>
+                        <button class="btn btn-dark btn-block" id="copiado" data-clipboard-target="#info_block" onclick="copiarQRPIX()">Copiar QRCODE</button>
+                    </center>
+                    <p style="opacity: 0;margin-bottom: -20px" id="p2"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -110,9 +138,9 @@
                         <a target="_blank" href="{{url('gerarpix',$compra->id)}}" class="btn intas">
                             CREDITO
                         </a>
-                        <button data-toggle="modal" data-target="#myModal"  class="btn intas">
-                            PIX
-                        </button>
+
+                        <a class="btn btn-primary m-t-5" id="pixnovo">PIX Automatico</a>
+
 
                         <br>
                         <br>
@@ -225,8 +253,25 @@
 
 @section('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha512-hDWGyh+Iy4Mr9AHOzUP2+Y0iVPn/BwxxaoSleEjH/i1o4EVTF/sh0/A1Syii8PWOae+uPr+T/KHwynoebSuAhw==" crossorigin="anonymous"></script>
+
+
     <script>
         $(document).ready(function () {
+            $("#pixnovo").click(function () {
+                document.getElementById("pixnovo").disabled = true;
+
+                $.get("{{url('api/compra',$compra->id)}}", function (data, status) {
+
+                    document.getElementById("codigo").value = data.pix_qrcode_copiaecola;
+                    document.getElementById("p2").value = data.pix_qrcode_copiaecola;
+                    $('#qrcode').html("<img src='" + data.pix_qrcode_imagemurl + "' >");
+                   // alert("Data: " + data.qrcode + "\nStatus: " + status);
+                    $("#myModal").modal();
+                });
+
+            });
 
             $('form').ajaxForm({
                 beforeSend: function () {
@@ -261,6 +306,7 @@
         function fracao(ship) {
 
             $(".intas").css("background-color", "transparent");
+
             document.getElementById('sel' + ship).style.backgroundColor = '#055863';
             $('input[name="moeda"]').attr('value', ship);
             // calculate percent of progress per second
@@ -268,4 +314,17 @@
 
         }
     </script>
+    <script>
+
+        function copiarQRPIX() {
+            var copyText = document.getElementById("codigo");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999)
+            document.execCommand("copy");
+
+            alert("QRCODE PIX COPIADO");
+        }
+
+    </script>
+
 @endsection

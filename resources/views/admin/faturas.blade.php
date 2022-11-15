@@ -53,6 +53,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Cliente</th>
+                                <th>ID QRCODE</th>
                                 <th>Telefone</th>
                                 <th>Valor</th>
                                 <th>Status</th>
@@ -65,6 +66,7 @@
                                     <tr style="background-color: transparent">
                                         <td>{{ $busca->id }}</td>
                                         <td>{{ $busca->user->name }}</td>
+                                        <td>{{ $busca->pix }}</td>
                                         <td>{{ $busca->user->telefone }}</td>
                                         <td>$ {{ $busca->plano->valor }}</td>
                                         <td>{{ $busca->ativo_formated }}</td>

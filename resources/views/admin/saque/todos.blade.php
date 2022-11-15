@@ -23,6 +23,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Cliente</th>
+                            <th>login</th>
+                            <th>whatsapp</th>
                             <th>Valor a receber</th>
                             <th>Status</th>
                             <th>Solicitado em</th>
@@ -35,7 +37,9 @@
                         @forelse($saquesRaiz as $saque)
                             <tr>
                                 <td>{{ $saque->id }}</td>
-                                <td>{{ $saque->user->name }}
+                                <td>{{ $saque->user->name }}</td>
+                                <td>{{$saque->user->login}}</td>
+                                <td>{{$saque->user->telefone}}</td>
                                 <td>$ {{ $saque->valor }}</td>
                                 <td>{{ $saque->status_formated }}</td>
                                 <td>{{ $saque->created_at->format('d-m-Y') }}</td>
@@ -72,6 +76,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Cliente</th>
+                                <th>login</th>
+                                <th>whatsapp</th>
                                 <th>Valor a receber</th>
                                 <th>Status</th>
                                 <th>Solicitado em</th>
@@ -84,7 +90,9 @@
                             @forelse($saques as $saque)
                                 <tr>
                                     <td>{{ $saque->id }}</td>
-                                    <td>{{ $saque->user->name }}
+                                    <td>{{ $saque->user->name }}</td>
+                                    <td>{{ $saque->user->login }}</td>
+                                    <td>{{ $saque->user->telefone }}</td>
                                     <td>$ {{ $saque->valor }}</td>
                                     <td>{{ $saque->status_formated }}</td>
                                     <td>{{ $saque->created_at->format('d-m-Y') }}</td>
@@ -124,6 +132,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Cliente</th>
+                                <th>login</th>
+                                <th>whatsapp</th>
                                 <th>Valor a receber</th>
                                 <th>Status</th>
                                 <th>Solicitado em</th>
@@ -136,7 +146,9 @@
                             @forelse($saqueindicaos as $saque)
                                 <tr>
                                     <td>{{ $saque->id }}</td>
-                                    <td>{{ $saque->user->name }}
+                                    <td>{{ $saque->user->name }}</td>
+                                    <td>{{ $saque->user->login }}</td>
+                                    <td>{{ $saque->user->telefone }}</td>
                                     <td>$ {{ $saque->valor }}</td>
                                     <td>{{ $saque->status_formated }}</td>
                                     <td>{{ $saque->created_at->format('d-m-Y') }}</td>
@@ -173,6 +185,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Cliente</th>
+                            <th>login</th>
+                            <th>whatsapp</th>
                             <th>Valor a receber</th>
                             <th>Status</th>
                             <th>Solicitado em</th>
@@ -185,8 +199,10 @@
                         @forelse($saquesCancelamento as $saque)
                             <tr>
                                 <td>{{ $saque->id }}</td>
-                                <td>{{ $saque->user->name }}
-                                <td>$ {{ $saque->valor }}</td>
+                                <td>{{ $saque->user->name }}</td>
+                                <td>{{ $saque->user->login }}</td>
+                                <td>{{ $saque->user->telefone }}</td>
+                                <td>R$ {{ $saque->valor }}</td>
                                 <td>{{ $saque->status_formated }}</td>
                                 <td>{{ $saque->created_at->format('d-m-Y') }}</td>
                                 <td>{{ $saque->created_at->addDays(2)->format('d-m-Y') }}</td>

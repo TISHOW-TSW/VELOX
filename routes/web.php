@@ -112,8 +112,9 @@ Route::get('/dashboard', function (\App\Services\CalendarService $calendarServic
 
 
     $agora = Carbon::now();
-
+//dd($agora);
     $resposta = ($calendarService->validaDia($agora)['respota']);
+    //dd($resposta);
 
     if ($agora->dayOfWeek == \Carbon\Carbon::SUNDAY || $agora->dayOfWeek == \Carbon\Carbon::SATURDAY || $resposta == true) {
         $resposta = true;
@@ -3053,5 +3054,9 @@ Route::get('restaura/{id}', function ($id) {
     return redirect(url('customer/invoices'));
     //dd( $total = $fatura->saldoRaiz->saldoRendimento->update['valor']);
 });
+
+
+
+
 
 require __DIR__ . '/auth.php';

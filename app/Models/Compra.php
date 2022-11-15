@@ -29,7 +29,9 @@ class Compra extends Model
         'dia_pagamento',
         'payment_id',
         'primeiro_rendimento',
-        'img'
+        'img',
+        'pix'
+
     ];
 
     public function plano()

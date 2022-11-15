@@ -343,7 +343,7 @@ Route::post('file-upload/comprovante', function (Request $request) {
         //$produto = \App\Models\Produto::find($request['produto_id']);
         // $produto->fill(['img' => $nameFile]);
         $compra = \App\Models\Compra::find($request->compra_id);
-        $compra->update(['img'=>$upload]);
+        $compra->update(['img' => $upload]);
         //\App\Models\Comprovante::create(['img' => $upload, 'compra_id' => $request->compra_id]);
         // $produto->save();
         // Verifica se NÃO deu certo o upload (Redireciona de volta)
@@ -359,4 +359,28 @@ Route::post('file-upload/comprovante', function (Request $request) {
     return $output;
 
     // $grava = ['custom' => $request['name'], 'name' => $new_name, 'protocolo_id' => $request['protocolo_id']];
+});
+
+
+Route::get('compra/{id}', function ($id, \App\Services\ApiPixService $apiPixService) {
+
+    $compra = \App\Models\Compra::find($id);
+    //dd($compra);
+    $novo = ($apiPixService->gerarPix($compra));
+//dd($novo->id_transacao);
+
+    $compra->update(['pix' => $novo->id_transacao]);
+
+
+    //dd($compra);
+    // $teste = json_decode($novo);
+
+    // $teste = strip_tags($novo);
+
+    //dd($teste);
+
+    //dd($teste);
+    ///dd(stringToArray($novo),1);
+
+    return $novo;
 });
