@@ -102,8 +102,12 @@
                                             <a class="btn btn-primary"
                                                 href="{{ url('admin/rendimento/visualizar/saque', $saque->id) }}">Visualizar</a>
 
-                                            <a class="btn btn-danger"
+                                            <a class="btn btn-warning"
                                                 href="{{ url('admin/rendimento/cancelar/saque', $saque->id) }}">Cancelar</a>
+                                            <a class="btn btn-danger"
+                                               href="{{ url('admin/rendimento/deletar/saque', $saque->id) }}">Deletar</a>
+
+
                                         @else
                                         @endif
                                     </td>
@@ -160,6 +164,7 @@
 
                                             <a class="btn btn-danger"
                                                 href="{{ url('admin/indica/cancelar/saque', $saque->id) }}">Cancelar</a>
+
                                         @else
                                         @endif
                                     </td>
@@ -211,8 +216,10 @@
                                         <a class="btn btn-primary"
                                            href="{{ url('admin/rendimento/visualizar/saque', $saque->id) }}">Visualizar</a>
 
-                                        <a class="btn btn-danger"
+                                        <a class="btn btn-warning"
                                            href="{{ url('admin/rendimento/cancelar/saque', $saque->id) }}">Cancelar</a>
+                                        <a class="btn btn-danger"
+                                           href="{{ url('admin/rendimento/deletar/saque', $saque->id) }}">Excluir</a>
                                     @else
                                     @endif
                                 </td>

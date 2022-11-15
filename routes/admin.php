@@ -395,6 +395,24 @@ Route::name('admin.')->prefix('admin')->group(function () {
         });
 
 
+        Route::get('rendimento/deletar/saque/{id}', function ($id) {
+            $saque = \App\Models\Saquerendimento::find($id);
+
+
+
+
+
+
+            Saquerendimento::destroy($id);
+
+            return redirect()->back();
+
+            // dd($dados);
+
+            return view('admin.saque.cancelar', compact('saque'));
+        });
+
+
         Route::get('delete/conta/{id}', function ($id) {
 
 
