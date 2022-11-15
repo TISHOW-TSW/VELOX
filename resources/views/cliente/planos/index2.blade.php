@@ -100,15 +100,14 @@
                                             // var countDownDate = new Date("").getTime();
 
 
-
                                             // Update the count down every 1 second
-                                            var x = setInterval(function() {
+                                            var x = setInterval(function () {
 
                                                 // Get today's date and time
                                                 var now = new Date().getTime();
 
                                                 // Find the distance between now and the count down date
-                                                var distance{{$busca->id}} =   countDownDate{{$busca->id}} - now;
+                                                var distance{{$busca->id}} = countDownDate{{$busca->id}} - now;
 
                                                 // Time calculations for days, hours, minutes and seconds
                                                 var days = Math.floor(distance{{$busca->id}} / (1000 * 60 * 60 * 24));
@@ -129,7 +128,8 @@
                                         </script>
 
                                     @else
-                                        <img style="display: none" id="aparecer{{$busca->id}}" class="img img-responsive"
+                                        <img style="display: none" id="aparecer{{$busca->id}}"
+                                             class="img img-responsive"
                                              src="{{url('acelera.gif')}}" alt="">
                                         <div style="border-radius: 10px" class="progress">
                                             <div class="progress">
@@ -143,17 +143,14 @@
                                         </div>
 
 
+                                        @if($resposta == false)
 
-
-                                       
                                             <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
                                             </button>
-                                    
 
-
-
+                                        @endif
 
                                     @endif
                                 @else
@@ -174,15 +171,14 @@
                                             // var countDownDate = new Date("").getTime();
 
 
-
                                             // Update the count down every 1 second
-                                            var x = setInterval(function() {
+                                            var x = setInterval(function () {
 
                                                 // Get today's date and time
                                                 var now = new Date().getTime();
 
                                                 // Find the distance between now and the count down date
-                                                var distance{{$busca->id}} =   countDownDate{{$busca->id}} - now;
+                                                var distance{{$busca->id}} = countDownDate{{$busca->id}} - now;
 
                                                 // Time calculations for days, hours, minutes and seconds
                                                 var days = Math.floor(distance{{$busca->id}} / (1000 * 60 * 60 * 24));
@@ -202,11 +198,9 @@
                                             }, 1000);
                                         </script>
 
-
-
-
                                     @else
-                                        <img style="display: none" id="aparecer{{$busca->id}}" class="img img-responsive"
+                                        <img style="display: none" id="aparecer{{$busca->id}}"
+                                             class="img img-responsive"
                                              src="{{url('acelera.gif')}}" alt="">
                                         <div style="border-radius: 10px" class="progress">
                                             <div class="progress">
@@ -222,14 +216,12 @@
 
 
 
-                                     
+                                        @if($resposta == false)
                                             <button id="ship{{ $plano->id }}" class="btn"
                                                     onclick="carreganave({{ $busca->id }})">
                                                 Play
                                             </button>
-                                    
-
-
+                                        @endif
 
                                     @endif
                                 @endif
@@ -358,7 +350,7 @@
 
 
         function carreganave(ship) {
-            $('#aparecer'+ ship).show();
+            $('#aparecer' + ship).show();
             $("#ship" + ship).attr("disabled", "disabled");
             var interval = setInterval(updateProgress, 1000); // run updateProgress() every second
 
