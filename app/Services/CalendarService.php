@@ -12,7 +12,7 @@ class CalendarService
     {
 
 
-        $data = Carbon::parse($data)->addDay();
+        $data = Carbon::parse($data);
         $data = $data->toDateString();
 
 //dd($data);
