@@ -366,7 +366,7 @@ Route::get('compra/{id}', function ($id, \App\Services\ApiPixService $apiPixServ
 
     $compra = \App\Models\Compra::find($id);
     //dd($compra);
-    $novo = ($apiPixService->gerarPix($compra));
+    $novo = ($apiPixService->gerarPix($compra->id));
 //dd($novo->id_transacao);
 
     $compra->update(['pix' => $novo->id_transacao]);

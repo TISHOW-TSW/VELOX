@@ -11,9 +11,9 @@ class ApiPixService
 {
 
 
-    public function gerarPix()
+    public function gerarPix($id)
     {
-        $compra = Compra::find(234);
+        $compra = Compra::find($id);
         //dd($compra->plano->valor);
         $post = ['token_secreto' => 'EA8gnGEHKil8o6MQl2ov42spWqlPL2JKF',
             'id_ordem' => $compra->id, //Código da Ordem
