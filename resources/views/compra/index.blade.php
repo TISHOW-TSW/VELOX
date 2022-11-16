@@ -76,11 +76,17 @@
 
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header">
+                <div style="background-color: black" class="modal-header">
 
-                    <h4 class="modal-title">PIX</h4>
+                    <img class="img img-responsive" src="{{asset('logo.png')}}" alt="">
                 </div>
                 <div class="modal-body">
+
+                    <center>
+                    <h3 style="color: black">Abra seu aplicativo de pagamento onde você utiliza o Pix e escolha a opção Ler QR Code</h3>
+                    <p>Aponte a câmera do seu celular</p>
+
+                    </center>
                     <center>
                         <div id="qrcode"></div>
                     </center>
@@ -90,8 +96,13 @@
                         <button class="btn btn-dark btn-block" id="copiado" data-clipboard-target="#info_block" onclick="copiarQRPIX()">Copiar QRCODE</button>
                     </center>
                     <p style="opacity: 0;margin-bottom: -20px" id="p2"></p>
+
+
                 </div>
                 <div class="modal-footer">
+                    <center>
+                        <h4 style="color: black">Não será necessário confirmar o pagamento!</h4>
+                    </center>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
