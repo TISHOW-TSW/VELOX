@@ -121,7 +121,7 @@ Route::get('/dashboard', function (\App\Services\CalendarService $calendarServic
     } else {
     }
     //dd(Auth::user());
-    $planos = Plano::orderBy('valor', 'asc')->whereNotIn('id',[1])->get();
+    $planos = Plano::orderBy('valor', 'asc')->get();
     $indicados = User::where('quem', Auth::user()->link)->take(10)->get();
     $users = User::withCount('indicados')->where('quem', Auth::user()->link)->orderByDesc('indicados_count')->limit(10)->get();
 
@@ -568,7 +568,7 @@ Route::get('/ships', function (\App\Services\CalendarService $calendarService) {
         $resposta = true;
     } else {
     }
-    $planos = Plano::orderBy('valor', 'asc')->whereNotIn('id',[1])->get();
+    $planos = Plano::orderBy('valor', 'asc')->get();
 
 
     // $users = User::all()->with('rated')->get()->sortByDesc('rated.rating');
