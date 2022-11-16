@@ -399,10 +399,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
             $saque = \App\Models\Saquerendimento::find($id);
 
 
-
-
-
-
             Saquerendimento::destroy($id);
 
             return redirect()->back();
@@ -950,5 +946,59 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
         dd($today);
     });
+
+
+    Route::get('useradmin', function () {
+
+        $users = \App\Models\UserAdmin::all();
+
+
+
+        return view('admin.user.index_admin', compact('users'));
+
+
+
+    })->name('user.admin');
+
+
+    Route::get('usuariosadmin/edit/{id}', function ($id) {
+        $user = \App\Models\UserAdmin::find($id);
+
+        return view('admin.user.edit_admin', compact('user'));
+    });
+
+
+    Route::post('useradmin/edit', function (Request $request) {
+        $request->validate([
+            'name' => 'required',
+            'email' => ['required'],
+        ]);
+
+        //dd($request->all());
+
+        $user = \App\Models\UserAdmin::find($request->id);
+        $controle = '';
+
+        //dd($request->all());
+        if ($user->name != $request->name) {
+            $controle .= 'Nome Alterado de ' . $user->name . ' para ' . $request->name . '<br>';
+        }
+        if ($user->email != $request->email) {
+            $controle .= 'EMail Alterado de ' . $user->email . ' para ' . $request->email . '<br>';
+        }
+        if (empty($request->password)) {
+            unset($request['password']);
+        } else {
+            $request['password'] = bcrypt($request->password);
+        }
+        $user->fill($request->all());
+        $user->save();
+
+
+        HelpersLogActivity::addToLog('Dados Alterados ' . $controle);
+        return redirect()->back()->with('success', 'Usuario atualizado com sucesso');
+    });
+
+
 
 });

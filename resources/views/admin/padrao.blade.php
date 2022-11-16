@@ -175,6 +175,9 @@
                                             href="{{ route('admin.vantagem.index') }}">Beneficios</a></li>
                                     <li><a  href="{{ route('admin.plano.index') }}">Planos</a>
                                     </li>
+
+                                    <li><a  href="{{ route('admin.user.admin') }}">Admin</a>
+                                    </li>
                                     <li><a  href="{{ url('admin/produtos') }}">
                                             Produtos</a></li>
                                     <li><a  href="{{ route('metas.index') }}">Metas</a>
