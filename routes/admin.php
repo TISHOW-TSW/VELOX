@@ -42,8 +42,8 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     Route::get('faturas', function () {
 
-        $compras = Compra::all();
-        HelpersLogActivity::addToLog('Acessou aba Faturas');
+        $compras = Compra::where('status',0)->get();
+       // HelpersLogActivity::addToLog('Acessou aba Faturas');
         return view('admin.faturas', compact('compras'));
     });
 
